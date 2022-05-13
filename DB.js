@@ -70,6 +70,12 @@ const sql = {
     },
     insertRow(argObj, res) {
       console.log(argObj);
+	    var json_parse = JSON.parse(argObj.data);
+	    console.log('json_parse');
+	    console.log(json_parse);
+	    var json_stringify = JSON.stringify(json_parse);
+	    console.log('json_stringify');
+	    console.log(json_stringify);
       if (
         !(argObj.account_uuid && argObj.email && argObj.password && argObj.team)
       ) {
