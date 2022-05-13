@@ -45,7 +45,12 @@ const query = async function (sql) {
 const sql = {
   accounts: {
     selectRow(argObj, res) {
-      if (!argObj.account_uuid) {
+      try {
+        let data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+      }
+      if (!data.account_uuid) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -56,7 +61,7 @@ const sql = {
         ACCOUNTS
       WHERE 1=1
         AND _IS_DELETED = 0
-        AND ACCOUNT_UUID = '${argObj.account_uuid}'
+        AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
       querySingle(sql)
         .then((r) => {
@@ -69,16 +74,12 @@ const sql = {
         });
     },
     insertRow(argObj, res) {
-      console.log(argObj);
-	    var json_parse = JSON.parse(argObj.data);
-	    console.log('json_parse');
-	    console.log(json_parse);
-	    var json_stringify = JSON.stringify(json_parse);
-	    console.log('json_stringify');
-	    console.log(json_stringify);
-      if (
-        !(argObj.account_uuid && argObj.email && argObj.password && argObj.team)
-      ) {
+      try {
+        let data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+      }
+      if (!(data.account_uuid && data.email && data.password && data.team)) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -88,7 +89,7 @@ const sql = {
           ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
         )
         VALUES(
-          '${argObj.account_uuid}', '${argObj.email}', '${argObj.password}', '${argObj.team}'
+          '${data.account_uuid}', '${data.email}', '${data.password}', '${data.team}'
         )
       `;
       query(sql)
@@ -107,8 +108,12 @@ const sql = {
         });
     },
     deleteRow(argObj, res) {
-      console.log(argObj);
-      if (!argObj.account_uuid) {
+      try {
+        let data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+      }
+      if (!data.account_uuid) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -120,7 +125,7 @@ const sql = {
           _UPDATED_AT = NOW()
         WHERE 1=1
           AND _IS_DELETED = 0
-          AND ACCOUNT_UUID = '${argObj.account_uuid}'
+          AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
       query(sql)
         .then((r) => {
@@ -133,8 +138,12 @@ const sql = {
     },
     uuid: {
       select(argObj, res) {
-        console.log(argObj);
-        if (!argObj.email) {
+        try {
+          let data = JSON.parse(argObj.data);
+        } catch (e) {
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        }
+        if (!data.email) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
@@ -145,7 +154,7 @@ const sql = {
           ACCOUNTS
         WHERE 1=1
           AND _IS_DELETED = 0
-          AND EMAIL = '${argObj.email}'
+          AND EMAIL = '${data.email}'
         `;
         querySingle(sql)
           .then((r) => {
@@ -160,7 +169,12 @@ const sql = {
     },
     password: {
       select(argObj, res) {
-        if (!argObj.account_uuid) {
+        try {
+          let data = JSON.parse(argObj.data);
+        } catch (e) {
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        }
+        if (!data.account_uuid) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
@@ -171,7 +185,7 @@ const sql = {
             ACCOUNTS
           WHERE 1=1
             AND _IS_DELETED = 0
-            AND ACCOUNT_UUID = '${argObj.account_uuid}'
+            AND ACCOUNT_UUID = '${data.account_uuid}'
         `;
         querySingle(sql)
           .then((r) => {
@@ -184,7 +198,12 @@ const sql = {
           });
       },
       update(argObj, res) {
-        if (!(argObj.account_uuid && argObj.password)) {
+        try {
+          let data = JSON.parse(argObj.data);
+        } catch (e) {
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        }
+        if (!(data.account_uuid && data.password)) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
@@ -192,12 +211,12 @@ const sql = {
           UPDATE
             ACCOUNTS
           SET
-            PASSWORD = ${argObj.password},
+            PASSWORD = ${data.password},
             _UPDATED_AT = NOW()
           WHERE
             1=1
             AND _IS_DELETED = 0
-            AND ACCOUNT_UUID = ${argObj.account_uuid}
+            AND ACCOUNT_UUID = ${data.account_uuid}
         `;
         query(sql)
           .then((r) => {

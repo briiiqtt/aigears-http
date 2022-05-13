@@ -18,10 +18,12 @@
 <script>
     document.addEventListener('click', (e) => {
         if (e.target.id === 'button1') {
-            axios.get('http:/localhost:52530/accounts?account_uuid=2')
-            .then((r)=>{
-                alert(r)
-            })
+            axios.post('http:/localhost:52530/get-account'), {
+                account_uuid: '123'
+            }
+                .then((r) => {
+                    alert(r)
+                })
         }
         if (e.target.id === 'button2') {
             console.log('2')
