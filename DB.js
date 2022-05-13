@@ -45,8 +45,9 @@ const query = async function (sql) {
 const sql = {
   accounts: {
     selectRow(argObj, res) {
+      let data = null;
       try {
-        let data = JSON.parse(argObj.data);
+        data = JSON.parse(argObj.data);
       } catch (e) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
       }
@@ -74,8 +75,9 @@ const sql = {
         });
     },
     insertRow(argObj, res) {
+      let data = null;
       try {
-        let data = JSON.parse(argObj.data);
+        data = JSON.parse(argObj.data);
       } catch (e) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
       }
@@ -108,8 +110,9 @@ const sql = {
         });
     },
     deleteRow(argObj, res) {
+      let data = null;
       try {
-        let data = JSON.parse(argObj.data);
+        data = JSON.parse(argObj.data);
       } catch (e) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
       }
