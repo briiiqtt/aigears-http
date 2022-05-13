@@ -18,11 +18,11 @@
 <script>
     document.addEventListener('click', (e) => {
         if (e.target.id === 'button1') {
-            axios.post('http:/localhost:52530/get-account'), {
-                account_uuid: '123'
-            }
+            axios.post(('http://localhost:52530/get-account'), {
+                data: JSON.stringify({ account_uuid: '232' })
+            })
                 .then((r) => {
-                    alert(r)
+                    console.log(r.data);
                 })
         }
         if (e.target.id === 'button2') {
