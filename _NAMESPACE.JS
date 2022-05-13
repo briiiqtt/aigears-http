@@ -15,6 +15,8 @@ const _NAMESPACE = {
     //
     INSUFFICIENT_VALUE: "필요한 인자가 제공되지 않음",
     UUID_DUPLICATED: "UUID가 중복됨",
+    NO_SUCH_PATH: "요청 경로 잘못됨",
+    SYNTAX_ERROR: "구문 오류",
   },
   ERR: "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n",
 };
