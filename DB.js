@@ -39,7 +39,7 @@ const sql = {
   accounts: {
     select(argObj, res) {
       if (!argObj.account_uuid) {
-        new Response(res).badRequest();
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
       let sql = `
@@ -51,9 +51,10 @@ const sql = {
         AND _IS_DELETED = 0
         AND ACCOUNT_UUID = '${argObj.account_uuid}'
       `;
-      query(sql)
+      querySingle(sql)
         .then((r) => {
-          new Response(res, r).OK();
+          if (r) new Response(res, r).OK();
+          else new Response(res).notFound();
         })
         .catch((err) => {
           console.error(_NAMESPACE.ERR, err);
@@ -61,8 +62,10 @@ const sql = {
         });
     },
     insert(argObj, res) {
-      if (!(argObj.account_uuid && argObj.email && argObj.password && argObj.team)) {
-        new Response(res).badRequest();
+      if (
+        !(argObj.account_uuid && argObj.email && argObj.password && argObj.team)
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
       let sql = `
@@ -76,7 +79,30 @@ const sql = {
       `;
       query(sql)
         .then((r) => {
-          new Response(res, r.affectedRows).OK();
+          new Response(res, { affectedRows: r.affectedRows }).OK();
+        })
+        .catch((err) => {
+          console.error(_NAMESPACE.ERR, err);
+          new Response(res).internalServerError();
+        });
+    },
+    delete(argObj, res) {
+      if (!argObj.account_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          ACCOUNTS
+        SET
+          _IS_DELETED = 1,
+          _UPDATED_AT = NOW()
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${argObj.account_uuid}'
+      `;
+      query(sql)
+        .then((r) => {
+          new Response(res, { affectedRows: r.affectedRows }).OK();
         })
         .catch((err) => {
           console.error(_NAMESPACE.ERR, err);
@@ -86,7 +112,7 @@ const sql = {
     uuid: {
       select(argObj, res) {
         if (!argObj.email) {
-          new Response(res).badRequest();
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
         let sql = `
@@ -100,7 +126,8 @@ const sql = {
         `;
         querySingle(sql)
           .then((r) => {
-            new Response(res, r).OK();
+            if (r) new Response(res, r).OK();
+            else new Response(res).notFound();
           })
           .catch((err) => {
             console.error(_NAMESPACE.ERR, err);
@@ -111,7 +138,7 @@ const sql = {
     password: {
       select(argObj, res) {
         if (!argObj.account_uuid) {
-          new Response(res).badRequest();
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
         let sql = `
@@ -125,7 +152,8 @@ const sql = {
         `;
         querySingle(sql)
           .then((r) => {
-            new Response(res, r).OK();
+            if (r) new Response(res, r).OK();
+            else new Response(res).notFound();
           })
           .catch((err) => {
             console.error(_NAMESPACE.ERR, err);
@@ -134,7 +162,7 @@ const sql = {
       },
       update(argObj, res) {
         if (!(argObj.account_uuid && argObj.password)) {
-          new Response(res).badRequest();
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
         let sql = `
@@ -150,7 +178,7 @@ const sql = {
         `;
         query(sql)
           .then((r) => {
-            new Response(res, r.affectedRows).OK();
+            new Response(res, { affectedRows: r.affectedRows }).OK();
           })
           .catch((err) => {
             console.error(_NAMESPACE.ERR, err);

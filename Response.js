@@ -6,12 +6,13 @@ const Response = class {
     this.data = _data;
   }
   sendResponse() {
-    console.log(`응답 code: ${this.code}, message: ${this.message}, data: `, this.data)
-    this.res.send({
+    let resp = {
       data: this.data,
       code: this.code,
       message: this.message,
-    });
+    };
+    console.log(resp);
+    this.res.send(resp);
   }
   OK(msg) {
     this.res.status(200);
