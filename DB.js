@@ -69,6 +69,7 @@ const sql = {
         });
     },
     insertRow(argObj, res) {
+      console.log(argObj);
       if (
         !(argObj.account_uuid && argObj.email && argObj.password && argObj.team)
       ) {
