@@ -138,8 +138,9 @@ const sql = {
     },
     uuid: {
       select(argObj, res) {
+        let data = null;
         try {
-          let data = JSON.parse(argObj.data);
+          data = JSON.parse(argObj.data);
         } catch (e) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         }
@@ -169,8 +170,9 @@ const sql = {
     },
     password: {
       select(argObj, res) {
+        let data = null;
         try {
-          let data = JSON.parse(argObj.data);
+          data = JSON.parse(argObj.data);
         } catch (e) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         }
@@ -198,8 +200,9 @@ const sql = {
           });
       },
       update(argObj, res) {
+        let data = null;
         try {
-          let data = JSON.parse(argObj.data);
+          data = JSON.parse(argObj.data);
         } catch (e) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         }
