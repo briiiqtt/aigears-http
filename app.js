@@ -19,7 +19,7 @@ app.listen((port = 52530), () => {
 });
 
 app.route("/test").get((req, res) => {
-  res.sendFile(`${__dirname}/index.html`);
+  res.sendFile(`${__dirname}/test.html`);
 });
 
 app.post("/get-account", (req, res) =>
