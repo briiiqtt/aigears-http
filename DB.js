@@ -27,7 +27,14 @@ const query = async function (sql) {
   let promise = new Promise((resolve, reject) => {
     connection.query(sql, (err, rows, fields) => {
       if (err) {
-        reject(err);
+        switch (err.code) {
+          case "ER_DUP_ENTRY":
+            reject("pkviolate");
+            break;
+
+          default:
+            reject(err);
+        }
       }
       resolve(rows);
     });
@@ -37,7 +44,7 @@ const query = async function (sql) {
 
 const sql = {
   accounts: {
-    select(argObj, res) {
+    selectRow(argObj, res) {
       if (!argObj.account_uuid) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -61,7 +68,7 @@ const sql = {
           new Response(res).internalServerError();
         });
     },
-    insert(argObj, res) {
+    insertRow(argObj, res) {
       if (
         !(argObj.account_uuid && argObj.email && argObj.password && argObj.team)
       ) {
@@ -82,11 +89,18 @@ const sql = {
           new Response(res, { affectedRows: r.affectedRows }).OK();
         })
         .catch((err) => {
-          console.error(_NAMESPACE.ERR, err);
-          new Response(res).internalServerError();
+          switch (err) {
+            case "pkviolate":
+              new Response(res).badRequest(_NAMESPACE.RES_MSG.UUID_DUPLICATED);
+              break;
+            default:
+              console.error(_NAMESPACE.ERR, err);
+              new Response(res).internalServerError();
+          }
         });
     },
-    delete(argObj, res) {
+    deleteRow(argObj, res) {
+      console.log(argObj);
       if (!argObj.account_uuid) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -98,6 +112,7 @@ const sql = {
           _IS_DELETED = 1,
           _UPDATED_AT = NOW()
         WHERE 1=1
+          AND _IS_DELETED = 0
           AND ACCOUNT_UUID = '${argObj.account_uuid}'
       `;
       query(sql)
@@ -111,6 +126,7 @@ const sql = {
     },
     uuid: {
       select(argObj, res) {
+        console.log(argObj);
         if (!argObj.email) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;

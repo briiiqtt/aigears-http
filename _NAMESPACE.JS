@@ -4,7 +4,7 @@ const _NAMESPACE = {
     user: "root",
     password: "0000",
     database: "aigears",
-    port: "53306"
+    port: "53306",
   },
   RES_MSG: {
     OK: "요청 성공적",
@@ -14,6 +14,7 @@ const _NAMESPACE = {
     INTERNAL_SERVER_ERROR: "서버 내부 에러",
     //
     INSUFFICIENT_VALUE: "필요한 인자가 제공되지 않음",
+    UUID_DUPLICATED: "UUID가 중복됨",
   },
   ERR: "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n",
 };
