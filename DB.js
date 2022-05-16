@@ -56,7 +56,6 @@ const query = function (res, sql) {
   });
 };
 const transaction = async function (...sqls) {
-  // console.log(sqls)
   try {
     await conn.beginTransaction();
     await Promise.all(sqls).catch((err) => {
@@ -73,8 +72,8 @@ const transaction = async function (...sqls) {
 
 const sql = {
   // test() {
-  //   transaction(
-  //     query(
+  //   let a = function () {
+  //     return query(
   //       null,
   //       `INSERT INTO
   //       ACCOUNTS(
@@ -83,8 +82,10 @@ const sql = {
   //       VALUES(
   //         '123', '123', '123', '123'
   //       )`
-  //     ),
-  //     query(
+  //     );
+  //   };
+  //   let b = function () {
+  //     return query(
   //       null,
   //       `INSERT INTO
   //       ACCOUNTS(
@@ -93,8 +94,10 @@ const sql = {
   //       VALUES(
   //         '456', '456', '456', '456'
   //       )`
-  //     ),
-  //     query(
+  //     );
+  //   };
+  //   let c = function () {
+  //     return query(
   //       null,
   //       `INSERT INTO
   //       ACCOUNTS(
@@ -103,8 +106,9 @@ const sql = {
   //       VALUES(
   //         '456', '456', '456', '456'
   //       )`
-  //     )
-  //   ); //.then((r) => console.log(r));
+  //     );
+  //   };
+  //   transaction(a, b, c);
   // },
   accounts: {
     selectRow(argObj, res) {
@@ -264,7 +268,7 @@ const sql = {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
-        if (!(data.account_uuid && data.team)) {
+        if (!(data.account_uuid && data.team && data.icon)) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
@@ -273,6 +277,7 @@ const sql = {
             ACCOUNTS
           SET
             TEAM = '${data.team}',
+            ICON = '${data.icon}',
             _UPDATED_AT = NOW()
           WHERE
             1=1

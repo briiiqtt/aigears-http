@@ -27,13 +27,14 @@ app.post("/get-account", (req, res) =>
 );
 /* path:	http://3.35.210.188:52530/get-account
  *          |name           |type    |desc        |
- * input:   | account_uuid  | string  | 계정UUID  | 택일
- *          | email         | string  | 이메일    | 택일
- *          |               |
+ * input:   | account_uuid  | string  | 계정UUID  | 이중택일
+ *          | email         | string  | 이메일    | 이중택일
+ *          |
  * output:  | account_uuid  | string  | 계정UUID
  *          | email         | string  | 이메일
  *          | password      | string  | 비밀번호
  *          | team          | string  | 소속
+ *          |
  * desc:    | 넘겨받은 UUID로 찾은 계정의 모든 정보를 제공함.
  */
 app.post("/add-account", (req, res) =>
@@ -44,8 +45,9 @@ app.post("/add-account", (req, res) =>
  * input:   | account_uuid  | string  | 계정UUID
  *          | email         | string  | 이메일
  *          | password      | string  | 비밀번호
- *          | team          | string  | 소속
+ *          |
  * output:  | affectedRows  | integer | 영향받은 건수
+ *          |
  * desc:  	|넘겨받은 입력대로 새로운 계정정보를 만들어 저장함.
  */
 app.post("/del-account", (req, res) =>
@@ -54,7 +56,9 @@ app.post("/del-account", (req, res) =>
 /* path:	http://3.35.210.188:52530/del-account
  *          |name           |type    |desc
  * input:   | account_uuid  | string | 계정UUID
+ *          |
  * output:  | affectedRows  | integer| 영향받은 건수
+ *          |
  * desc:    |넘겨받은 UUID로 찾은 계정의 모든 정보를 삭제함.
  */
 
@@ -65,6 +69,7 @@ app.post("/set-team", (req, res) => db.sql.accounts.team.update(req.body, res));
  *        | team          | string  | 소속
  *        |
  * output:| affectedRows  | integer | 영향받은 건수
+ *        |
  * desc:  | 넘겨받은 UUID로 찾은 계정의 소속을 넘겨받은 TEAM 값으로 수정함.
  */
 
