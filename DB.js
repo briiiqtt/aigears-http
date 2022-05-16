@@ -1,48 +1,100 @@
 const _NAMESPACE = require("./_NAMESPACE.JS");
 const mysql = require("mysql");
-const connection = mysql.createConnection(_NAMESPACE.CONN);
+const conn = mysql.createConnection(_NAMESPACE.CONN);
 
 const Response = require("./Response");
 
-const querySingle = async function (sql) {
-  let promise = new Promise((resolve, reject) => {
+const selectSingle = function (res, sql) {
+  return new Promise((resolve, reject) => {
     if (sql.substring(0, 10).includes("SELECT")) {
       //FIXME: 이러면안된다
       reject("단일행 SELECT 전용임");
       return false;
     }
-    connection.query(sql, (err, rows, fields) => {
+    conn.query(sql, (err, result, fields) => {
       if (err) {
-        reject(err);
+        console.err(_NAMESPACE.ERR, err);
+      } else if (!(result.length in [0, 1])) {
+        new Response(res).internalServerError();
+      } else {
+        new Response(
+          res,
+          result.affectedRows
+            ? { affectedRows: result.affectedRows }
+            : result[0]
+        ).OK();
       }
-      if (!(rows.length in [0, 1])) {
-        reject(rows);
-      }
-      resolve(rows[0]);
     });
   });
-  return await promise;
 };
-const query = async function (sql) {
-  let promise = new Promise((resolve, reject) => {
-    connection.query(sql, (err, rows, fields) => {
+const query = function (res, sql) {
+  return new Promise((resolve, reject) => {
+    conn.query(sql, (err, result, fields) => {
       if (err) {
-        switch (err.code) {
-          case "ER_DUP_ENTRY":
-            reject("pkviolate");
-            break;
+        if (res) {
+          switch (err.code) {
+            case "ER_DUP_ENTRY":
+              new Response(res).badRequest(_NAMESPACE.RES_MSG.UUID_DUPLICATED);
+              break;
 
-          default:
-            reject(err);
+            default:
+              console.error(_NAMESPACE.ERR, err);
+              new Response(res).internalServerError();
+          }
         }
+        reject(err);
+      } else {
+        if (res) {
+          new Response(
+            res,
+            result.affectedRows ? { affectedRows: result.affectedRows } : result
+          ).OK();
+        }
+        resolve(result);
       }
-      resolve(rows);
     });
   });
-  return await promise;
+};
+const transaction = async function (...sqls) {
+  // console.log(sqls)
+  try {
+    await conn.beginTransaction();
+    await Promise.all(sqls);
+    await conn.commit();
+    return true;
+  } catch (e) {
+    console.error(e);
+    await conn.rollback();
+    return false;
+  }
 };
 
 const sql = {
+  // test() {
+  //   transaction(
+  //     query(null,`INSERT INTO
+  //       ACCOUNTS(
+  //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
+  //       )
+  //       VALUES(
+  //         '123', '123', '123', '123'
+  //       )`),
+  //     query(null,`INSERT INTO
+  //       ACCOUNTS(
+  //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
+  //       )
+  //       VALUES(
+  //         '456', '456', '456', '456'
+  //       )`),
+  //     query(null,`INSERT INTO
+  //       ACCOUNTS(
+  //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
+  //       )
+  //       VALUES(
+  //         '456', '456', '456', '456'
+  //       )`)
+  //   )//.then((r) => console.log(r));
+  // },
   accounts: {
     selectRow(argObj, res) {
       let data = null;
@@ -51,7 +103,7 @@ const sql = {
       } catch (e) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
       }
-      if (!data.account_uuid) {
+      if (!data.account_uuid && !data.email) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -62,17 +114,12 @@ const sql = {
         ACCOUNTS
       WHERE 1=1
         AND _IS_DELETED = 0
-        AND ACCOUNT_UUID = '${data.account_uuid}'
+        AND (
+          ACCOUNT_UUID = '${data.account_uuid}'
+          OR EMAIL = '${data.email}'
+          )
       `;
-      querySingle(sql)
-        .then((r) => {
-          if (r) new Response(res, r).OK();
-          else new Response(res).notFound();
-        })
-        .catch((err) => {
-          console.error(_NAMESPACE.ERR, err);
-          new Response(res).internalServerError();
-        });
+      selectSingle(res, sql);
     },
     insertRow(argObj, res) {
       let data = null;
@@ -94,20 +141,7 @@ const sql = {
           '${data.account_uuid}', '${data.email}', '${data.password}', '${data.team}'
         )
       `;
-      query(sql)
-        .then((r) => {
-          new Response(res, { affectedRows: r.affectedRows }).OK();
-        })
-        .catch((err) => {
-          switch (err) {
-            case "pkviolate":
-              new Response(res).badRequest(_NAMESPACE.RES_MSG.UUID_DUPLICATED);
-              break;
-            default:
-              console.error(_NAMESPACE.ERR, err);
-              new Response(res).internalServerError();
-          }
-        });
+      query(res, sql);
     },
     deleteRow(argObj, res) {
       let data = null;
@@ -130,14 +164,7 @@ const sql = {
           AND _IS_DELETED = 0
           AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
-      query(sql)
-        .then((r) => {
-          new Response(res, { affectedRows: r.affectedRows }).OK();
-        })
-        .catch((err) => {
-          console.error(_NAMESPACE.ERR, err);
-          new Response(res).internalServerError();
-        });
+      query(res, sql);
     },
     uuid: {
       select(argObj, res) {
@@ -160,15 +187,7 @@ const sql = {
           AND _IS_DELETED = 0
           AND EMAIL = '${data.email}'
         `;
-        querySingle(sql)
-          .then((r) => {
-            if (r) new Response(res, r).OK();
-            else new Response(res).notFound();
-          })
-          .catch((err) => {
-            console.error(_NAMESPACE.ERR, err);
-            new Response(res).internalServerError();
-          });
+        selectSingle(res, sql);
       },
     },
     password: {
@@ -192,15 +211,7 @@ const sql = {
             AND _IS_DELETED = 0
             AND ACCOUNT_UUID = '${data.account_uuid}'
         `;
-        querySingle(sql)
-          .then((r) => {
-            if (r) new Response(res, r).OK();
-            else new Response(res).notFound();
-          })
-          .catch((err) => {
-            console.error(_NAMESPACE.ERR, err);
-            new Response(res).internalServerError();
-          });
+        selectSingle(res, sql);
       },
       update(argObj, res) {
         let data = null;
@@ -224,14 +235,7 @@ const sql = {
             AND _IS_DELETED = 0
             AND ACCOUNT_UUID = ${data.account_uuid}
         `;
-        query(sql)
-          .then((r) => {
-            new Response(res, { affectedRows: r.affectedRows }).OK();
-          })
-          .catch((err) => {
-            console.error(_NAMESPACE.ERR, err);
-            new Response(res).internalServerError();
-          });
+        query(res, sql);
       },
     },
   },
