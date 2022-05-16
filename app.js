@@ -58,6 +58,15 @@ app.post("/del-account", (req, res) =>
  * desc:    |넘겨받은 UUID로 찾은 계정의 모든 정보를 삭제함.
  */
 
+app.post("/set-team", (req, res) => db.sql.accounts.team.update(req.body, res));
+/* path: http://localhost:52530/set-team
+ *        |name           |type     |desc
+ * input: | account_uuid  | string  | 계정UUID
+ *        | team          | string  | 소속
+ *        |
+ * output:| affectedRows  | integer | 영향받은 건수
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 소속을 넘겨받은 TEAM 값으로 수정함.
+ */
 
 // db.sql.test();
 

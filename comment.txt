@@ -1,31 +1,48 @@
 모든 요청메소드: POST
 
-계정 get
+계정조회
 /* path:	http://3.35.210.188:52530/get-account
- *          |name          |type    |desc
- * input:   | account_uuid | string | 계정UUID
- * output:  | account_uuid | string | 계정UUID
- *          | email        | string | 이메일
- *          | password     | string | 비밀번호
- *          | team         | string | 소속
- * desc:    |넘겨받은 UUID로 찾은 계정의 모든 정보를 제공함.
+ *          |name           |type    |desc        |
+ * input:   | account_uuid  | string  | 계정UUID  | 이중택일
+ *          | email         | string  | 이메일    | 이중택일
+ *          |
+ * output:  | account_uuid  | string  | 계정UUID
+ *          | email         | string  | 이메일
+ *          | password      | string  | 비밀번호
+ *          | team          | string  | 소속
+ *          |
+ * desc:    | 넘겨받은 UUID로 찾은 계정의 모든 정보를 제공함.
  */
 
-계정 add
+계정추가
 /* path:	http://3.35.210.188:52530/add-account
- *          |name          |type    |desc
- * input:   | account_uuid | string | 계정UUID
- *          | email        | string | 이메일
- *          | password     | string | 비밀번호
- *          | team         | string | 소속
- * output:  | affectedRows | integer| 영향받은 건수
+ *          |name           |type     |desc
+ * input:   | account_uuid  | string  | 계정UUID
+ *          | email         | string  | 이메일
+ *          | password      | string  | 비밀번호
+ *          |
+ * output:  | affectedRows  | integer | 영향받은 건수
+ *          |
  * desc:  	|넘겨받은 입력대로 새로운 계정정보를 만들어 저장함.
  */
 
-계정 delete
+계정삭제
 /* path:	http://3.35.210.188:52530/del-account
- *          |name          |type    |desc
- * input:   | account_uuid | string | 계정UUID
- * output:  | affectedRows | integer| 영향받은 건수
+ *          |name           |type    |desc
+ * input:   | account_uuid  | string | 계정UUID
+ *          |
+ * output:  | affectedRows  | integer| 영향받은 건수
+ *          |
  * desc:    |넘겨받은 UUID로 찾은 계정의 모든 정보를 삭제함.
+ */
+
+계정 팀 변경
+ /* path: http://localhost:52530/set-team
+ *        |name           |type     |desc
+ * input: | account_uuid  | string  | 계정UUID
+ *        | team          | string  | 소속
+ *        |
+ * output:| affectedRows  | integer | 영향받은 건수
+ *        |
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 소속을 넘겨받은 TEAM 값으로 수정함.
  */

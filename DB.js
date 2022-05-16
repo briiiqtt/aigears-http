@@ -113,6 +113,7 @@ const sql = {
         data = JSON.parse(argObj.data);
       } catch (e) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
       }
       if (!data.account_uuid && !data.email) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -138,6 +139,7 @@ const sql = {
         data = JSON.parse(argObj.data);
       } catch (e) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
       }
       if (!(data.account_uuid && data.email && data.password)) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -160,6 +162,7 @@ const sql = {
         data = JSON.parse(argObj.data);
       } catch (e) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
       }
       if (!data.account_uuid) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -184,6 +187,7 @@ const sql = {
           data = JSON.parse(argObj.data);
         } catch (e) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+          return false;
         }
         if (!data.email) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -208,6 +212,7 @@ const sql = {
           data = JSON.parse(argObj.data);
         } catch (e) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+          return false;
         }
         if (!data.account_uuid) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -230,6 +235,7 @@ const sql = {
           data = JSON.parse(argObj.data);
         } catch (e) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+          return false;
         }
         if (!(data.account_uuid && data.password)) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -245,6 +251,33 @@ const sql = {
             1=1
             AND _IS_DELETED = 0
             AND ACCOUNT_UUID = ${data.account_uuid}
+        `;
+        query(res, sql);
+      },
+    },
+    team: {
+      update(argObj, res) {
+        let data = null;
+        try {
+          data = JSON.parse(argObj.data);
+        } catch (e) {
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+          return false;
+        }
+        if (!(data.account_uuid && data.team)) {
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+          return false;
+        }
+        let sql = `
+          UPDATE
+            ACCOUNTS
+          SET
+            TEAM = '${data.team}',
+            _UPDATED_AT = NOW()
+          WHERE
+            1=1
+            AND _IS_DELETED = 0
+            AND ACCOUNT_UUID = '${data.account_uuid}'
         `;
         query(res, sql);
       },
