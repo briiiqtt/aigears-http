@@ -34,7 +34,7 @@ const query = function (res, sql) {
         if (res) {
           switch (err.code) {
             case "ER_DUP_ENTRY":
-              new Response(res).badRequest(_NAMESPACE.RES_MSG.UUID_DUPLICATED);
+              new Response(res).badRequest(_NAMESPACE.RES_MSG.DUPLICATED_PK);
               break;
 
             default:

@@ -14,7 +14,7 @@ const _NAMESPACE = {
     INTERNAL_SERVER_ERROR: "서버 내부 에러",
     //
     INSUFFICIENT_VALUE: "필요한 인자가 제공되지 않음",
-    UUID_DUPLICATED: "UUID가 중복됨",
+    DUPLICATED_PK: "고유키 중복",
     NO_SUCH_PATH: "요청 경로 잘못됨",
     SYNTAX_ERROR: "구문 오류",
   },
