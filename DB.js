@@ -59,7 +59,9 @@ const transaction = async function (...sqls) {
   // console.log(sqls)
   try {
     await conn.beginTransaction();
-    await Promise.all(sqls);
+    await Promise.all(sqls).catch((err) => {
+      throw err;
+    });
     await conn.commit();
     return true;
   } catch (e) {
@@ -72,28 +74,37 @@ const transaction = async function (...sqls) {
 const sql = {
   // test() {
   //   transaction(
-  //     query(null,`INSERT INTO
+  //     query(
+  //       null,
+  //       `INSERT INTO
   //       ACCOUNTS(
   //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
   //       )
   //       VALUES(
   //         '123', '123', '123', '123'
-  //       )`),
-  //     query(null,`INSERT INTO
+  //       )`
+  //     ),
+  //     query(
+  //       null,
+  //       `INSERT INTO
   //       ACCOUNTS(
   //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
   //       )
   //       VALUES(
   //         '456', '456', '456', '456'
-  //       )`),
-  //     query(null,`INSERT INTO
+  //       )`
+  //     ),
+  //     query(
+  //       null,
+  //       `INSERT INTO
   //       ACCOUNTS(
   //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
   //       )
   //       VALUES(
   //         '456', '456', '456', '456'
-  //       )`)
-  //   )//.then((r) => console.log(r));
+  //       )`
+  //     )
+  //   ); //.then((r) => console.log(r));
   // },
   accounts: {
     selectRow(argObj, res) {
@@ -128,17 +139,17 @@ const sql = {
       } catch (e) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
       }
-      if (!(data.account_uuid && data.email && data.password && data.team)) {
+      if (!(data.account_uuid && data.email && data.password)) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
       let sql = `
       INSERT INTO
         ACCOUNTS(
-          ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
+          ACCOUNT_UUID, EMAIL, PASSWORD
         )
         VALUES(
-          '${data.account_uuid}', '${data.email}', '${data.password}', '${data.team}'
+          '${data.account_uuid}', '${data.email}', '${data.password}'
         )
       `;
       query(res, sql);

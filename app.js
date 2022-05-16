@@ -58,17 +58,6 @@ app.post("/del-account", (req, res) =>
  * desc:    |넘겨받은 UUID로 찾은 계정의 모든 정보를 삭제함.
  */
 
-app.post("/get-account-by-email", (req, res) =>
-  db.sql.accounts.uuid.select(req.body, res)
-);
-/* path:	http://3.35.210.188:52530/accounts/uuid
- *          |name           |type    |desc
- * input:   | email         | string | 이메일
- * output:  | account_uuid  | string | 계정UUID
- * desc:    |넘겨받은 이메일로 찾은 계정의 UUID를 제공함.
- *            이메일은 중복값을 허용함.
- *            그래서 하나의 이메일에 여러 uuid가 조회될 가능성 있음
- */
 
 // db.sql.test();
 
