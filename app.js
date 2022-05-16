@@ -67,13 +67,14 @@ app.post("/set-team", (req, res) => db.sql.accounts.team.update(req.body, res));
  *        |name           |type     |desc
  * input: | account_uuid  | string  | 계정UUID
  *        | team          | string  | 소속
+ *        | icon          | string  | 아이콘
  *        |
  * output:| affectedRows  | integer | 영향받은 건수
  *        |
- * desc:  | 넘겨받은 UUID로 찾은 계정의 소속을 넘겨받은 TEAM 값으로 수정함.
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 소속과 아이콘을 넘겨받은 값으로 수정함.
  */
 
-// db.sql.test();
+db.sql.test();
 
 app.all("*", (req, res) => {
   new Response(res).notFound(_NAMESPACE.RES_MSG.NO_SUCH_PATH);

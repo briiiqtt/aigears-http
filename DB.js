@@ -58,9 +58,7 @@ const query = function (res, sql) {
 const transaction = async function (...sqls) {
   try {
     await conn.beginTransaction();
-    await Promise.all(sqls).catch((err) => {
-      throw err;
-    });
+    await Promise.all(sqls.map(sql=>query(null, sql)));
     await conn.commit();
     return true;
   } catch (e) {
@@ -71,45 +69,35 @@ const transaction = async function (...sqls) {
 };
 
 const sql = {
-  // test() {
-  //   let a = function () {
-  //     return query(
-  //       null,
-  //       `INSERT INTO
-  //       ACCOUNTS(
-  //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
-  //       )
-  //       VALUES(
-  //         '123', '123', '123', '123'
-  //       )`
-  //     );
-  //   };
-  //   let b = function () {
-  //     return query(
-  //       null,
-  //       `INSERT INTO
-  //       ACCOUNTS(
-  //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
-  //       )
-  //       VALUES(
-  //         '456', '456', '456', '456'
-  //       )`
-  //     );
-  //   };
-  //   let c = function () {
-  //     return query(
-  //       null,
-  //       `INSERT INTO
-  //       ACCOUNTS(
-  //         ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
-  //       )
-  //       VALUES(
-  //         '456', '456', '456', '456'
-  //       )`
-  //     );
-  //   };
-  //   transaction(a, b, c);
-  // },
+  async test() {
+    if(await transaction(
+      `INSERT INTO
+        ACCOUNTS(
+          ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
+        )
+        VALUES(
+          '123', '123', '123', '123'
+        )`,
+      `INSERT INTO
+        ACCOUNTS(
+          ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
+        )
+        VALUES(
+          '456', '456', '456', '456'
+        )`,
+      `INSERT INTO
+        ACCOUNTS(
+          ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
+        )
+        VALUES(
+          '789', '789', '789', '789'
+        )`
+    )){
+      console.log(true)
+    }else{
+      console.log(false)
+    }
+  },
   accounts: {
     selectRow(argObj, res) {
       let data = null;
