@@ -192,8 +192,6 @@ app.post("/set-parts", (req, res) => db.sql.parts.update(req.body, res));
  *
  */
 
-app.post("/parts-set-slot", (req, res) => db.sql.parts.setSlot(req.body, res));
-
 db.sql.test();
 
 app.all("*", (req, res) => {
