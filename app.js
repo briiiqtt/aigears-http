@@ -192,7 +192,6 @@ app.post("/set-parts", (req, res) => db.sql.parts.update(req.body, res));
  *
  */
 
-db.sql.test();
 
 app.all("*", (req, res) => {
   new Response(res).notFound(_NAMESPACE.RES_MSG.NO_SUCH_PATH);

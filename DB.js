@@ -558,19 +558,6 @@ const sql = {
       `;
       query(res, sql);
     },
-    setSlot(argObj, res) {
-      let data = null;
-      try {
-        data = JSON.parse(argObj.data);
-      } catch (e) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      if (!data.slot_using_this && !data.parts_uuid) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-    },
   },
 };
 
