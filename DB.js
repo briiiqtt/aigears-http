@@ -3,6 +3,7 @@ const mysql = require("mysql");
 const conn = mysql.createConnection(_NAMESPACE.CONN);
 
 const Response = require("./Response");
+const { DATE } = require("mysql/lib/protocol/constants/types");
 
 const selectSingle = function (res, sql) {
   return new Promise((resolve, reject) => {
@@ -38,7 +39,9 @@ const query = function (res, sql) {
               break;
 
             case "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD":
-              new Response(res).badRequest(_NAMESPACE.RES_MSG.TYPE_MISMATCH + `(${err.sqlMessage})`);
+              new Response(res).badRequest(
+                _NAMESPACE.RES_MSG.TYPE_MISMATCH + `(${err.sqlMessage})`
+              );
               break;
 
             default:
@@ -117,6 +120,10 @@ const sql = {
       }
       if (!data.account_uuid && !data.email) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid && data.email) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.UUID_OR_EMAIL);
         return false;
       }
       let sql = `
@@ -286,7 +293,37 @@ const sql = {
   },
   hangers: {
     select(argObj, res) {
-      //
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!data.account_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          SLOT_NUM,
+          WEAPON_UUID_MAIN,
+          WEAPON_UUID_SUB,
+          PARTS_UUID_HEAD,
+          PARTS_UUID_BODY,
+          PARTS_UUID_ARM,
+          PARTS_UUID_LEG,
+          PARTS_UUID_BOOSTER,
+          PARTS_UUID_CORE
+        FROM
+          HANGERS
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          ${
+            data.slot_num !== undefined ? "AND SLOT_NUM = " + data.slot_num : ""
+          }
+      `;
+      query(res, sql);
     },
     insertRow(argObj, res) {
       let data = null;
@@ -385,12 +422,132 @@ const sql = {
             '${data.gubun}',
             '${data.enhancement ? data.enhancement : 0}',
             '${
-              data.cur_durability && data.cur_durability > 0
+              data.cur_durability && data.cur_durability !== undefined
                 ? data.cur_durability
                 : data.max_durability
             }',
             '${data.max_durability}'
           )
+      `;
+      query(res, sql);
+    },
+    select(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!data.account_uuid && !data.parts_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          PARTS_UUID,
+          ACCOUNT_UUID,
+          NAME,
+          GUBUN,
+          ENHANCEMENT,
+          CUR_DURABILITY,
+          MAX_DURABILITY,
+          IS_CUSTOMIZED,
+          CUSTOM_COLOR_1,
+          CUSTOM_COLOR_2,
+          CUSTOM_COLOR_3,
+          SLOT_USING_THIS
+        FROM
+          PARTS
+        WHERE 1=1
+          ${
+            data.parts_uuid !== undefined
+              ? "AND PARTS_UUID = " + data.parts_uuid
+              : ""
+          }
+          ${
+            data.account_uuid !== undefined
+              ? "AND ACCOUNT_UUID = " + data.account_uuid
+              : ""
+          }
+          ${
+            data.account_uuid !== undefined &&
+            data.slot_using_this !== undefined
+              ? "AND SLOT_USING_THIS = " + data.slot_using_this
+              : ""
+          }
+      `;
+      query(res, sql);
+    },
+    update(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!(data.account_uuid && data.slot_using_this) && !data.parts_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          PARTS
+        SET
+          _UPDATED_AT = CURRENT_TIMESTAMP()
+          ${data.name !== undefined ? ", NAME = " + data.name : ""}
+          ${data.gubun !== undefined ? ", GUBUN = " + data.gubun : ""}
+          ${
+            data.enhancement !== undefined
+              ? ", ENHANCEMENT = " + data.enhancement
+              : ""
+          }
+          ${
+            data.cur_durability !== undefined
+              ? ", CUR_DURABILITY = " + data.cur_durability
+              : ""
+          }
+          ${
+            data.max_durability !== undefined
+              ? ", MAX_DURABILITY = " + data.max_durability
+              : ""
+          }
+          ${
+            data.is_customized !== undefined
+              ? ", IS_CUSTOMIZED = " + data.is_customized
+              : ""
+          }
+          ${
+            data.custom_color_1 !== undefined
+              ? ", CUSTOM_COLOR_1 = " + data.custom_color_1
+              : ""
+          }
+          ${
+            data.custom_color_2 !== undefined
+              ? ", CUSTOM_COLOR_2 = " + data.custom_color_2
+              : ""
+          }
+          ${
+            data.custom_color_3 !== undefined
+              ? ", CUSTOM_COLOR_3 = " + data.custom_color_3
+              : ""
+          }
+        WHERE 1=1
+          ${
+            data.account_uuid !== undefined &&
+            data.slot_using_this !== undefined
+              ? "AND ACCOUNT_UUID = " +
+                data.account_uuid +
+                ", AND SLOT_USING_THIS = " +
+                data.slot_using_this
+              : ""
+          }
+          ${
+            data.parts_uuid !== undefined
+              ? "AND PARTS_UUID = " + data.parts_uuid
+              : ""
+          }
       `;
       query(res, sql);
     },

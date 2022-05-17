@@ -18,6 +18,7 @@ const _NAMESPACE = {
     DUPLICATED_PK: "고유키 중복",
     NO_SUCH_PATH: "요청 경로 잘못됨",
     SYNTAX_ERROR: "구문 오류",
+    UUID_OR_EMAIL: "UUID와 EMAIL을 동시에 인자로 사용할 수 없음",
   },
   ERR: "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n",
 };
