@@ -176,6 +176,7 @@ app.post("/set-parts", (req, res) => db.sql.parts.update(req.body, res));
  *        | account_uuid      | string      | 계정UUID      |양자택일(slot_using_this 필수)
  *        | slot_using_this   | integer     | 해당부품을 사용하고 있는 슬롯
  *        | gubun             | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어 | 선택적
+ *        | slot_change_to    | integer     | 바꿀 슬롯번호 |선택적
  *        | name              | string      | 이름          |선택적
  *        | enhancement       | integer     | 강화단계      |선택적
  *        | cur_durability    | integer     | 현재내구도    |선택적
@@ -184,7 +185,6 @@ app.post("/set-parts", (req, res) => db.sql.parts.update(req.body, res));
  *        | custom_color_1    | string      | 커스텀색상1   |선택적
  *        | custom_color_2    | string      | 커스텀색상2   |선택적
  *        | custom_color_3    | string      | 커스텀색상3   |선택적
- *        | slot_change_to    | integer     | 바꿀 슬롯번호 |선택적
  *        |
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |

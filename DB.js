@@ -54,7 +54,7 @@ const query = function (res, sql) {
         if (res) {
           new Response(
             res,
-            result.affectedRows > 0
+            result.affectedRows !== undefined
               ? { affectedRows: result.affectedRows }
               : result
           ).OK();
