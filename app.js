@@ -27,8 +27,8 @@ app.post("/get-account", (req, res) =>
 );
 /* path:	http://3.35.210.188:52530/get-account
  *          |name           |type    |desc        |
- * input:   | account_uuid  | string  | 계정UUID  | 이중택일
- *          | email         | string  | 이메일    | 이중택일
+ * input:   | account_uuid  | string  | 계정UUID  | 양자택일
+ *          | email         | string  | 이메일    | 양자택일
  *          |
  * output:  | account_uuid  | string  | 계정UUID
  *          | email         | string  | 이메일
@@ -63,7 +63,7 @@ app.post("/del-account", (req, res) =>
  */
 
 app.post("/set-team", (req, res) => db.sql.accounts.team.update(req.body, res));
-/* path: http://localhost:52530/set-team
+/* path: http://3.35.210.188:52530/set-team
  *        |name           |type     |desc
  * input: | account_uuid  | string  | 계정UUID
  *        | team          | string  | 소속
@@ -74,8 +74,61 @@ app.post("/set-team", (req, res) => db.sql.accounts.team.update(req.body, res));
  * desc:  | 넘겨받은 UUID로 찾은 계정의 소속과 아이콘을 넘겨받은 값으로 수정함.
  */
 
+app.post("/add-slot", (req, res) => db.sql.hangers.insertRow(req.body, res));
+/* path:  http://3.35.210.188:52530/add-slot
+ *        |name               |type         |desc
+ * input: | account_uuid      | string      | 계정UUID
+ *        |
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 행거에 슬롯을 1칸 추가함.
+ *
+ */
+
+app.post("/change-equipment", (req, res) =>
+  db.sql.hangers.update(req.body, res)
+);
+/* path:  http://3.35.210.188:52530/change-equipment
+ *        |name               |type         |desc
+ * input: | account_uuid      | string      | 계정UUID
+ *        | slot_num          | integer     | 슬롯번호
+ *        | weapon_uuid_main  | string      | 메인무기UUID  |선택적
+ *        | weapon_uuid_sub   | string      | 서브무기UUID  |선택적
+ *        | parts_uuid_head   | string      | 머리UUID      |선택적
+ *        | parts_uuid_body   | string      | 바디UUID      |선택적
+ *        | parts_uuid_arm    | string      | 팔UUID        |선택적
+ *        | parts_uuid_leg    | string      | 다리UUID      |선택적
+ *        | parts_uuid_booster| string      | 부스터UUID    |선택적
+ *        | parts_uuid_core   | string      | 코어UUID      |선택적
+ *        |
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 특정 슬롯의 정보를 바꿈.
+ *
+ */
+
+app.post("/add-parts", (req, res) => db.sql.parts.insertRow(req.body, res));
+/* path:  http://3.35.210.188:52530/add-parts"
+ *        |name                |type         |desc
+ * input: | 
+ *        |
+ * output:|
+ *        |
+ * desc:  |
+ *
+ */
 db.sql.test();
 
 app.all("*", (req, res) => {
   new Response(res).notFound(_NAMESPACE.RES_MSG.NO_SUCH_PATH);
 });
+
+/* path:  http://3.35.210.188:52530
+ *        |name                |type         |desc
+ * input: |
+ *        |
+ * output:|
+ *        |
+ * desc:  |
+ *
+ */
