@@ -76,8 +76,8 @@ app.post("/set-team", (req, res) => db.sql.accounts.team.update(req.body, res));
  * desc:  | 넘겨받은 UUID로 찾은 계정의 소속과 아이콘을 넘겨받은 값으로 수정함.
  */
 
-app.post("/get-hanger", (req, res) => db.sql.hangers.select(req.body, res));
-/* path:  http://3.35.210.188:52530/get-hanger
+app.post("/get-hangar", (req, res) => db.sql.hangars.select(req.body, res));
+/* path:  http://3.35.210.188:52530/get-hangar
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호    |선택적
@@ -96,8 +96,8 @@ app.post("/get-hanger", (req, res) => db.sql.hangers.select(req.body, res));
  *
  */
 
-app.post("/add-slot", (req, res) => db.sql.hangers.insertRow(req.body, res));
-/* path:  http://3.35.210.188:52530/add-slot
+app.post("/add-hangar", (req, res) => db.sql.hangars.insertRow(req.body, res));
+/* path:  http://3.35.210.188:52530/add-hangar
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        |
@@ -107,8 +107,8 @@ app.post("/add-slot", (req, res) => db.sql.hangers.insertRow(req.body, res));
  *
  */
 
-app.post("/set-slot", (req, res) => db.sql.hangers.update(req.body, res));
-/* path:  http://3.35.210.188:52530/set-equipment
+app.post("/set-hangar", (req, res) => db.sql.hangars.update(req.body, res));
+/* path:  http://3.35.210.188:52530/set-hangar
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호
@@ -166,30 +166,33 @@ app.post("/get-parts", (req, res) => db.sql.parts.select(req.body, res));
  *        | custom_color_3    | string      | 커스텀색상3
  *        | slot_using_this   | integer     | 해당부품을 사용하고 있는 슬롯
  *        |
- * desc:  | (부품UUID) 또는 (계정UUID+슬롯번호) 로 찾은 부품의 정보를 제공함.
+ * desc:  | (부품UUID) 또는 (계정UUID+슬롯번호(+구분번호)) 로 찾은 부품의 정보를 제공함.
  */
 
 app.post("/set-parts", (req, res) => db.sql.parts.update(req.body, res));
-/* path:  http://3.35.210.188:52530
+/* path:  http://3.35.210.188:52530/set-parts
  *        |name               |type         |desc
  * input: | parts_uuid        | string      | 부품UUID      |양자택일
  *        | account_uuid      | string      | 계정UUID      |양자택일(slot_using_this 필수)
  *        | slot_using_this   | integer     | 해당부품을 사용하고 있는 슬롯
- *        | name              | string      | 이름
- *        | gubun             | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어
- *        | enhancement       | integer     | 강화단계
- *        | cur_durability    | integer     | 현재내구도
- *        | max_durability    | integer     | 최대내구도
- *        | is_customized     | integer     | 커스텀여부  |0:false,1:true
- *        | custom_color_1    | string      | 커스텀색상1
- *        | custom_color_2    | string      | 커스텀색상2
- *        | custom_color_3    | string      | 커스텀색상3
+ *        | gubun             | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어 | 선택적
+ *        | name              | string      | 이름          |선택적
+ *        | enhancement       | integer     | 강화단계      |선택적
+ *        | cur_durability    | integer     | 현재내구도    |선택적
+ *        | max_durability    | integer     | 최대내구도    |선택적
+ *        | is_customized     | integer     | 커스텀여부    |0:false,1:true, 선택적
+ *        | custom_color_1    | string      | 커스텀색상1   |선택적
+ *        | custom_color_2    | string      | 커스텀색상2   |선택적
+ *        | custom_color_3    | string      | 커스텀색상3   |선택적
+ *        | slot_change_to    | integer     | 바꿀 슬롯번호 |선택적
  *        |
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
- * desc:  | (부품UUID) 또는 (계정UUID+슬롯번호) 로 찾은 부품의 정보를 수정함.
+ * desc:  | (부품UUID) 또는 (계정UUID+슬롯번호(+구분번호)) 로 찾은 부품의 정보를 수정함.
  *
  */
+
+app.post("/parts-set-slot", (req, res) => db.sql.parts.setSlot(req.body, res));
 
 db.sql.test();
 

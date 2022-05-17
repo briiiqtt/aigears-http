@@ -291,7 +291,7 @@ const sql = {
       },
     },
   },
-  hangers: {
+  hangars: {
     select(argObj, res) {
       let data = null;
       try {
@@ -476,6 +476,7 @@ const sql = {
               ? "AND SLOT_USING_THIS = " + data.slot_using_this
               : ""
           }
+          ${data.gubun !== undefined ? "AND GUBUN = " + data.gubun : ""}
       `;
       query(res, sql);
     },
@@ -533,13 +534,18 @@ const sql = {
               ? ", CUSTOM_COLOR_3 = " + data.custom_color_3
               : ""
           }
+          ${
+            data.slot_change_to !== undefined
+              ? ", SLOT_USING_THIS = " + data.slot_change_to
+              : ""
+          }
         WHERE 1=1
           ${
             data.account_uuid !== undefined &&
             data.slot_using_this !== undefined
               ? "AND ACCOUNT_UUID = " +
                 data.account_uuid +
-                ", AND SLOT_USING_THIS = " +
+                " AND SLOT_USING_THIS = " +
                 data.slot_using_this
               : ""
           }
@@ -548,8 +554,22 @@ const sql = {
               ? "AND PARTS_UUID = " + data.parts_uuid
               : ""
           }
+          ${data.gubun !== undefined ? "AND GUBUN = " + data.gubun : ""}
       `;
       query(res, sql);
+    },
+    setSlot(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!data.slot_using_this && !data.parts_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
     },
   },
 };
