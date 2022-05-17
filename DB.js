@@ -316,7 +316,7 @@ const sql = {
           PARTS_UUID_BOOSTER,
           PARTS_UUID_CORE
         FROM
-          HANGERS
+          HANGARS
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
           ${
@@ -339,10 +339,10 @@ const sql = {
       }
       let sql = `
         INSERT INTO
-          HANGERS (ACCOUNT_UUID, SLOT_NUM)
+          HANGARS (ACCOUNT_UUID, SLOT_NUM)
           VALUES (
             '${data.account_uuid}',
-            IFNULL((SELECT A FROM (SELECT MAX(SLOT_NUM)+1 "A" FROM HANGERS WHERE ACCOUNT_UUID = '${data.account_uuid}') A),0 ))
+            IFNULL((SELECT A FROM (SELECT MAX(SLOT_NUM)+1 "A" FROM HANGARS WHERE ACCOUNT_UUID = '${data.account_uuid}') A),0 ))
         `;
       query(res, sql);
     },
@@ -358,7 +358,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let sql = `UPDATE HANGERS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
+      let sql = `UPDATE HANGARS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
       if (data.weapon_uuid_main)
         sql += `, WEAPON_UUID_MAIN = '${data.weapon_uuid_main}'`;
       if (data.weapon_uuid_sub)
