@@ -155,7 +155,7 @@
  *
  */
 
-/* path:  http://3.35.210.188:52530/get-commodoties
+/* path:  http://3.35.210.188:52530/get-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        |
@@ -171,7 +171,7 @@
  *
  */
 
-/* path:  http://3.35.210.188:52530/init-commodoties
+/* path:  http://3.35.210.188:52530/init-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        |
@@ -182,7 +182,7 @@
  *
  */
 
-/* path:  http://3.35.210.188:52530/set-commodoties
+/* path:  http://3.35.210.188:52530/set-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | gold              | integer     | 골드      |선택적
@@ -195,12 +195,52 @@
  *        |
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
+ * desc:  | 전달받은 계정UUID로 찾은 계정의 재화상태를 변경함
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/get-weapon
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | weapon_uuid         | string      | 무기UUID
+ *        |
+ * output:| account_uuid        | string      | 계정UUID
+ *        | weapon_uuid         | string      | 무기UUID
+ *        | enhancement         | integer     | 강화단계
+ *        | slot_using_this     | integer     | 이걸 사용중인 슬롯
+ *        | gubun               | integer     | 0:메인무기, 1:서브무기
+ *        |
+ * desc:  | 계정UUID와 무기UUID로 찾은 무기의 정보를 제공함.
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/add-weapon
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | weapon_uuid         | string      | 무기UUID
+ *        | enhancement         | integer     | 강화단계    |선택적
+ *        | gubun               | integer     | 0:메인무기, 1:서브무기
+ *        |
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
  * desc:  |
  *
  */
 
-/* path:  http://3.35.210.188:52530
- *        |name               |type         |desc
+/* path:  http://3.35.210.188:52530/set-weapon
+ *        |name                 |type         |desc
+ * input: | weapon_uuid         | string      | 무기UUID
+ *        | enhancement         | integer     | 강화단계         |선택적
+ *        | slot_using_this     | integer     | 이걸 사용할 슬롯 |선택적
+ *        |
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
+ * desc:  |
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/
+ *        |name                 |type         |desc
  * input: |
  *        |
  * output:|

@@ -462,12 +462,12 @@ const sql = {
         WHERE 1=1
           ${
             data.parts_uuid !== undefined
-              ? "AND PARTS_UUID = " + data.parts_uuid
+              ? "AND PARTS_UUID = '" + data.parts_uuid + "'"
               : ""
           }
           ${
             data.account_uuid !== undefined
-              ? "AND ACCOUNT_UUID = " + data.account_uuid
+              ? "AND ACCOUNT_UUID = '" + data.account_uuid + "'"
               : ""
           }
           ${
@@ -521,17 +521,17 @@ const sql = {
           }
           ${
             data.custom_color_1 !== undefined
-              ? ", CUSTOM_COLOR_1 = " + data.custom_color_1
+              ? ", CUSTOM_COLOR_1 = '" + data.custom_color_1 + "'"
               : ""
           }
           ${
             data.custom_color_2 !== undefined
-              ? ", CUSTOM_COLOR_2 = " + data.custom_color_2
+              ? ", CUSTOM_COLOR_2 = '" + data.custom_color_2 + "'"
               : ""
           }
           ${
             data.custom_color_3 !== undefined
-              ? ", CUSTOM_COLOR_3 = " + data.custom_color_3
+              ? ", CUSTOM_COLOR_3 = '" + data.custom_color_3 + "'"
               : ""
           }
           ${
@@ -543,15 +543,16 @@ const sql = {
           ${
             data.account_uuid !== undefined &&
             data.slot_using_this !== undefined
-              ? "AND ACCOUNT_UUID = " +
+              ? "AND ACCOUNT_UUID = '" +
                 data.account_uuid +
-                " AND SLOT_USING_THIS = " +
-                data.slot_using_this
+                "' AND SLOT_USING_THIS = '" +
+                data.slot_using_this +
+                "'"
               : ""
           }
           ${
             data.parts_uuid !== undefined
-              ? "AND PARTS_UUID = " + data.parts_uuid
+              ? "AND PARTS_UUID = '" + data.parts_uuid + "'"
               : ""
           }
           ${data.gubun !== undefined ? "AND GUBUN = " + data.gubun : ""}
@@ -650,6 +651,104 @@ const sql = {
           ${data.qrd !== undefined ? ", QRD = " + data.qrd : ""}
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
+      `;
+      query(res, sql);
+    },
+  },
+  weapons: {
+    select(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!data.account_uuid && !data.weapon_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          WEAPON_UUID,
+          ACCOUNT_UUID,
+          ENHANCEMENT,
+          SLOT_USING_THIS,
+          GUBUN
+        FROM
+          WEAPONS
+        WHERE 1=1
+          ${
+            data.account_uuid !== undefined
+              ? "AND ACCOUNT_UUID = '" + data.account_uuid + "'"
+              : ""
+          }
+          ${
+            data.weapon_uuid !== undefined
+              ? "AND WEAPON_UUID = '" + data.weapon_uuid + "'"
+              : ""
+          }
+      `;
+      query(res, sql);
+    },
+    insert(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!(data.account_uuid && data.weapon_uuid && data.gubun)) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        INSERT INTO
+          WEAPONS(
+            WEAPON_UUID,
+            ACCOUNT_UUID,
+            ENHANCEMENT,
+            GUBUN
+          )
+          VALUES(
+            '${data.weapon_uuid}',
+            '${data.account_uuid}',
+            '${data.enhancement ? data.enhancement : 0}',
+            '${data.gubun}'
+          )
+      `;
+      query(res, sql);
+    },
+    update(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!data.weapon_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          WEAPONS
+        SET
+          _UPDATED_AT = CURRENT_TIMESTAMP()
+          ${
+            data.enhancement !== undefined
+              ? ", ENHANCEMENT = " + data.enhancement
+              : ""
+          }
+          ${
+            data.slot_using_this !== undefined
+              ? ", SLOT_USING_THIS = " + data.slot_using_this
+              : ""
+          }
+        WHERE
+          WEAPON_UUID = ${data.weapon_uuid}
       `;
       query(res, sql);
     },
