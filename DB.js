@@ -559,6 +559,101 @@ const sql = {
       query(res, sql);
     },
   },
+  commodities: {
+    select(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!data.account_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          GOLD,
+          CHIP,
+          BOLT,
+          IRONPLATE,
+          HITORIUM,
+          ELECTRIC_WIRE,
+          QRD
+        FROM
+          COMMODITIES
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+      `;
+      query(res, sql);
+    },
+    insert(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!data.account_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        INSERT INTO
+          COMMODITIES(
+            ACCOUNT_UUID,
+            GOLD,
+            CHIP,
+            BOLT,
+            IRONPLATE,
+            HITORIUM,
+            ELECTRIC_WIRE,
+            QRD
+          )
+          VALUES('${data.account_uuid}', 0, 0, 0, 0, 0, 0, 0)
+      `;
+      query(res, sql);
+    },
+    update(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (!data.account_uuid) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          COMMODITIES
+        SET
+          _UPDATED_AT = CURRENT_TIMESTAMP()
+          ${data.gold !== undefined ? ", GOLD = " + data.gold : ""}
+          ${data.chip !== undefined ? ", CHIP = " + data.chip : ""}
+          ${data.bolt !== undefined ? ", BOLT = " + data.bolt : ""}
+          ${
+            data.ironplate !== undefined
+              ? ", IRONPLATE = " + data.ironplate
+              : ""
+          }
+          ${data.hitorium !== undefined ? ", HITORIUM = " + data.hitorium : ""}
+          ${
+            data.electric_wire !== undefined
+              ? ", ELECTRIC_WIRE = " + data.electric_wire
+              : ""
+          }
+          ${data.qrd !== undefined ? ", QRD = " + data.qrd : ""}
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+      `;
+      query(res, sql);
+    },
+  },
 };
 
 module.exports = { sql };
