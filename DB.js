@@ -290,8 +290,8 @@ const sql = {
       },
     },
   },
-  hangars: {
-    getHangar(argObj, res) {
+  robots: {
+    getRobot(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -315,7 +315,7 @@ const sql = {
           PARTS_UUID_WEAPON_M
           PARTS_UUID_WEAPON_S
         FROM
-          HANGARS
+          ROBOTS
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
           ${
@@ -324,7 +324,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    addHangar(argObj, res) {
+    addRobot(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -338,14 +338,14 @@ const sql = {
       }
       let sql = `
         INSERT INTO
-          HANGARS (ACCOUNT_UUID, SLOT_NUM)
+          ROBOTS (ACCOUNT_UUID, SLOT_NUM)
           VALUES (
             '${data.account_uuid}',
-            IFNULL((SELECT A FROM (SELECT MAX(SLOT_NUM)+1 "A" FROM HANGARS WHERE ACCOUNT_UUID = '${data.account_uuid}') A),0 ))
+            IFNULL((SELECT A FROM (SELECT MAX(SLOT_NUM)+1 "A" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}') A),0 ))
         `;
       query(res, sql);
     },
-    setHangar(argObj, res) {
+    setRobot(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -357,21 +357,21 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let sql = `UPDATE HANGARS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
+      let sql = `UPDATE ROBOTS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
+      if (data.parts_uuid_arm)
+        sql += `, PARTS_UUID_ARM = '${data.parts_uuid_arm}'`;
+      if (data.parts_uuid_head)
+        sql += `, PARTS_UUID_HEAD = '${data.parts_uuid_head}'`;
+      if (data.parts_uuid_leg)
+        sql += `, PARTS_UUID_LEG = '${data.parts_uuid_leg}'`;
+      if (data.parts_uuid_body)
+        sql += `, PARTS_UUID_BODY = '${data.parts_uuid_body}'`;
+      if (data.parts_uuid_booster)
+        sql += `, PARTS_UUID_BOOSTER = '${data.parts_uuid_booster}'`;
       if (data.parts_uuid_weapon_m)
         sql += `, PARTS_UUID_WEAPON_M = '${data.parts_uuid_weapon_m}'`;
       if (data.parts_uuid_weapon_s)
         sql += `, PARTS_UUID_WEAPON_S = '${data.parts_uuid_weapon_s}'`;
-      if (data.parts_uuid_head)
-        sql += `, PARTS_UUID_HEAD = '${data.parts_uuid_head}'`;
-      if (data.parts_uuid_body)
-        sql += `, PARTS_UUID_BODY = '${data.parts_uuid_body}'`;
-      if (data.parts_uuid_arm)
-        sql += `, PARTS_UUID_ARM = '${data.parts_uuid_arm}'`;
-      if (data.parts_uuid_leg)
-        sql += `, PARTS_UUID_LEG = '${data.parts_uuid_leg}'`;
-      if (data.parts_uuid_booster)
-        sql += `, PARTS_UUID_BOOSTER = '${data.parts_uuid_booster}'`;
       if (data.parts_uuid_core)
         sql += `, PARTS_UUID_CORE = '${data.parts_uuid_core}'`;
       sql += `

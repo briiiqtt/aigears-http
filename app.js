@@ -42,19 +42,19 @@ app.post("/set-team", (req, res) => {
   db.sql.accounts.team.setTeam(req.body, res);
 });
 
-app.post("/get-hangar", (req, res) => {
-  console.log("getHanger()");
-  db.sql.hangars.getHangar(req.body, res);
+app.post("/get-robot", (req, res) => {
+  console.log("getRobot()");
+  db.sql.robots.getRobot(req.body, res);
 });
 
-app.post("/add-hangar", (req, res) => {
-  console.log("addHangar()");
-  db.sql.hangars.addHangar(req.body, res);
+app.post("/add-robot", (req, res) => {
+  console.log("addRobot()");
+  db.sql.robots.addRobot(req.body, res);
 });
 
-app.post("/set-hangar", (req, res) => {
-  console.log("setHangar()");
-  db.sql.hangars.setHangar(req.body, res);
+app.post("/set-robot", (req, res) => {
+  console.log("setRobot()");
+  db.sql.robots.setRobot(req.body, res);
 });
 
 app.post("/add-parts", (req, res) => {
