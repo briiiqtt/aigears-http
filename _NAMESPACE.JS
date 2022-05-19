@@ -1,11 +1,4 @@
 const _NAMESPACE = {
-  CONN: {
-    host: "127.0.0.1",
-    user: "root",
-    password: "0000",
-    database: "aigears",
-    port: "53306",
-  },
   RES_MSG: {
     OK: "요청 성공적",
     BAD_REQUEST: "유효하지 않은 요청",
