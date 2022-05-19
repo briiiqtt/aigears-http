@@ -117,7 +117,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (data.account_uuid === undefined || data.email === undefined) {
+      if (data.account_uuid === undefined && data.email === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -239,18 +239,18 @@ const sql = {
         `;
       query(null, sql).then((r) => {
         let pw = null;
-        let accountUUID = null;
+        let account_uuid = null;
         try {
           pw = r[0].PASSWORD;
-          accountUUID = r[0].ACCOUNT_UUID;
+          account_uuid = r[0].ACCOUNT_UUID;
         } catch (e) {
-          new Response(res, { isPWCorrect: 2, accountUUID }).OK();
+          new Response(res, { is_pw_correct: 2, account_uuid: null }).OK();
           return false;
         }
         if (pw == data.password) {
-          new Response(res, { isPWCorrect: 1, accountUUID }).OK();
+          new Response(res, { is_pw_correct: 1, account_uuid }).OK();
         } else {
-          new Response(res, { isPWCorrect: 0, accountUUID: null }).OK();
+          new Response(res, { is_pw_correct: 0, account_uuid: null }).OK();
         }
       });
     },
