@@ -239,18 +239,18 @@ const sql = {
         `;
       query(null, sql).then((r) => {
         let pw = null;
-        let account_uuid = null;
+        let ACCOUNT_UUID = null;
         try {
           pw = r[0].PASSWORD;
-          account_uuid = r[0].ACCOUNT_UUID;
+          ACCOUNT_UUID = r[0].ACCOUNT_UUID;
         } catch (e) {
-          new Response(res, { is_pw_correct: 2, account_uuid: null }).OK();
+          new Response(res, { IS_PW_CORRECT: 2, ACCOUNT_UUID: null }).OK();
           return false;
         }
         if (pw == data.password) {
-          new Response(res, { is_pw_correct: 1, account_uuid }).OK();
+          new Response(res, { IS_PW_CORRECT: 1, ACCOUNT_UUID }).OK();
         } else {
-          new Response(res, { is_pw_correct: 0, account_uuid: null }).OK();
+          new Response(res, { IS_PW_CORRECT: 0, ACCOUNT_UUID: null }).OK();
         }
       });
     },

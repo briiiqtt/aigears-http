@@ -28,6 +28,7 @@
  *          |name           |type     |desc
  * input:   | email         | string  | 이메일
  *          | password      | string  | 비밀번호
+ *          | accout      | string  | 비밀번호
  *          |
  * output:  | isPWCorrect   | integer | 0:비밀번호틀림
  *          |                         | 1:비밀번호일치
