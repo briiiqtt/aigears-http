@@ -24,6 +24,18 @@
  * desc:  	|넘겨받은 입력대로 새로운 계정정보를 만들어 저장함.
  */
 
+/* path:	http://3.35.210.188:52530/is-pw-correct
+ *          |name           |type     |desc
+ * input:   | email         | string  | 이메일
+ *          | password      | string  | 비밀번호
+ *          |
+ * output:  | isPWCorrect   | integer | 0:비밀번호틀림
+ *          |                         | 1:비밀번호일치
+ *          |                         | 2:계정없음
+ *          |
+ * desc:  	|
+ */
+
 /* path:	http://3.35.210.188:52530/del-account
  *          |name           |type    |desc
  * input:   | account_uuid  | string | 계정UUID

@@ -229,6 +229,7 @@ const sql = {
       }
       let sql = `
           SELECT
+            ACCOUNT_UUID,
             PASSWORD
           FROM
             ACCOUNTS
@@ -237,14 +238,19 @@ const sql = {
             AND EMAIL = '${data.email}'
         `;
       query(null, sql).then((r) => {
+        let pw = null;
+        let accountUUID = null;
         try {
-          if (r[0].PASSWORD == data.password) {
-            new Response(res, { isPWCorrect: 1 }).OK();
-          } else {
-            new Response(res, { isPWCorrect: 0 }).OK();
-          }
+          pw = r[0].PASSWORD;
+          accountUUID = r[0].ACCOUNT_UUID;
         } catch (e) {
-          new Response(res, { isPWCorrect: 2 }).OK();
+          new Response(res, { isPWCorrect: 2, accountUUID }).OK();
+          return false;
+        }
+        if (pw == data.password) {
+          new Response(res, { isPWCorrect: 1, accountUUID }).OK();
+        } else {
+          new Response(res, { isPWCorrect: 0, accountUUID: null }).OK();
         }
       });
     },
@@ -501,7 +507,11 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!(data.account_uuid && data.slot_using_this) && !data.parts_uuid) {
+      if (
+        (data.account_uuid === undefined ||
+          data.slot_using_this === undefined) &&
+        data.parts_uuid === undefined
+      ) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -598,7 +608,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!data.account_uuid) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -626,7 +636,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!data.account_uuid) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -654,7 +664,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!data.account_uuid) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -692,7 +702,7 @@ const sql = {
         return false;
       }
       if (
-        !data.account_uuid ||
+        data.account_uuid === undefined ||
         !(
           data.gold ||
           data.chip ||
