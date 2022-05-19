@@ -492,13 +492,12 @@ const sql = {
         return false;
       }
       if (data.slot_change_to && data.parts_uuid) {
-        console.log("00000");
         let flag = true;
         await query(
           null,
           `SELECT ACCOUNT_UUID FROM PARTS WHERE PARTS_UUID = '${data.parts_uuid}'`
         ).then((r) => {
-          console.log("111111", r[0].ACCOUNT_UUID !== data.account_uuid);
+          console.log(r);
           if (r[0].ACCOUNT_UUID !== data.account_uuid) {
             new Response(res).badRequest(
               _NAMESPACE.RES_MSG.IT_IS_NOT_YOUR_PARTS
@@ -506,7 +505,6 @@ const sql = {
             flag = false;
           }
         });
-        console.log("22222222");
         if (!flag) return false;
       }
       let sql = `
