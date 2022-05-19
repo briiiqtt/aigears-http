@@ -703,15 +703,13 @@ const sql = {
       }
       if (
         data.account_uuid === undefined ||
-        !(
-          data.gold ||
-          data.chip ||
-          data.bolt ||
-          data.ironplate ||
-          data.hitorium ||
-          data.electric_wire ||
-          data.qrd
-        )
+        (data.gold === undefined &&
+          data.chip === undefined &&
+          data.bolt === undefined &&
+          data.ironplate === undefined &&
+          data.hitorium === undefined &&
+          data.electric_wire === undefined &&
+          data.qrd === undefined)
       ) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
