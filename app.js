@@ -23,88 +23,73 @@ app.route("/test").get((req, res) => {
 });
 
 app.post("/get-account", (req, res) => {
-  console.log("getAccount()");
+  console.log("getAccount()",req.body);
   db.sql.accounts.getAccount(req.body, res);
 });
 
 app.post("/add-account", (req, res) => {
-  console.log("addAccount()");
+  console.log("addAccount()",req.body);
   db.sql.accounts.addAccount(req.body, res);
 });
 
 app.post("/del-account", (req, res) => {
-  console.log("delAccount()");
+  console.log("delAccount()",req.body);
   db.sql.accounts.delAccount(req.body, res);
 });
 
 app.post("/set-team", (req, res) => {
-  console.log("setTeam()");
+  console.log("setTeam()",req.body);
   db.sql.accounts.team.setTeam(req.body, res);
 });
 
 app.post("/get-robot", (req, res) => {
-  console.log("getRobot()");
+  console.log("getRobot()",req.body);
   db.sql.robots.getRobot(req.body, res);
 });
 
 app.post("/add-robot", (req, res) => {
-  console.log("addRobot()");
+  console.log("addRobot()",req.body);
   db.sql.robots.addRobot(req.body, res);
 });
 
 app.post("/set-robot", (req, res) => {
-  console.log("setRobot()");
+  console.log("setRobot()",req.body);
   db.sql.robots.setRobot(req.body, res);
 });
 
 app.post("/add-parts", (req, res) => {
-  console.log("addParts()");
+  console.log("addParts()",req.body);
   db.sql.parts.addParts(req.body, res);
 });
 
 app.post("/get-parts", (req, res) => {
-  console.log("getParts()");
+  console.log("getParts()",req.body);
   db.sql.parts.getParts(req.body, res);
 });
 
 app.post("/set-parts", (req, res) => {
-  console.log("setParts()");
+  console.log("setParts()",req.body);
   db.sql.parts.setParts(req.body, res);
 });
 
 app.post("/get-commodities", (req, res) => {
-  console.log("getCommodities()");
+  console.log("getCommodities()",req.body);
   db.sql.commodities.getCommodities(req.body, res);
 });
 
 app.post("/init-commodities", (req, res) => {
-  console.log("initCommodities()");
+  console.log("initCommodities()",req.body);
   db.sql.commodities.initCommodities(req.body, res);
 });
 
 app.post("/set-commodities", (req, res) => {
-  console.log("setCommodities()");
+  console.log("setCommodities()",req.body);
   db.sql.commodities.setCommodities(req.body, res);
 });
 
 app.post("/add-commodities", (req, res) => {
-  console.log("addCommodities()");
+  console.log("addCommodities()",req.body);
   db.sql.commodities.addCommodities(req.body, res);
-});
-
-app.post("/get-weapon", (req, res) => {
-  console.log("getWeapon()");
-  db.sql.weapons.getWeapon(req.body, res);
-});
-
-app.post("/add-weapon", (req, res) => {
-  console.log("addWeapon()");
-  db.sql.weapons.addWeapon(req.body, res);
-});
-
-app.post("/set-weapon", (req, res) => {
-  console.log("setWeapon()");
-  db.sql.weapons.setWeapon(req.body, res);
 });
 
 //

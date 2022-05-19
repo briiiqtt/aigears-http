@@ -44,7 +44,7 @@
  * desc:  | 넘겨받은 UUID로 찾은 계정의 소속과 아이콘을 넘겨받은 값으로 수정함.
  */
 
-/* path:  http://3.35.210.188:52530/get-hangar
+/* path:  http://3.35.210.188:52530/get-robot
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호    |선택적
@@ -63,7 +63,7 @@
  *
  */
 
-/* path:  http://3.35.210.188:52530/add-hangar
+/* path:  http://3.35.210.188:52530/add-robot
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        |
@@ -73,7 +73,7 @@
  *
  */
 
-/* path:  http://3.35.210.188:52530/set-hangar
+/* path:  http://3.35.210.188:52530/set-robot
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호
@@ -213,46 +213,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화에 입력값을 누적함
- *
- */
-
-/* path:  http://3.35.210.188:52530/get-weapon
- *        |name                 |type         |desc
- * input: | account_uuid        | string      | 계정UUID
- *        | weapon_uuid         | string      | 무기UUID
- *        |
- * output:| account_uuid        | string      | 계정UUID
- *        | weapon_uuid         | string      | 무기UUID
- *        | enhancement         | integer     | 강화단계
- *        | slot_using_this     | integer     | 이걸 사용중인 슬롯
- *        | gubun               | integer     | 0:메인무기, 1:서브무기
- *        |
- * desc:  | 계정UUID와 무기UUID로 찾은 무기의 정보를 제공함.
- *
- */
-
-/* path:  http://3.35.210.188:52530/add-weapon
- *        |name                 |type         |desc
- * input: | account_uuid        | string      | 계정UUID
- *        | weapon_uuid         | string      | 무기UUID
- *        | enhancement         | integer     | 강화단계    |선택적
- *        | gubun               | integer     | 0:메인무기, 1:서브무기
- *        |
- * output:| affectedRows      | integer     | 영향받은 건수
- *        |
- * desc:  |
- *
- */
-
-/* path:  http://3.35.210.188:52530/set-weapon
- *        |name                 |type         |desc
- * input: | weapon_uuid         | string      | 무기UUID
- *        | enhancement         | integer     | 강화단계         |선택적
- *        | slot_using_this     | integer     | 이걸 사용할 슬롯 |선택적
- *        |
- * output:| affectedRows      | integer     | 영향받은 건수
- *        |
- * desc:  |
  *
  */
 
