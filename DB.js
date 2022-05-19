@@ -3,11 +3,10 @@ const mysql = require("mysql");
 const conn = mysql.createConnection(_NAMESPACE.CONN);
 
 const Response = require("./Response");
-const { DATE } = require("mysql/lib/protocol/constants/types");
 
 const selectSingle = function (res, sql) {
   return new Promise((resolve, reject) => {
-    if (sql.substring(0, 10).includes("SELECT")) {
+    if (!sql.includes("SELECT")) {
       //FIXME: 이러면안된다
       reject("단일행 SELECT 전용임");
       return false;
@@ -110,7 +109,7 @@ const sql = {
     }
   },
   accounts: {
-    selectRow(argObj, res) {
+    getAccount(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -140,7 +139,7 @@ const sql = {
       `;
       selectSingle(res, sql);
     },
-    insertRow(argObj, res) {
+    addAccount(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -163,7 +162,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    deleteRow(argObj, res) {
+    delAccount(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -187,83 +186,83 @@ const sql = {
       `;
       query(res, sql);
     },
-    uuid: {
-      select(argObj, res) {
-        let data = null;
-        try {
-          data = JSON.parse(argObj.data);
-        } catch (e) {
-          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-          return false;
-        }
-        if (!data.email) {
-          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-          return false;
-        }
-        let sql = `
-        SELECT
-          ACCOUNT_UUID
-        FROM
-          ACCOUNTS
-        WHERE 1=1
-          AND _IS_DELETED = 0
-          AND EMAIL = '${data.email}'
-        `;
-        selectSingle(res, sql);
-      },
-    },
-    password: {
-      select(argObj, res) {
-        let data = null;
-        try {
-          data = JSON.parse(argObj.data);
-        } catch (e) {
-          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-          return false;
-        }
-        if (!data.account_uuid) {
-          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-          return false;
-        }
-        let sql = `
-          SELECT
-            PASSWORD
-          FROM
-            ACCOUNTS
-          WHERE 1=1
-            AND _IS_DELETED = 0
-            AND ACCOUNT_UUID = '${data.account_uuid}'
-        `;
-        selectSingle(res, sql);
-      },
-      update(argObj, res) {
-        let data = null;
-        try {
-          data = JSON.parse(argObj.data);
-        } catch (e) {
-          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-          return false;
-        }
-        if (!(data.account_uuid && data.password)) {
-          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-          return false;
-        }
-        let sql = `
-          UPDATE
-            ACCOUNTS
-          SET
-            PASSWORD = ${data.password},
-            _UPDATED_AT = NOW()
-          WHERE
-            1=1
-            AND _IS_DELETED = 0
-            AND ACCOUNT_UUID = ${data.account_uuid}
-        `;
-        query(res, sql);
-      },
-    },
+    // uuid: {
+    //   select(argObj, res) {
+    //     let data = null;
+    //     try {
+    //       data = JSON.parse(argObj.data);
+    //     } catch (e) {
+    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //       return false;
+    //     }
+    //     if (!data.email) {
+    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //       return false;
+    //     }
+    //     let sql = `
+    //     SELECT
+    //       ACCOUNT_UUID
+    //     FROM
+    //       ACCOUNTS
+    //     WHERE 1=1
+    //       AND _IS_DELETED = 0
+    //       AND EMAIL = '${data.email}'
+    //     `;
+    //     selectSingle(res, sql);
+    //   },
+    // },
+    // password: {
+    //   select(argObj, res) {
+    //     let data = null;
+    //     try {
+    //       data = JSON.parse(argObj.data);
+    //     } catch (e) {
+    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //       return false;
+    //     }
+    //     if (!data.account_uuid) {
+    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //       return false;
+    //     }
+    //     let sql = `
+    //       SELECT
+    //         PASSWORD
+    //       FROM
+    //         ACCOUNTS
+    //       WHERE 1=1
+    //         AND _IS_DELETED = 0
+    //         AND ACCOUNT_UUID = '${data.account_uuid}'
+    //     `;
+    //     selectSingle(res, sql);
+    //   },
+    //   update(argObj, res) {
+    //     let data = null;
+    //     try {
+    //       data = JSON.parse(argObj.data);
+    //     } catch (e) {
+    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //       return false;
+    //     }
+    //     if (!(data.account_uuid && data.password)) {
+    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //       return false;
+    //     }
+    //     let sql = `
+    //       UPDATE
+    //         ACCOUNTS
+    //       SET
+    //         PASSWORD = ${data.password},
+    //         _UPDATED_AT = NOW()
+    //       WHERE
+    //         1=1
+    //         AND _IS_DELETED = 0
+    //         AND ACCOUNT_UUID = ${data.account_uuid}
+    //     `;
+    //     query(res, sql);
+    //   },
+    // },
     team: {
-      update(argObj, res) {
+      setTeam(argObj, res) {
         let data = null;
         try {
           data = JSON.parse(argObj.data);
@@ -292,7 +291,7 @@ const sql = {
     },
   },
   hangars: {
-    select(argObj, res) {
+    getHangar(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -325,7 +324,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    insertRow(argObj, res) {
+    addHangar(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -346,7 +345,7 @@ const sql = {
         `;
       query(res, sql);
     },
-    update(argObj, res) {
+    setHangar(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -384,7 +383,7 @@ const sql = {
     },
   },
   parts: {
-    insertRow(argObj, res) {
+    addParts(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -431,7 +430,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    select(argObj, res) {
+    getParts(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -480,7 +479,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    update(argObj, res) {
+    async setParts(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -492,12 +491,30 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
+      if (data.slot_change_to && data.parts_uuid) {
+        console.log("00000");
+        let flag = true;
+        await query(
+          null,
+          `SELECT ACCOUNT_UUID FROM PARTS WHERE PARTS_UUID = '${data.parts_uuid}'`
+        ).then((r) => {
+          console.log("111111", r[0].ACCOUNT_UUID !== data.account_uuid);
+          if (r[0].ACCOUNT_UUID !== data.account_uuid) {
+            new Response(res).badRequest(
+              _NAMESPACE.RES_MSG.IT_IS_NOT_YOUR_PARTS
+            );
+            flag = false;
+          }
+        });
+        console.log("22222222");
+        if (!flag) return false;
+      }
       let sql = `
         UPDATE
           PARTS
         SET
           _UPDATED_AT = CURRENT_TIMESTAMP()
-          ${data.name !== undefined ? ", NAME = " + data.name : ""}
+          ${data.name !== undefined ? ", NAME = '" + data.name + "'" : ""}
           ${data.gubun !== undefined ? ", GUBUN = " + data.gubun : ""}
           ${
             data.enhancement !== undefined
@@ -561,7 +578,7 @@ const sql = {
     },
   },
   commodities: {
-    select(argObj, res) {
+    getCommodities(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -589,7 +606,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    insert(argObj, res) {
+    initCommodities(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -617,7 +634,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    update(argObj, res) {
+    setCommodities(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -654,9 +671,106 @@ const sql = {
       `;
       query(res, sql);
     },
+    addCommodities(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (
+        !data.account_uuid ||
+        !(
+          data.gold ||
+          data.chip ||
+          data.bolt ||
+          data.ironplate ||
+          data.hitorium ||
+          data.electric_wire ||
+          data.qrd
+        )
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          COMMODITIES
+        SET
+          _UPDATED_AT = CURRENT_TIMESTAMP()
+          ${
+            data.gold !== undefined
+              ? ", GOLD = (SELECT * FROM (SELECT GOLD + " +
+                data.gold +
+                " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
+                data.account_uuid +
+                "') as a)"
+              : ""
+          }
+          ${
+            data.chip !== undefined
+              ? ", CHIP = (SELECT * FROM (SELECT CHIP + " +
+                data.chip +
+                " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
+                data.account_uuid +
+                "') as a)"
+              : ""
+          }
+          ${
+            data.bolt !== undefined
+              ? ", BOLT = (SELECT * FROM (SELECT BOLT + " +
+                data.bolt +
+                " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
+                data.account_uuid +
+                "') as a)"
+              : ""
+          }
+          ${
+            data.ironplate !== undefined
+              ? ", IRONPLATE = (SELECT * FROM (SELECT IRONPLATE + " +
+                data.ironplate +
+                " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
+                data.account_uuid +
+                "') as a)"
+              : ""
+          }
+          ${
+            data.hitorium !== undefined
+              ? ", HITORIUM = (SELECT * FROM (SELECT HITORIUM + " +
+                data.hitorium +
+                " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
+                data.account_uuid +
+                "') as a)"
+              : ""
+          }
+          ${
+            data.electric_wire !== undefined
+              ? ", ELECTRIC_WIRE = (SELECT * FROM (SELECT ELECTRIC_WIRE + " +
+                data.electric_wire +
+                " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
+                data.account_uuid +
+                "') as a)"
+              : ""
+          }
+          ${
+            data.qrd !== undefined
+              ? ", QRD = (SELECT * FROM (SELECT QRD + " +
+                data.qrd +
+                " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
+                data.account_uuid +
+                "') as a)"
+              : ""
+          }
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+      `;
+
+      query(res, sql);
+    },
   },
   weapons: {
-    select(argObj, res) {
+    getWeapon(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -691,7 +805,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    insert(argObj, res) {
+    addWeapon(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -720,7 +834,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    update(argObj, res) {
+    setWeapon(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);

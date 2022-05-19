@@ -112,8 +112,8 @@
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID    |양자택일
  *        | parts_uuid        | string      | 부품UUID    |양자택일
- *        | gubun             | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어
- *        | slot_using_this   | integer     | 해당부품을  |계정UUID가 제공된 경우에만 작동
+ *        | gubun             | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어     | 선택적
+ *        | slot_using_this   | integer     | 해당부품을  |계정UUID가 제공된 경우에만 작동  | 선택적
  *        |                                   사용하고
  *        |                                   있는 슬롯
  *        |
@@ -135,8 +135,8 @@
 
 /* path:  http://3.35.210.188:52530/set-parts
  *        |name               |type         |desc
- * input: | parts_uuid        | string      | 부품UUID      |양자택일
- *        | account_uuid      | string      | 계정UUID      |양자택일(slot_using_this 필수)
+ * input: | parts_uuid        | string      | 부품UUID      |
+ *        | account_uuid      | string      | 계정UUID      |
  *        | slot_using_this   | integer     | 해당부품을 사용하고 있는 슬롯
  *        | gubun             | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어 | 선택적
  *        | slot_change_to    | integer     | 바꿀 슬롯번호 |선택적
@@ -165,7 +165,7 @@
  *        | ironplate         | integer     | 재료3
  *        | hitorium          | integer     | 재료4
  *        | electric_wire     | integer     | 재료5
- *        | qrd               | integer     | 큐리덤
+ *        | qrd               | string     | 큐리덤
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화상태를 제공함.
  *
@@ -191,11 +191,28 @@
  *        | ironplate         | integer     | 재료3     |선택적
  *        | hitorium          | integer     | 재료4     |선택적
  *        | electric_wire     | integer     | 재료5     |선택적
- *        | qrd               | integer     | 큐리덤    |선택적
+ *        | qrd               | string     | 큐리덤    |선택적
  *        |
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화상태를 변경함
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/add-commodities
+ *        |name               |type         |desc
+ * input: | account_uuid      | string      | 계정UUID
+ *        | gold              | integer     | 골드      |선택적
+ *        | chip              | integer     | 재료1     |선택적
+ *        | bolt              | integer     | 재료2     |선택적
+ *        | ironplate         | integer     | 재료3     |선택적
+ *        | hitorium          | integer     | 재료4     |선택적
+ *        | electric_wire     | integer     | 재료5     |선택적
+ *        | qrd               | string     | 큐리덤    |선택적
+ *        |
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
+ * desc:  | 전달받은 계정UUID로 찾은 계정의 재화에 입력값을 누적함
  *
  */
 
