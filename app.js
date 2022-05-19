@@ -23,72 +23,101 @@ app.route("/test").get((req, res) => {
 });
 
 app.post("/get-account", (req, res) => {
-  console.log("getAccount()",req.body);
+  console.log(
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\ngetAccount()\n",
+    req.body
+  );
   db.sql.accounts.getAccount(req.body, res);
 });
 
 app.post("/add-account", (req, res) => {
-  console.log("addAccount()",req.body);
+  console.log(
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\naddAccount()\n",
+    req.body
+  );
   db.sql.accounts.addAccount(req.body, res);
 });
 
 app.post("/del-account", (req, res) => {
-  console.log("delAccount()",req.body);
+  console.log(
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\ndelAccount()\n",
+    req.body
+  );
   db.sql.accounts.delAccount(req.body, res);
 });
 
+app.post("/is-pw-correct", (req, res) => {
+  console.log(
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\nisPWCorrect()\n",
+    req.body
+  );
+  db.sql.accounts.isPWCorrect(req.body, res);
+});
+
 app.post("/set-team", (req, res) => {
-  console.log("setTeam()",req.body);
+  console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\nsetTeam()\n", req.body);
   db.sql.accounts.team.setTeam(req.body, res);
 });
 
 app.post("/get-robot", (req, res) => {
-  console.log("getRobot()",req.body);
+  console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\ngetRobot()\n", req.body);
   db.sql.robots.getRobot(req.body, res);
 });
 
 app.post("/add-robot", (req, res) => {
-  console.log("addRobot()",req.body);
+  console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\naddRobot()\n", req.body);
   db.sql.robots.addRobot(req.body, res);
 });
 
 app.post("/set-robot", (req, res) => {
-  console.log("setRobot()",req.body);
+  console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\nsetRobot()\n", req.body);
   db.sql.robots.setRobot(req.body, res);
 });
 
 app.post("/add-parts", (req, res) => {
-  console.log("addParts()",req.body);
+  console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\naddParts()\n", req.body);
   db.sql.parts.addParts(req.body, res);
 });
 
 app.post("/get-parts", (req, res) => {
-  console.log("getParts()",req.body);
+  console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\ngetParts()\n", req.body);
   db.sql.parts.getParts(req.body, res);
 });
 
 app.post("/set-parts", (req, res) => {
-  console.log("setParts()",req.body);
+  console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\nsetParts()\n", req.body);
   db.sql.parts.setParts(req.body, res);
 });
 
 app.post("/get-commodities", (req, res) => {
-  console.log("getCommodities()",req.body);
+  console.log(
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\ngetCommodities()\n",
+    req.body
+  );
   db.sql.commodities.getCommodities(req.body, res);
 });
 
 app.post("/init-commodities", (req, res) => {
-  console.log("initCommodities()",req.body);
+  console.log(
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\ninitCommodities()\n",
+    req.body
+  );
   db.sql.commodities.initCommodities(req.body, res);
 });
 
 app.post("/set-commodities", (req, res) => {
-  console.log("setCommodities()",req.body);
+  console.log(
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\nsetCommodities()\n",
+    req.body
+  );
   db.sql.commodities.setCommodities(req.body, res);
 });
 
 app.post("/add-commodities", (req, res) => {
-  console.log("addCommodities()",req.body);
+  console.log(
+    "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\naddCommodities()\n",
+    req.body
+  );
   db.sql.commodities.addCommodities(req.body, res);
 });
 

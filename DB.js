@@ -215,55 +215,63 @@ const sql = {
     //     selectSingle(res, sql);
     //   },
     // },
-    // password: {
-    //   select(argObj, res) {
-    //     let data = null;
-    //     try {
-    //       data = JSON.parse(argObj.data);
-    //     } catch (e) {
-    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    //       return false;
-    //     }
-    //     if (!data.account_uuid) {
-    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    //       return false;
-    //     }
-    //     let sql = `
-    //       SELECT
-    //         PASSWORD
-    //       FROM
-    //         ACCOUNTS
-    //       WHERE 1=1
-    //         AND _IS_DELETED = 0
-    //         AND ACCOUNT_UUID = '${data.account_uuid}'
-    //     `;
-    //     selectSingle(res, sql);
-    //   },
-    //   update(argObj, res) {
-    //     let data = null;
-    //     try {
-    //       data = JSON.parse(argObj.data);
-    //     } catch (e) {
-    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    //       return false;
-    //     }
-    //     if (!(data.account_uuid && data.password)) {
-    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    //       return false;
-    //     }
-    //     let sql = `
-    //       UPDATE
-    //         ACCOUNTS
-    //       SET
-    //         PASSWORD = ${data.password},
-    //         _UPDATED_AT = NOW()
-    //       WHERE
-    //         1=1
-    //         AND _IS_DELETED = 0
-    //         AND ACCOUNT_UUID = ${data.account_uuid}
-    //     `;
-    //     query(res, sql);
-    //   },
+    isPWCorrect(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.email === undefined || data.password === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+          SELECT
+            PASSWORD
+          FROM
+            ACCOUNTS
+          WHERE 1=1
+            AND _IS_DELETED = 0
+            AND EMAIL = '${data.email}'
+        `;
+      query(null, sql).then((r) => {
+        try {
+          if (r[0].PASSWORD == data.password) {
+            new Response(res, { isPWCorrect: 1 }).OK();
+          } else {
+            new Response(res, { isPWCorrect: 0 }).OK();
+          }
+        } catch (e) {
+          new Response(res, { isPWCorrect: 2 }).OK();
+        }
+      });
+    },
+    // setPassword(argObj, res) {
+    //   let data = null;
+    //   try {
+    //     data = JSON.parse(argObj.data);
+    //   } catch (e) {
+    //     new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //     return false;
+    //   }
+    //   if (!(data.account_uuid && data.password)) {
+    //     new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //     return false;
+    //   }
+    //   let sql = `
+    //     UPDATE
+    //       ACCOUNTS
+    //     SET
+    //       PASSWORD = ${data.password},
+    //       _UPDATED_AT = NOW()
+    //     WHERE
+    //       1=1
+    //       AND _IS_DELETED = 0
+    //       AND ACCOUNT_UUID = ${data.account_uuid}
+    //   `;
+    //   query(res, sql);
     // },
     team: {
       setTeam(argObj, res) {

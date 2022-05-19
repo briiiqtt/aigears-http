@@ -11,7 +11,7 @@ const Response = class {
       code: this.code,
       message: this.message,
     };
-    console.log(resp);
+    console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n',resp);
     this.res.send(resp);
   }
   OK(msg) {
