@@ -1,5 +1,5 @@
 const _CONN = require("./_CONNECTION");
-const _NAMESPACE = require("./_NAMESPACE.JS");
+const _NAMESPACE = require("./_NAMESPACE.js");
 const mysql = require("mysql");
 const conn = mysql.createConnection(_CONN);
 
