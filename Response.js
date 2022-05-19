@@ -1,4 +1,4 @@
-const _NAMESPACE = require("./_NAMESPACE.JS");
+const _NAMESPACE = require("./_NAMESPACE.js");
 
 const Response = class {
   constructor(_res, _data) {
