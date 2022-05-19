@@ -311,8 +311,8 @@ const sql = {
           PARTS_UUID_ARM,
           PARTS_UUID_LEG,
           PARTS_UUID_BOOSTER,
-          PARTS_UUID_CORE
-          PARTS_UUID_WEAPON_M
+          PARTS_UUID_CORE,
+          PARTS_UUID_WEAPON_M,
           PARTS_UUID_WEAPON_S
         FROM
           ROBOTS
