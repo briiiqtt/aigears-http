@@ -117,7 +117,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!data.account_uuid && !data.email) {
+      if (data.account_uuid === undefined || data.email === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -147,7 +147,11 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!(data.account_uuid && data.email && data.password)) {
+      if (
+        data.account_uuid === undefined ||
+        data.email === undefined ||
+        data.password === undefined
+      ) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -170,7 +174,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!data.account_uuid) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -270,7 +274,11 @@ const sql = {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
-        if (!(data.account_uuid && data.team && data.icon)) {
+        if (
+          data.account_uuid === undefined ||
+          data.team === undefined ||
+          data.icon === undefined
+        ) {
           new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
           return false;
         }
@@ -299,7 +307,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!data.account_uuid) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -332,7 +340,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!data.account_uuid) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -353,7 +361,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!(data.account_uuid && data.slot_num)) {
+      if (data.account_uuid === undefined || data.slot_num === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -392,15 +400,13 @@ const sql = {
         return false;
       }
       if (
-        !(
-          data.account_uuid &&
-          data.parts_uuid &&
-          data.name &&
-          data.gubun &&
-          data.max_durability
-        )
+        data.account_uuid === undefined ||
+        data.parts_uuid === undefined ||
+        data.name === undefined ||
+        data.gubun === undefined ||
+        data.max_durability === undefined
       ) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE+"aaaaaaaaaaaaaaaaaaaaaaa");
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
       let sql = `
@@ -438,7 +444,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (!data.account_uuid && !data.parts_uuid) {
+      if (data.account_uuid === undefined || data.parts_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
