@@ -400,7 +400,7 @@ const sql = {
           data.max_durability
         )
       ) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE+"aaaaaaaaaaaaaaaaaaaaaaa");
         return false;
       }
       let sql = `
