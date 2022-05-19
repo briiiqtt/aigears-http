@@ -306,14 +306,14 @@ const sql = {
       let sql = `
         SELECT
           SLOT_NUM,
-          WEAPON_UUID_MAIN,
-          WEAPON_UUID_SUB,
           PARTS_UUID_HEAD,
           PARTS_UUID_BODY,
           PARTS_UUID_ARM,
           PARTS_UUID_LEG,
           PARTS_UUID_BOOSTER,
           PARTS_UUID_CORE
+          PARTS_UUID_WEAPON_M
+          PARTS_UUID_WEAPON_S
         FROM
           HANGARS
         WHERE 1=1
@@ -358,10 +358,10 @@ const sql = {
         return false;
       }
       let sql = `UPDATE HANGARS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
-      if (data.weapon_uuid_main)
-        sql += `, WEAPON_UUID_MAIN = '${data.weapon_uuid_main}'`;
-      if (data.weapon_uuid_sub)
-        sql += `, WEAPON_UUID_SUB = '${data.weapon_uuid_sub}'`;
+      if (data.parts_uuid_weapon_m)
+        sql += `, PARTS_UUID_WEAPON_M = '${data.parts_uuid_weapon_m}'`;
+      if (data.parts_uuid_weapon_s)
+        sql += `, PARTS_UUID_WEAPON_S = '${data.parts_uuid_weapon_s}'`;
       if (data.parts_uuid_head)
         sql += `, PARTS_UUID_HEAD = '${data.parts_uuid_head}'`;
       if (data.parts_uuid_body)
@@ -767,104 +767,104 @@ const sql = {
       query(res, sql);
     },
   },
-  weapons: {
-    getWeapon(argObj, res) {
-      let data = null;
-      try {
-        data = JSON.parse(argObj.data);
-      } catch (e) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      if (!data.account_uuid && !data.weapon_uuid) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      let sql = `
-        SELECT
-          WEAPON_UUID,
-          ACCOUNT_UUID,
-          ENHANCEMENT,
-          SLOT_USING_THIS,
-          GUBUN
-        FROM
-          WEAPONS
-        WHERE 1=1
-          ${
-            data.account_uuid !== undefined
-              ? "AND ACCOUNT_UUID = '" + data.account_uuid + "'"
-              : ""
-          }
-          ${
-            data.weapon_uuid !== undefined
-              ? "AND WEAPON_UUID = '" + data.weapon_uuid + "'"
-              : ""
-          }
-      `;
-      query(res, sql);
-    },
-    addWeapon(argObj, res) {
-      let data = null;
-      try {
-        data = JSON.parse(argObj.data);
-      } catch (e) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      if (!(data.account_uuid && data.weapon_uuid && data.gubun)) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      let sql = `
-        INSERT INTO
-          WEAPONS(
-            WEAPON_UUID,
-            ACCOUNT_UUID,
-            ENHANCEMENT,
-            GUBUN
-          )
-          VALUES(
-            '${data.weapon_uuid}',
-            '${data.account_uuid}',
-            '${data.enhancement ? data.enhancement : 0}',
-            '${data.gubun}'
-          )
-      `;
-      query(res, sql);
-    },
-    setWeapon(argObj, res) {
-      let data = null;
-      try {
-        data = JSON.parse(argObj.data);
-      } catch (e) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      if (!data.weapon_uuid) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      let sql = `
-        UPDATE
-          WEAPONS
-        SET
-          _UPDATED_AT = CURRENT_TIMESTAMP()
-          ${
-            data.enhancement !== undefined
-              ? ", ENHANCEMENT = " + data.enhancement
-              : ""
-          }
-          ${
-            data.slot_using_this !== undefined
-              ? ", SLOT_USING_THIS = " + data.slot_using_this
-              : ""
-          }
-        WHERE
-          WEAPON_UUID = ${data.weapon_uuid}
-      `;
-      query(res, sql);
-    },
-  },
+  // weapons: {
+  //   getWeapon(argObj, res) {
+  //     let data = null;
+  //     try {
+  //       data = JSON.parse(argObj.data);
+  //     } catch (e) {
+  //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+  //       return false;
+  //     }
+  //     if (!data.account_uuid && !data.weapon_uuid) {
+  //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+  //       return false;
+  //     }
+  //     let sql = `
+  //       SELECT
+  //         WEAPON_UUID,
+  //         ACCOUNT_UUID,
+  //         ENHANCEMENT,
+  //         SLOT_USING_THIS,
+  //         GUBUN
+  //       FROM
+  //         WEAPONS
+  //       WHERE 1=1
+  //         ${
+  //           data.account_uuid !== undefined
+  //             ? "AND ACCOUNT_UUID = '" + data.account_uuid + "'"
+  //             : ""
+  //         }
+  //         ${
+  //           data.weapon_uuid !== undefined
+  //             ? "AND WEAPON_UUID = '" + data.weapon_uuid + "'"
+  //             : ""
+  //         }
+  //     `;
+  //     query(res, sql);
+  //   },
+  //   addWeapon(argObj, res) {
+  //     let data = null;
+  //     try {
+  //       data = JSON.parse(argObj.data);
+  //     } catch (e) {
+  //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+  //       return false;
+  //     }
+  //     if (!(data.account_uuid && data.weapon_uuid && data.gubun)) {
+  //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+  //       return false;
+  //     }
+  //     let sql = `
+  //       INSERT INTO
+  //         WEAPONS(
+  //           WEAPON_UUID,
+  //           ACCOUNT_UUID,
+  //           ENHANCEMENT,
+  //           GUBUN
+  //         )
+  //         VALUES(
+  //           '${data.weapon_uuid}',
+  //           '${data.account_uuid}',
+  //           '${data.enhancement ? data.enhancement : 0}',
+  //           '${data.gubun}'
+  //         )
+  //     `;
+  //     query(res, sql);
+  //   },
+  //   setWeapon(argObj, res) {
+  //     let data = null;
+  //     try {
+  //       data = JSON.parse(argObj.data);
+  //     } catch (e) {
+  //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+  //       return false;
+  //     }
+  //     if (!data.weapon_uuid) {
+  //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+  //       return false;
+  //     }
+  //     let sql = `
+  //       UPDATE
+  //         WEAPONS
+  //       SET
+  //         _UPDATED_AT = CURRENT_TIMESTAMP()
+  //         ${
+  //           data.enhancement !== undefined
+  //             ? ", ENHANCEMENT = " + data.enhancement
+  //             : ""
+  //         }
+  //         ${
+  //           data.slot_using_this !== undefined
+  //             ? ", SLOT_USING_THIS = " + data.slot_using_this
+  //             : ""
+  //         }
+  //       WHERE
+  //         WEAPON_UUID = ${data.weapon_uuid}
+  //     `;
+  //     query(res, sql);
+  //   },
+  // },
 };
 
 module.exports = { sql };
