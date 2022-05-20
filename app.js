@@ -18,16 +18,32 @@ app.listen((port = 52530), () => {
   console.log(`server started, port: ${port}`);
 });
 
+let requestNum = 0;
+
 app.all("*", (req, res, next) => {
   let date = new Date();
+  res.append("requestNum", requestNum);
+  requestNum++;
   console.log(
-    `***** REQUEST: ${req.path} `,
-    req.body,
-    `${date.getFullYear()}-${
-      date.getMonth() + 1
-    }-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`
+    res.get("requestNum") + "\r\n",
+    date.getFullYear() +
+      "-" +
+      date.getMonth() +
+      1 +
+      "-" +
+      date.getDay() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds() +
+      ":" +
+      date.getMilliseconds() +
+      "\r\n",
+    "<<<<<<<<<< REQUEST: " + req.path + "\r\n",
+    req.body
   );
-  
   next();
 });
 

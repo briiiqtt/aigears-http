@@ -14,11 +14,24 @@ const Response = class {
     this.res.json(resp);
     let date = new Date();
     console.log(
-      `***** RESPONSE / `,
-      resp,
-      `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`
+      this.res.get("requestNum") + "\r\n",
+      date.getFullYear() +
+        "-" +
+        date.getMonth() +
+        1 +
+        "-" +
+        date.getDay() +
+        " " +
+        date.getHours() +
+        ":" +
+        date.getMinutes() +
+        ":" +
+        date.getSeconds() +
+        ":" +
+        date.getMilliseconds() +
+        "\r\n",
+      ">>>>>>>>>> RESPONSE:\r\n",
+      resp
     );
   }
   OK(msg) {
