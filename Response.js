@@ -17,8 +17,7 @@ const Response = class {
       this.res.get("requestNum") + "\r\n",
       date.getFullYear() +
         "-" +
-        date.getMonth() +
-        1 +
+        (date.getMonth() + 1) +
         "-" +
         date.getDay() +
         " " +
