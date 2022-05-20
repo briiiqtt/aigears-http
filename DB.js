@@ -383,85 +383,29 @@ const sql = {
         return false;
       }
       let sql = `UPDATE ROBOTS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
-      if (data.parts_uuid_arm)
+      if (data.parts_uuid_arm !== undefined)
         sql += `, PARTS_UUID_ARM = '${data.parts_uuid_arm}'`;
-      if (data.parts_uuid_head)
+      if (data.parts_uuid_head !== undefined)
         sql += `, PARTS_UUID_HEAD = '${data.parts_uuid_head}'`;
-      if (data.parts_uuid_leg)
+      if (data.parts_uuid_leg !== undefined)
         sql += `, PARTS_UUID_LEG = '${data.parts_uuid_leg}'`;
-      if (data.parts_uuid_body)
+      if (data.parts_uuid_body !== undefined)
         sql += `, PARTS_UUID_BODY = '${data.parts_uuid_body}'`;
-      if (data.parts_uuid_booster)
+      if (data.parts_uuid_booster !== undefined)
         sql += `, PARTS_UUID_BOOSTER = '${data.parts_uuid_booster}'`;
-      if (data.parts_uuid_weapon_m)
+      if (data.parts_uuid_weapon_m !== undefined)
         sql += `, PARTS_UUID_WEAPON_M = '${data.parts_uuid_weapon_m}'`;
-      if (data.parts_uuid_weapon_s)
+      if (data.parts_uuid_weapon_s !== undefined)
         sql += `, PARTS_UUID_WEAPON_S = '${data.parts_uuid_weapon_s}'`;
-      if (data.parts_uuid_core)
+      if (data.parts_uuid_core !== undefined)
         sql += `, PARTS_UUID_CORE = '${data.parts_uuid_core}'`;
-      if (data.coating)
-        sql += `, COATING = '${data.coating}'`;
-      if (data.name)
-        sql += `, NAME = '${data.name}'`;
+      if (data.coating !== undefined) sql += `, COATING = '${data.coating}'`;
+      if (data.name !== undefined) sql += `, NAME = '${data.name}'`;
       sql += `
       WHERE 1=1
         AND ACCOUNT_UUID = '${data.account_uuid}'
         AND SLOT_NUM = '${data.slot_num}'
       `;
-      console.log(`
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      `,sql,`
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-
-
-
-
-      
-      
-      
-      
-      
-      
-      `);
       query(res, sql);
     },
   },
