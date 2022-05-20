@@ -11,8 +11,15 @@ const Response = class {
       code: this.code,
       message: this.message,
     };
-    console.log('PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\n',resp);
-    this.res.send(resp);
+    this.res.json(resp);
+    let date = new Date();
+    console.log(
+      `***** RESPONSE / `,
+      resp,
+      `${date.getFullYear()}-${
+        date.getMonth() + 1
+      }-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`
+    );
   }
   OK(msg) {
     // this.res.status(200);

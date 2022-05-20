@@ -164,7 +164,7 @@
  *        |
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
- * desc:  | (부품UUID) 또는 (계정UUID+슬롯번호(+구분번호)) 로 찾은 부품의 정보를 수정함.
+ * desc:  | (부품UUID + 계정UUID) 또는 (계정UUID+슬롯번호(+구분번호)) 로 찾은 부품의 정보를 수정함.
  *
  */
 

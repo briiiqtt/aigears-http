@@ -459,7 +459,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (data.account_uuid === undefined || data.parts_uuid === undefined) {
+      if (data.account_uuid === undefined && data.parts_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -787,6 +787,55 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
 
+      query(res, sql);
+    },
+  },
+  skills: {
+    addSkill(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined || data.skill_name === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        INSERT INTO
+          SKILLS(
+            ACCOUNT_UUID,
+            SKILL_NAME
+          )
+          VALUES(
+            '${data.account_uuid}',
+            '${data.skill_name}'
+          )
+      `;
+      query(res, sql);
+    },
+    getSkill(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          SKILL_NAME
+        FROM
+          SKILLS
+        WHERE
+          ACCOUNT_UUID = '${data.account_uuid}'
+      `;
       query(res, sql);
     },
   },
