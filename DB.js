@@ -408,9 +408,62 @@ const sql = {
         AND ACCOUNT_UUID = '${data.account_uuid}'
         AND SLOT_NUM = '${data.slot_num}'
       `;
+      console.log(`
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      `,sql,`
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+
+
+
+      
+      
+      
+      
+      
+      
+      `);
       query(res, sql);
     },
-    
   },
   parts: {
     addParts(argObj, res) {
