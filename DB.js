@@ -397,6 +397,10 @@ const sql = {
         sql += `, PARTS_UUID_WEAPON_S = '${data.parts_uuid_weapon_s}'`;
       if (data.parts_uuid_core)
         sql += `, PARTS_UUID_CORE = '${data.parts_uuid_core}'`;
+      if (data.coating)
+        sql += `, COATING = '${data.coating}'`;
+      if (data.name)
+        sql += `, NAME = '${data.name}'`;
       sql += `
       WHERE 1=1
         AND ACCOUNT_UUID = '${data.account_uuid}'
