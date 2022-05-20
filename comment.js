@@ -28,12 +28,11 @@
  *          |name           |type     |desc
  * input:   | email         | string  | 이메일
  *          | password      | string  | 비밀번호
- *          | accout      | string  | 비밀번호
  *          |
  * output:  | isPWCorrect   | integer | 0:비밀번호틀림
  *          |                         | 1:비밀번호일치
  *          |                         | 2:계정없음
- *          |
+ *          | account_uuid  | string  | 비밀번호 불일치시 null
  * desc:  	|
  */
 
@@ -105,7 +104,7 @@
  *
  */
 
-/* path:  http://3.35.210.188:52530/add-parts"
+/* path:  http://3.35.210.188:52530/add-parts
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | parts_uuid        | string      | 부품UUID
@@ -221,11 +220,32 @@
  *        | ironplate         | integer     | 재료3     |선택적
  *        | hitorium          | integer     | 재료4     |선택적
  *        | electric_wire     | integer     | 재료5     |선택적
- *        | qrd               | string     | 큐리덤    |선택적
+ *        | qrd               | string      | 큐리덤    |선택적
  *        |
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화에 입력값을 누적함
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/add-skill
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | skill_name          | string      | 스킬명
+ *        |
+ * output:| affectedRows        | integer     | 영향받은 건수
+ *        |
+ * desc:  | 전달받은 계정UUID로 찾은 계정에 보유스킬을 추가함
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/get-skill
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        |
+ * output:| skill_name          | string      | 스킬명
+ *        |
+ * desc:  | 전달받은 계정UUID로 찾은 계정이 보유하고 있는 스킬목록을 제공함
  *
  */
 
