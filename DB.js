@@ -336,7 +336,9 @@ const sql = {
           PARTS_UUID_BOOSTER,
           PARTS_UUID_CORE,
           PARTS_UUID_WEAPON_M,
-          PARTS_UUID_WEAPON_S
+          PARTS_UUID_WEAPON_S,
+          NAME,
+          COATING
         FROM
           ROBOTS
         WHERE 1=1
@@ -408,6 +410,7 @@ const sql = {
       `;
       query(res, sql);
     },
+    
   },
   parts: {
     addParts(argObj, res) {
