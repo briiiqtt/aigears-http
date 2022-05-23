@@ -76,14 +76,14 @@ const transaction = async function (sqls) {
   } catch (e) {
     console.error(e);
     await conn.rollback();
-    return false;
+    return e.code ? e.code : e;
   }
 };
 
 const sql = {
   async test() {
     if (
-      await transaction(
+      (await transaction([
         () =>
           query(
             null,
@@ -116,8 +116,8 @@ const sql = {
         VALUES(
           '789', '789', '789', '789'
         )`
-          )
-      ).then((r) => console.log(r))
+          ),
+      ])) === true
     ) {
       console.log(true);
     } else {
@@ -528,7 +528,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    setProfileMain(argObj, res) {
+    async setProfileMain(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -540,7 +540,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let flag = transaction(
+      let flag = await transaction([
         `
         UPDATE
           ROBOTS
@@ -558,12 +558,13 @@ const sql = {
         WHERE 1=1
             AND ACCOUNT_UUID = '${data.account_uuid}'
             AND SLOT_NUM ='${data.slot_num}'
-        `
-      );
-      if (flag) new Response(res, { result: "success" }).OK();
-      else new Response(res, { result: "fail" }).internalServerError();
+        `,
+      ]);
+      if (flag !== true)
+        new Response(res, { result: "fail" }).internalServerError();
+      else new Response(res, { result: "success" }).OK();
     },
-    setProfileSub(argObj, res) {
+    async setProfileSub(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -575,7 +576,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let flag = transaction(
+      let flag = await transaction([
         `
         UPDATE
           ROBOTS
@@ -593,10 +594,11 @@ const sql = {
         WHERE 1=1
             AND ACCOUNT_UUID = '${data.account_uuid}'
             AND SLOT_NUM ='${data.slot_num}'
-        `
-      );
-      if (flag) new Response(res, { result: "success" }).OK();
-      else new Response(res, { result: "fail" }).internalServerError();
+        `,
+      ]);
+      if (flag !== true)
+        new Response(res, { result: "fail" }).internalServerError();
+      else new Response(res, { result: "success" }).OK();
     },
   },
   parts: {
@@ -1191,43 +1193,42 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let achvmt = _ACHIEVEMENTS[data.name];
-      if (achvmt === undefined) {
+      let reward = _ACHIEVEMENTS[data.name];
+      if (reward === undefined) {
         new Response(res).badRequest("해당 업적에 대한 정보 없음");
-        console.error("\n\n\n\n\n\n\n\n\n\n\n\n\n\nAAAAAAAAAAAA");
         return false;
       }
 
-      let arr = [];
-      arr.push(() =>
+      let queryArray = [];
+      queryArray.push(() =>
         sql.commodities.addCommodities(
           {
             data: JSON.stringify({
               account_uuid: data.account_uuid,
-              gold: achvmt["Gold"] !== undefined ? achvmt["Gold"] : undefined,
-              chip: achvmt["Chip"] !== undefined ? achvmt["Chip"] : undefined,
-              bolt: achvmt["Bolt"] !== undefined ? achvmt["Bolt"] : undefined,
+              gold: reward["Gold"] !== undefined ? reward["Gold"] : undefined,
+              chip: reward["Chip"] !== undefined ? reward["Chip"] : undefined,
+              bolt: reward["Bolt"] !== undefined ? reward["Bolt"] : undefined,
               ironplate:
-                achvmt["IronPlate"] !== undefined
-                  ? achvmt["IronPlate"]
+                reward["IronPlate"] !== undefined
+                  ? reward["IronPlate"]
                   : undefined,
               hitorium:
-                achvmt["Hitorium"] !== undefined
-                  ? achvmt["Hitorium"]
+                reward["Hitorium"] !== undefined
+                  ? reward["Hitorium"]
                   : undefined,
               electric_wire:
-                achvmt["ElectricWire"] !== undefined
-                  ? achvmt["ElectricWire"]
+                reward["ElectricWire"] !== undefined
+                  ? reward["ElectricWire"]
                   : undefined,
             }),
           },
           null
         )
       );
-      if (achvmt["SkillReward"] !== undefined) {
-        if (Array.isArray(achvmt["SkillReward"])) {
-          for (let skill of achvmt["SkillReward"]) {
-            arr.push(() =>
+      if (reward["SkillReward"] !== undefined) {
+        if (Array.isArray(reward["SkillReward"])) {
+          for (let skill of reward["SkillReward"]) {
+            queryArray.push(() =>
               query(
                 null,
                 `
@@ -1238,12 +1239,40 @@ const sql = {
               )
             );
           }
+        } else {
+          queryArray.push(() =>
+            query(
+              null,
+              `
+              INSERT INTO
+                SKILLS (ACCOUNT_UUID, SKILL_NAME)
+              VALUES ('${data.account_uuid}','${reward["SkillReward"]}')
+            `
+            )
+          );
         }
       }
+      queryArray.push(() =>
+        query(
+          null,
+          `
+        UPDATE
+          ACHIEVEMENTS
+        SET
+          GOT_REWARD = 1
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          AND NAME = '${data.name}'
+      `
+        )
+      );
 
-      let flag = transaction(arr);
-      if (flag) new Response(res, { result: "success" }).OK();
-      else new Response(res, { result: "fail" }).internalServerError();
+      let flag = await transaction(queryArray);
+      if (flag === "ER_DUP_ENTRY")
+        new Response(res, _NAMESPACE.RES_MSG.DUPLICATED_PK).badRequest();
+      else if (flag !== true)
+        new Response(res, { result: "fail" }).internalServerError();
+      else if (flag === true) new Response(res, { result: "success" }).OK();
     },
   },
 };
