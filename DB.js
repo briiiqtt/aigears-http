@@ -1173,8 +1173,8 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (data.achievement !== undefined) {
-        new Response(res, _ACHIEVEMENTS[data.achievement]).OK();
+      if (data.name !== undefined) {
+        new Response(res, _ACHIEVEMENTS[data.name]).OK();
       } else {
         new Response(res, _ACHIEVEMENTS).OK();
       }
@@ -1187,11 +1187,16 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (data.account_uuid === undefined) {
+      if (data.account_uuid === undefined || data.name === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
       let achvmt = _ACHIEVEMENTS[data.name];
+      if (achvmt === undefined) {
+        new Response(res).badRequest("해당 업적에 대한 정보 없음");
+        console.error("\n\n\n\n\n\n\n\n\n\n\n\n\n\nAAAAAAAAAAAA");
+        return false;
+      }
 
       let arr = [];
       arr.push(() =>

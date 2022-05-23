@@ -295,6 +295,7 @@
 /* path:  http://3.35.210.188:52530/get-blueprint
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
+ *        | model               | string      | 종류        |선택적
  *        |
  * output:| account_uuid        | string      | 계정UUID
  *        | stock               | int         | 보유량
@@ -327,6 +328,28 @@
  * output:| affectedRows        | integer     | 영향받은 건수
  *        |
  * desc:  | (계정UUID+설계도종류)의 보유량을 stock 값만큼 추가함.
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/get-reward-info-json
+ *        |name                 |type         |desc
+ * input: | name                | string      | 업적이름    |선택적
+ *        |
+ * output:| AchievementReward.json
+ *        |
+ * desc:  | (모든 업적 또는 전달한 이름의 업적)
+ *                       의 완료시 보상에 대한 정보를 제공함.
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/claim-achievement-reward
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | name                | string      | 업적이름
+ *        |
+ * output:| result              | string      | success / fail
+ *        |
+ * desc:  | 전달한 이름의 업적의 완료보상을 전달한 계정UUID에게 지급함.
  *
  */
 
