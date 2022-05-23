@@ -1,5 +1,6 @@
 const _CONN = require("./_CONNECTION");
 const _NAMESPACE = require("./_NAMESPACE.js");
+const _ACHIEVEMENTS = require("./AchievementReward.json");
 const mysql = require("mysql");
 const conn = mysql.createConnection(_CONN);
 
@@ -64,10 +65,12 @@ const query = function (res, sql) {
     });
   });
 };
-const transaction = async function (...sqls) {
+// const transaction = async function (...sqls) {
+const transaction = async function (sqls) {
   try {
     await conn.beginTransaction();
-    await Promise.all(sqls.map((sql) => query(null, sql)));
+    // await Promise.all(sqls.map((sql) => query(null, sql)));
+    await Promise.all(sqls.map((sql) => sql()));
     await conn.commit();
     return true;
   } catch (e) {
@@ -81,28 +84,40 @@ const sql = {
   async test() {
     if (
       await transaction(
-        `INSERT INTO
+        () =>
+          query(
+            null,
+            `INSERT INTO
         ACCOUNTS(
           ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
         )
         VALUES(
           '123', '123', '123', '123'
-        )`,
-        `INSERT INTO
+        )`
+          ),
+        () =>
+          query(
+            null,
+            `INSERT INTO
         ACCOUNTS(
           ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
         )
         VALUES(
           '456', '456', '456', '456'
-        )`,
-        `INSERT INTO
+        )`
+          ),
+        () =>
+          query(
+            null,
+            `INSERT INTO
         ACCOUNTS(
           ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
         )
         VALUES(
           '789', '789', '789', '789'
         )`
-      )
+          )
+      ).then((r) => console.log(r))
     ) {
       console.log(true);
     } else {
@@ -901,7 +916,7 @@ const sql = {
           _UPDATED_AT = CURRENT_TIMESTAMP()
           ${
             data.gold !== undefined
-              ? ", GOLD = (SELECT * FROM (SELECT GOLD + " +
+              ? ", GOLD = (SELECT * FROM (SELECT IFNULL(GOLD,0) + " +
                 data.gold +
                 " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
                 data.account_uuid +
@@ -910,7 +925,7 @@ const sql = {
           }
           ${
             data.chip !== undefined
-              ? ", CHIP = (SELECT * FROM (SELECT CHIP + " +
+              ? ", CHIP = (SELECT * FROM (SELECT IFNULL(CHIP,0) + " +
                 data.chip +
                 " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
                 data.account_uuid +
@@ -919,7 +934,7 @@ const sql = {
           }
           ${
             data.bolt !== undefined
-              ? ", BOLT = (SELECT * FROM (SELECT BOLT + " +
+              ? ", BOLT = (SELECT * FROM (SELECT IFNULL(BOLT,0) + " +
                 data.bolt +
                 " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
                 data.account_uuid +
@@ -928,7 +943,7 @@ const sql = {
           }
           ${
             data.ironplate !== undefined
-              ? ", IRONPLATE = (SELECT * FROM (SELECT IRONPLATE + " +
+              ? ", IRONPLATE = (SELECT * FROM (SELECT IFNULL(IRONPLATE,0) + " +
                 data.ironplate +
                 " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
                 data.account_uuid +
@@ -937,7 +952,7 @@ const sql = {
           }
           ${
             data.hitorium !== undefined
-              ? ", HITORIUM = (SELECT * FROM (SELECT HITORIUM + " +
+              ? ", HITORIUM = (SELECT * FROM (SELECT IFNULL(HITORIUM,0) + " +
                 data.hitorium +
                 " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
                 data.account_uuid +
@@ -946,7 +961,7 @@ const sql = {
           }
           ${
             data.electric_wire !== undefined
-              ? ", ELECTRIC_WIRE = (SELECT * FROM (SELECT ELECTRIC_WIRE + " +
+              ? ", ELECTRIC_WIRE = (SELECT * FROM (SELECT IFNULL(ELECTRIC_WIRE,0) + " +
                 data.electric_wire +
                 " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
                 data.account_uuid +
@@ -955,7 +970,7 @@ const sql = {
           }
           ${
             data.qrd !== undefined
-              ? ", QRD = (SELECT * FROM (SELECT QRD + " +
+              ? ", QRD = (SELECT * FROM (SELECT IFNULL(QRD,0) + " +
                 data.qrd +
                 " FROM COMMODITIES WHERE ACCOUNT_UUID = '" +
                 data.account_uuid +
@@ -965,7 +980,6 @@ const sql = {
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
-
       query(res, sql);
     },
   },
@@ -1042,6 +1056,7 @@ const sql = {
         WHERE 1=1
           AND _IS_DELETED = 0
           AND ACCOUNT_UUID = '${data.account_uuid}'
+          ${data.model !== undefined ? "AND MODEL = '" + data.model + "'" : ""}
       `;
       query(res, sql);
     },
@@ -1147,6 +1162,83 @@ const sql = {
           new Response(res, r.affectedRows).OK();
         }
       });
+    },
+  },
+  achievement: {
+    getRewardInfoJSON(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.achievement !== undefined) {
+        new Response(res, _ACHIEVEMENTS[data.achievement]).OK();
+      } else {
+        new Response(res, _ACHIEVEMENTS).OK();
+      }
+    },
+    async claimAchievementReward(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let achvmt = _ACHIEVEMENTS[data.name];
+
+      let arr = [];
+      arr.push(() =>
+        sql.commodities.addCommodities(
+          {
+            data: JSON.stringify({
+              account_uuid: data.account_uuid,
+              gold: achvmt["Gold"] !== undefined ? achvmt["Gold"] : undefined,
+              chip: achvmt["Chip"] !== undefined ? achvmt["Chip"] : undefined,
+              bolt: achvmt["Bolt"] !== undefined ? achvmt["Bolt"] : undefined,
+              ironplate:
+                achvmt["IronPlate"] !== undefined
+                  ? achvmt["IronPlate"]
+                  : undefined,
+              hitorium:
+                achvmt["Hitorium"] !== undefined
+                  ? achvmt["Hitorium"]
+                  : undefined,
+              electric_wire:
+                achvmt["ElectricWire"] !== undefined
+                  ? achvmt["ElectricWire"]
+                  : undefined,
+            }),
+          },
+          null
+        )
+      );
+      if (achvmt["SkillReward"] !== undefined) {
+        if (Array.isArray(achvmt["SkillReward"])) {
+          for (let skill of achvmt["SkillReward"]) {
+            arr.push(() =>
+              query(
+                null,
+                `
+              INSERT INTO
+                SKILLS (ACCOUNT_UUID, SKILL_NAME)
+              VALUES ('${data.account_uuid}','${skill}')
+            `
+              )
+            );
+          }
+        }
+      }
+
+      let flag = transaction(arr);
+      if (flag) new Response(res, { result: "success" }).OK();
+      else new Response(res, { result: "fail" }).internalServerError();
     },
   },
 };

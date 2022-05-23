@@ -53,7 +53,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/test", (req, res) => {
-  res.sendFile(__dirname + "/test.html");
+  db.sql.test();
 });
 app.get("/testdownload", (req, res) => {
   res.download(__dirname + "/test.html");
@@ -153,6 +153,14 @@ router.post("/set-blueprint", (req, res) => {
 
 router.post("/add-blueprint", (req, res) => {
   db.sql.blueprints.addBlueprint(req.body, res);
+});
+
+router.post("/get-reward-info-json", (req, res) => {
+  db.sql.achievement.getRewardInfoJSON(req.body, res);
+});
+
+router.post("/claim-achievement-reward", (req, res) => {
+  db.sql.achievement.claimAchievementReward(req.body, res);
 });
 
 //
