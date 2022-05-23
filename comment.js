@@ -104,6 +104,27 @@
  *
  */
 
+/* path:  http://3.35.210.188:52530/set-robot-record
+ *        |name                     |type         |desc
+ * input: | account_uuid            | string      | 계정UUID
+ *        | slot_num                | integer     | 슬롯번호
+ *        | sally_count             | integer     | 출전횟수(+=)
+ *        | destroy_count           | integer     | 적파괴횟수(+=)
+ *        | be_destroyed_count      | integer     | 피파괴횟수(+=)
+ *        | one_on_one_win_count    | integer     | 일대일승리횟수(+=)
+ *        | one_on_one_lose_count   | integer     | 일대일패배횟수(+=)
+ *        | total_win_count         | integer     | 총승리횟수(+=)
+ *        | total_lose_count        | integer     | 총패배횟수(+=)
+ *        | challenge_shortest_time | integer     | 챌린지최단돌파기록(=)
+ *        | challenge_high_round    | integer     | 챌린지최고라운드기록(=)
+ *        | destroy_count_challenge | integer     | 챌린지적파괴횟수(+=)
+ *        | 
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
+ * desc:  | (+=)는 기존값에 받은값 누적, (=)는 기존값을 받은값으로 덮어씀
+ *
+ */
+
 /* path:  http://3.35.210.188:52530/add-parts
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
