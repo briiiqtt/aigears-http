@@ -408,6 +408,119 @@ const sql = {
       `;
       query(res, sql);
     },
+    // setRobotRecord(argObj, res) {
+    //   let data = null;
+    //   try {
+    //     data = JSON.parse(argObj.data);
+    //   } catch (e) {
+    //     new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //     return false;
+    //   }
+    //   if (data.account_uuid === undefined || data.slot_num === undefined) {
+    //     new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    //     return false;
+    //   }
+    //   let sql = `
+    //     UPDATE
+    //       ROBOTS
+    //     SET
+    //       _UPDATED_AT = CURRENT_TIMESTAMP()
+    //       ${
+    //         data.sally_count !== undefined
+    //           ? ", SALLY_COUNT = (SELECT * FROM (SELECT IFNULL(SALLY_COUNT,0) + " +
+    //             data.sally_count +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.destroy_count !== undefined
+    //           ? ", DESTROY_COUNT = (SELECT * FROM (SELECT IFNULL(DESTROY_COUNT,0) + " +
+    //             data.destroy_count +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.be_destroyed_count !== undefined
+    //           ? ", BE_DESTROYED_COUNT = (SELECT * FROM (SELECT IFNULL(BE_DESTROYED_COUNT,0) + " +
+    //             data.be_destroyed_count +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.one_on_one_win_count !== undefined
+    //           ? ", ONE_ON_ONE_WIN_COUNT = (SELECT * FROM (SELECT IFNULL(ONE_ON_ONE_WIN_COUNT,0) + " +
+    //             data.one_on_one_win_count +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.one_on_one_lose_count !== undefined
+    //           ? ", ONE_ON_ONE_LOSE_COUNT = (SELECT * FROM (SELECT IFNULL(ONE_ON_ONE_LOSE_COUNT,0) + " +
+    //             data.one_on_one_lose_count +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.total_win_count !== undefined
+    //           ? ", TOTAL_WIN_COUNT = (SELECT * FROM (SELECT IFNULL(TOTAL_WIN_COUNT,0) + " +
+    //             data.total_win_count +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.total_lose_count !== undefined
+    //           ? ", TOTAL_LOSE_COUNT = (SELECT * FROM (SELECT IFNULL(TOTAL_LOSE_COUNT,0) + " +
+    //             data.total_lose_count +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.challenge_shortest_time !== undefined
+    //           ? ", CHALLENGE_SHORTEST_TIME = (SELECT * FROM (SELECT IFNULL(CHALLENGE_SHORTEST_TIME,0) + " +
+    //             data.challenge_shortest_time +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.challenge_high_round !== undefined
+    //           ? ", CHALLENGE_HIGH_ROUND = (SELECT * FROM (SELECT IFNULL(CHALLENGE_HIGH_ROUND,0) + " +
+    //             data.challenge_high_round +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //       ${
+    //         data.destroy_count_challenge !== undefined
+    //           ? ", DESTROY_COUNT_CHALLENGE = (SELECT * FROM (SELECT IFNULL(DESTROY_COUNT_CHALLENGE,0) + " +
+    //             data.destroy_count_challenge +
+    //             " FROM ROBOTS WHERE ACCOUNT_UUID = '" +
+    //             data.account_uuid +
+    //             "') as a)"
+    //           : ""
+    //       }
+    //     WHERE 1=1
+    //       AND ACCOUNT_UUID = '${data.account_uuid}'
+    //       AND SLOT_NUM = '${data.slot_num}'
+    //   `;
+    //   query(res, sql);
+    // },
   },
   parts: {
     addParts(argObj, res) {
@@ -841,6 +954,137 @@ const sql = {
           ACCOUNT_UUID = '${data.account_uuid}'
       `;
       query(res, sql);
+    },
+  },
+  blueprints: {
+    getBlueprint(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          ACCOUNT_UUID,
+          STOCK,
+          MODEL,
+          IS_MADE
+        FROM
+          BLUEPRINTS
+        WHERE 1=1
+          AND _IS_DELETED = 0
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+      `;
+      query(res, sql);
+    },
+    setBlueprint(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (
+        data.account_uuid === undefined ||
+        data.stock === undefined ||
+        data.model === undefined
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          BLUEPRINTS
+        SET
+          _UPDATED_AT = CURRENT_TIMESTAMP()
+          ${data.stock !== undefined ? ", STOCK = " + data.stock : ""}
+          ${data.is_made !== undefined ? ", IS_MADE = " + data.is_made : ""}
+        WHERE 1=1
+          AND _IS_DELETED = 0
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          AND MODEL = '${data.model}'
+      `;
+      query(null, sql).then((r) => {
+        if (r.affectedRows === 0) {
+          query(
+            res,
+            `
+            INSERT INTO
+              BLUEPRINTS(ACCOUNT_UUID, STOCK, MODEL)
+            VALUES(
+              '${data.account_uuid}',
+              '${data.stock}',
+              '${data.model}'
+            )
+          `
+          );
+        } else {
+          new Response(res, r.affectedRows).OK();
+        }
+      });
+    },
+    addBlueprint(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (
+        data.account_uuid === undefined ||
+        data.stock === undefined ||
+        data.model === undefined
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          BLUEPRINTS
+        SET
+          _UPDATED_AT = CURRENT_TIMESTAMP()
+          ${
+            data.stock !== undefined
+              ? ", STOCK = (SELECT * FROM (SELECT IFNULL(STOCK,0) + " +
+                data.stock +
+                " FROM BLUEPRINTS WHERE ACCOUNT_UUID = '" +
+                data.account_uuid +
+                "' AND MODEL = '" +
+                data.model +
+                "') as a)"
+              : ""
+          }
+        WHERE 1=1
+          AND _IS_DELETED = 0
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          AND MODEL = '${data.model}'
+      `;
+      query(null, sql).then((r) => {
+        if (r.affectedRows === 0) {
+          query(
+            res,
+            `
+            INSERT INTO
+              BLUEPRINTS(ACCOUNT_UUID, STOCK, MODEL)
+            VALUES(
+              '${data.account_uuid}',
+              '${data.stock}',
+              '${data.model}'
+              )
+            `
+          );
+        } else {
+          new Response(res, r.affectedRows).OK();
+        }
+      });
     },
   },
 };

@@ -249,6 +249,42 @@
  *
  */
 
+/* path:  http://3.35.210.188:52530/get-blueprint
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        |
+ * output:| account_uuid        | string      | 계정UUID
+ *        | stock               | int         | 보유량
+ *        | model               | string      | 종류
+ *        | is_made             | int         | 해금
+ * desc:  | 전달받은 계정UUID로 찾은 계정의 설계도 보유상태를 제공함
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/set-blueprint
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | stock               | int         | 보유량
+ *        | model               | string      | 종류
+ *        |
+ * output:| affectedRows        | integer     | 영향받은 건수
+ *        |
+ * desc:  | (계정UUID+설계도종류)의 보유량 stock값으로 설정함.
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/add-blueprint
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | stock               | int         | 보유량
+ *        | model               | string      | 종류
+ *        |
+ * output:| affectedRows        | integer     | 영향받은 건수
+ *        |
+ * desc:  | (계정UUID+설계도종류)의 보유량을 stock 값만큼 추가함.
+ *
+ */
+
 /* path:  http://3.35.210.188:52530/
  *        |name                 |type         |desc
  * input: |
