@@ -513,6 +513,76 @@ const sql = {
       `;
       query(res, sql);
     },
+    setProfileMain(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined || data.slot_num === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let flag = transaction(
+        `
+        UPDATE
+          ROBOTS
+        SET
+          PROFILE = 0
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          AND PROFILE = 1
+        `,
+        `
+        UPDATE
+          ROBOTS
+        SET
+          PROFILE = 1
+        WHERE 1=1
+            AND ACCOUNT_UUID = '${data.account_uuid}'
+            AND SLOT_NUM ='${data.slot_num}'
+        `
+      );
+      if (flag) new Response(res, { result: "success" }).OK();
+      else new Response(res, { result: "fail" }).internalServerError();
+    },
+    setProfileSub(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined || data.slot_num === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let flag = transaction(
+        `
+        UPDATE
+          ROBOTS
+        SET
+          PROFILE = 0
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          AND PROFILE = 2
+        `,
+        `
+        UPDATE
+          ROBOTS
+        SET
+          PROFILE = 2
+        WHERE 1=1
+            AND ACCOUNT_UUID = '${data.account_uuid}'
+            AND SLOT_NUM ='${data.slot_num}'
+        `
+      );
+      if (flag) new Response(res, { result: "success" }).OK();
+      else new Response(res, { result: "fail" }).internalServerError();
+    },
   },
   parts: {
     addParts(argObj, res) {

@@ -85,6 +85,28 @@
  *
  */
 
+/* path:  http://3.35.210.188:52530/set-profile-main
+ *        |name               |type         |desc
+ * input: | account_uuid      | string      | 계정UUID
+ *        | slot_num          | integer     | 슬롯번호
+ *        |
+ * output:| result            | string      | success / fail
+ *        |
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 해당 슬롯을 대표로봇으로 설정함
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/set-profile-sub
+ *        |name               |type         |desc
+ * input: | account_uuid      | string      | 계정UUID
+ *        | slot_num          | integer     | 슬롯번호
+ *        |
+ * output:| result            | string      | success / fail
+ *        |
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 해당 슬롯을 서브대표로봇으로 설정함
+ *
+ */
+
 /* path:  http://3.35.210.188:52530/set-robot
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
@@ -118,7 +140,7 @@
  *        | challenge_shortest_time | integer     | 챌린지최단돌파기록(=)
  *        | challenge_high_round    | integer     | 챌린지최고라운드기록(=)
  *        | destroy_count_challenge | integer     | 챌린지적파괴횟수(+=)
- *        | 
+ *        |
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | (+=)는 기존값에 받은값 누적, (=)는 기존값을 받은값으로 덮어씀
@@ -287,10 +309,12 @@
  * input: | account_uuid        | string      | 계정UUID
  *        | stock               | int         | 보유량
  *        | model               | string      | 종류
+ *        | is_made             | integer     | 0:해금X, 1:해금O
  *        |
  * output:| affectedRows        | integer     | 영향받은 건수
  *        |
- * desc:  | (계정UUID+설계도종류)의 보유량 stock값으로 설정함.
+ * desc:  | (계정UUID+설계도종류)의 보유량 stock값으로 설정하거나
+ *        | 설계도의 해금 여부를 설정한다.
  *
  */
 
