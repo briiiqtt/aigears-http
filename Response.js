@@ -20,7 +20,7 @@ const Response = class {
         "-" +
         (date.getMonth() + 1) +
         "-" +
-        date.getDay() +
+        date.getDate() +
         " " +
         date.getHours() +
         ":" +

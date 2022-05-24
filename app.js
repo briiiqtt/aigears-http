@@ -37,7 +37,7 @@ app.use((req, res, next) => {
       "-" +
       (date.getMonth() + 1) +
       "-" +
-      date.getDay() +
+      date.getDate() +
       " " +
       date.getHours() +
       ":" +
@@ -169,12 +169,12 @@ router.post("/achievement-attained", (req, res) => {
   db.sql.achievement.achievementAttained(req.body, res);
 });
 
-router.post("/claim-achievement-reward", (req, res) => {
-  db.sql.achievement.claimAchievementReward(req.body, res);
-});
-
 router.post("/get-achievement-progress-and-max-count", (req, res) => {
   db.sql.achievement.getAchievementProgressAndMaxCount(req.body, res);
+});
+
+router.post("/claim-achievement-reward", (req, res) => {
+  db.sql.achievement.claimAchievementReward(req.body, res);
 });
 
 //
