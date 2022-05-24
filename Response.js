@@ -14,8 +14,9 @@ const Response = class {
     this.res.json(resp);
     let date = new Date();
     console.log(
-      this.res.get("requestNum") + "\r\n",
-      date.getFullYear() +
+      this.res.get("requestNum") +
+        " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +
+        date.getFullYear() +
         "-" +
         (date.getMonth() + 1) +
         "-" +
@@ -28,8 +29,10 @@ const Response = class {
         date.getSeconds() +
         ":" +
         date.getMilliseconds() +
-        "\r\n",
-      ">>>>>>>>>> RESPONSE CODE: " + this.code + "\r\nmsg: " + this.message
+        "\r\n**RESPONSE CODE: " +
+        this.code +
+        "\r\n**msg: " +
+        this.message
       // resp
     );
   }

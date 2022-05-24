@@ -31,8 +31,9 @@ app.use((req, res, next) => {
   res.append("requestNum", requestNum);
   requestNum++;
   console.log(
-    res.get("requestNum") + "\r\n",
-    date.getFullYear() +
+    res.get("requestNum") +
+      " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" +
+      date.getFullYear() +
       "-" +
       (date.getMonth() + 1) +
       "-" +
@@ -45,8 +46,9 @@ app.use((req, res, next) => {
       date.getSeconds() +
       ":" +
       date.getMilliseconds() +
-      "\r\n",
-    "<<<<<<<<<< REQUEST: " + req.path + "\r\n",
+      "\r\n**REQUEST: " +
+      req.path +
+      "\r\n**body: ",
     req.body
   );
   next();

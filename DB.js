@@ -1254,7 +1254,7 @@ const sql = {
     achievementAttained(argObj, res) {
       let data = null;
       // try {
-        // data = JSON.parse(argObj.data);
+      // data = JSON.parse(argObj.data);
       // } catch (e) {
       //   new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
       //   return false;
@@ -1270,7 +1270,7 @@ const sql = {
       //     PROGRESS = IFNULL((),0)+${data.amount}
       //   WHERE 1=1
       //     AND ACCOUNT_UUID = '${data.account_uuid}
-      //     AND 
+      //     AND
       // `
     },
     async claimAchievementReward(argObj, res) {
