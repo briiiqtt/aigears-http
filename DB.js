@@ -982,7 +982,18 @@ const sql = {
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
-      query(res, sql);
+      query(null, sql).then((r) => {
+        if (r.affectedRows === 0) {
+          query(
+            null,
+            `
+          INSERT INTO COMMODITIES (ACCOUNT_UUID)
+          VALUES ('${data.account_uuid}')`
+          ).then(() => query(res, sql));
+        } else {
+          new Response(res, { affectedRows: r.affectedRows }).OK();
+        }
+      });
     },
   },
   skills: {
