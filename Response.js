@@ -29,7 +29,7 @@ const Response = class {
         ":" +
         date.getMilliseconds() +
         "\r\n",
-      ">>>>>>>>>> RESPONSE CODE:" + this.code
+      ">>>>>>>>>> RESPONSE CODE: " + this.code + "\r\nmsg: " + this.message
       // resp
     );
   }
