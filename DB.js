@@ -1,6 +1,7 @@
 const _CONN = require("./_CONNECTION");
 const _NAMESPACE = require("./_NAMESPACE.js");
 const _ACHIEVEMENTS = require("./AchievementReward.json");
+const _BLUEPRINT = require("./RequireBlueprintCount.json");
 const mysql = require("mysql");
 const conn = mysql.createConnection(_CONN);
 
@@ -528,7 +529,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    async setProfileMain(argObj, res) {
+    async setProfile(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -541,7 +542,10 @@ const sql = {
         return false;
       }
       let flag = await transaction([
-        `
+        () =>
+          query(
+            null,
+            `
         UPDATE
           ROBOTS
         SET
@@ -549,8 +553,12 @@ const sql = {
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
           AND PROFILE = 1
-        `,
         `
+          ),
+        () =>
+          query(
+            null,
+            `
         UPDATE
           ROBOTS
         SET
@@ -558,13 +566,14 @@ const sql = {
         WHERE 1=1
             AND ACCOUNT_UUID = '${data.account_uuid}'
             AND SLOT_NUM ='${data.slot_num}'
-        `,
+        `
+          ),
       ]);
       if (flag !== true)
         new Response(res, { result: "fail" }).internalServerError();
       else new Response(res, { result: "success" }).OK();
     },
-    async setProfileSub(argObj, res) {
+    getProfile(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -572,33 +581,19 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (data.account_uuid === undefined || data.slot_num === undefined) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let flag = await transaction([
-        `
-        UPDATE
+      let sql = `
+        SELECT
+          SLOT_NUM
+        FROM
           ROBOTS
-        SET
-          PROFILE = 0
         WHERE 1=1
-          AND ACCOUNT_UUID = '${data.account_uuid}'
-          AND PROFILE = 2
-        `,
-        `
-        UPDATE
-          ROBOTS
-        SET
-          PROFILE = 2
-        WHERE 1=1
-            AND ACCOUNT_UUID = '${data.account_uuid}'
-            AND SLOT_NUM ='${data.slot_num}'
-        `,
-      ]);
-      if (flag !== true)
-        new Response(res, { result: "fail" }).internalServerError();
-      else new Response(res, { result: "success" }).OK();
+          AND PROFILE = 1
+      `;
+      query(res, sql);
     },
   },
   parts: {
@@ -1175,6 +1170,23 @@ const sql = {
           new Response(res, r.affectedRows).OK();
         }
       });
+    },
+    isCollectedFully(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined || data.model === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          
+      `;
     },
   },
   achievement: {

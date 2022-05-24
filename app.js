@@ -95,12 +95,12 @@ router.post("/set-robot", (req, res) => {
   db.sql.robots.setRobot(req.body, res);
 });
 
-router.post("/set-profile-main", (req, res) => {
-  db.sql.robots.setProfileMain(req.body, res);
+router.post("/set-profile", (req, res) => {
+  db.sql.robots.setProfile(req.body, res);
 });
 
-router.post("/set-profile-sub", (req, res) => {
-  db.sql.robots.setProfileSub(req.body, res);
+router.post("/get-profile", (req, res) => {
+  db.sql.robots.getProfile(req.body, res);
 });
 
 router.post("/set-robot-record", (req, res) => {

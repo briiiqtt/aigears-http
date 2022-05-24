@@ -85,7 +85,7 @@
  *
  */
 
-/* path:  http://3.35.210.188:52530/set-profile-main
+/* path:  http://3.35.210.188:52530/set-profile
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호
@@ -96,14 +96,13 @@
  *
  */
 
-/* path:  http://3.35.210.188:52530/set-profile-sub
+/* path:  http://3.35.210.188:52530/get-profile
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
- *        | slot_num          | integer     | 슬롯번호
  *        |
- * output:| result            | string      | success / fail
+ * output:| slot_num          | integer     | 슬롯번호
  *        |
- * desc:  | 넘겨받은 UUID로 찾은 계정의 해당 슬롯을 서브대표로봇으로 설정함
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 대표로봇의 번호를 제공함
  *
  */
 
