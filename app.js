@@ -165,6 +165,10 @@ router.post("/get-reward-info-json", (req, res) => {
   db.sql.achievement.getRewardInfoJSON(req.body, res);
 });
 
+router.post("/achievement-attained", (req, res) => {
+  db.sql.achievement.achievementAttained(req.body, res);
+});
+
 router.post("/claim-achievement-reward", (req, res) => {
   db.sql.achievement.claimAchievementReward(req.body, res);
 });

@@ -353,6 +353,31 @@
  *
  */
 
+/* path:  http://3.35.210.188:52530/achievement-attained
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | name                | string      | 업적이름
+ *        | amount              | integer     | 증가량
+ *        |
+ * output:| affectedRows        | integer     | 영향받은 건수
+ *        |
+ * desc:  | 계정UUID로 찾은 계정의 업적진행을 증가량만큼 증가시킴.
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/get-achievement-progress-and-max-count
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | name                | string      | 업적이름
+ *        |
+ * output:| progress            | integer     | 진행단계
+ *        | max                 | integer     | 최대단계
+ *        |
+ * desc:  | 계정UUID로 찾은 계정의 업적 진행단계와 
+ *          해당업적의 최대단계를 제공함.
+ *
+ */
+
 /* path:  http://3.35.210.188:52530/claim-achievement-reward
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID

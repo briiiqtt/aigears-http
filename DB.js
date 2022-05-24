@@ -2,7 +2,7 @@ const _CONN = require("./_CONNECTION");
 const _NAMESPACE = require("./_NAMESPACE.js");
 const _ACHIEVEMENT_REWARD = require("./AchievementReward.json");
 const _BLUEPRINT = require("./RequireBlueprintCount.json");
-const _ACHIEVEMENT_COUNT = require("./RequireBlueprintCount.json");
+const _ACHIEVEMENT_COUNT = require("./AchievementAttainCount.json");
 const mysql = require("mysql");
 const conn = mysql.createConnection(_CONN);
 
@@ -1203,10 +1203,11 @@ const sql = {
           }
           return series.substring(0, series.indexOf("("));
         }
-        let model = r[0]["MODEL"];
+        let model = data.model;
         let series = seriesalize(model);
-        r[0].MAX = _BLUEPRINT[series];
-        new Response(res, r).OK();
+        let MAX = _BLUEPRINT[series];
+        let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
+        new Response(res, { STOCK, MAX }).OK();
       });
     },
   },
@@ -1225,6 +1226,46 @@ const sql = {
         new Response(res, _ACHIEVEMENT_REWARD).OK();
       }
     },
+    achievementAttained(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (
+        data.account_uuid === undefined ||
+        data.name === undefined ||
+        data.amount === undefined
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          ACHIEVEMENTS
+        SET
+          PROGRESS = (SELECT * FROM (SELECT IFNULL(PROGRESS,0) FROM ACHIEVEMENTS WHERE ACCOUNT_UUID = '${data.account_uuid}' AND NAME = '${data.name}') AS A)+${data.amount}
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          AND NAME = '${data.name}'
+      `;
+      query(null, sql).then((r) => {
+        if (r.affectedRows === 0) {
+          query(
+            null,
+            `
+            INSERT INTO
+              ACHIEVEMENTS(ACCOUNT_UUID, NAME, PROGRESS)
+            VALUES ('${data.account_uuid}','${data.name}',${data.amount})
+          `
+          ).then(() => query(res, sql));
+        } else {
+          new Response(res, { affectedRows: r.affectedRows }).OK();
+        }
+      });
+    },
     getAchievementProgressAndMaxCount(argObj, res) {
       let data = null;
       try {
@@ -1239,7 +1280,8 @@ const sql = {
       }
       let sql = `
         SELECT
-          PROGRESS
+          PROGRESS,
+          NAME
         FROM
           ACHIEVEMENTS
         WHERE 1=1
@@ -1247,31 +1289,9 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
       query(null, sql).then((r) => {
-        _ACHIEVEMENT_COUNT[data.name];
+        r[0].MAX = _ACHIEVEMENT_COUNT[data.name];
         new Response(res, r).OK();
       });
-    },
-    achievementAttained(argObj, res) {
-      let data = null;
-      // try {
-      // data = JSON.parse(argObj.data);
-      // } catch (e) {
-      //   new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-      //   return false;
-      // }
-      // if (data.account_uuid === undefined || data.name === undefined) {
-      //   new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-      //   return false;
-      // }
-      // let sql = `
-      //   UPDATE
-      //     ACHIEVEMENTS
-      //   SET
-      //     PROGRESS = IFNULL((),0)+${data.amount}
-      //   WHERE 1=1
-      //     AND ACCOUNT_UUID = '${data.account_uuid}
-      //     AND
-      // `
     },
     async claimAchievementReward(argObj, res) {
       let data = null;
