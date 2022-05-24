@@ -155,12 +155,20 @@ router.post("/add-blueprint", (req, res) => {
   db.sql.blueprints.addBlueprint(req.body, res);
 });
 
+router.post("/get-current-and-max-blueprint-count", (req, res) => {
+  db.sql.blueprints.getCurrentAndMaxBlueprintCount(req.body, res);
+});
+
 router.post("/get-reward-info-json", (req, res) => {
   db.sql.achievement.getRewardInfoJSON(req.body, res);
 });
 
 router.post("/claim-achievement-reward", (req, res) => {
   db.sql.achievement.claimAchievementReward(req.body, res);
+});
+
+router.post("/get-achievement-progress-and-max-count", (req, res) => {
+  db.sql.achievement.getAchievementProgressAndMaxCount(req.body, res);
 });
 
 //

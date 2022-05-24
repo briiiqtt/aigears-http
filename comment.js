@@ -330,6 +330,18 @@
  *
  */
 
+/* path:  http://3.35.210.188:52530/get-current-and-max-blueprint-count
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | model               | string      | 종류
+ *        |
+ * output:| stock               | integer     | 현재보유량
+ *        | max                 | integer     | 최대보유량
+ *        |
+ * desc:  | (계정UUID+설계도종류)의 보유량과 해당 설계도의 최대보유량을 제공함
+ *
+ */
+
 /* path:  http://3.35.210.188:52530/get-reward-info-json
  *        |name                 |type         |desc
  * input: | name                | string      | 업적이름    |선택적

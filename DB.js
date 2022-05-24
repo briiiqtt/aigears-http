@@ -1,7 +1,8 @@
 const _CONN = require("./_CONNECTION");
 const _NAMESPACE = require("./_NAMESPACE.js");
-const _ACHIEVEMENTS = require("./AchievementReward.json");
+const _ACHIEVEMENT_REWARD = require("./AchievementReward.json");
 const _BLUEPRINT = require("./RequireBlueprintCount.json");
+const _ACHIEVEMENT_COUNT = require("./RequireBlueprintCount.json");
 const mysql = require("mysql");
 const conn = mysql.createConnection(_CONN);
 
@@ -1171,7 +1172,7 @@ const sql = {
         }
       });
     },
-    isCollectedFully(argObj, res) {
+    getCurrentAndMaxBlueprintCount(argObj, res) {
       let data = null;
       try {
         data = JSON.parse(argObj.data);
@@ -1185,8 +1186,28 @@ const sql = {
       }
       let sql = `
         SELECT
-          
+          MODEL,
+          STOCK
+        FROM
+          BLUEPRINTS
+        WHERE 1=1
+          AND _IS_DELETED = 0
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          AND MODEL = '${data.model}'
       `;
+      query(null, sql).then((r) => {
+        function seriesalize(str) {
+          let series = "";
+          for (let s of str.split("-")) {
+            series += s;
+          }
+          return series.substring(0, series.indexOf("("));
+        }
+        let model = r[0]["MODEL"];
+        let series = seriesalize(model);
+        r[0].MAX = _BLUEPRINT[series];
+        new Response(res, r).OK();
+      });
     },
   },
   achievement: {
@@ -1199,10 +1220,58 @@ const sql = {
         return false;
       }
       if (data.name !== undefined) {
-        new Response(res, _ACHIEVEMENTS[data.name]).OK();
+        new Response(res, _ACHIEVEMENT_REWARD[data.name]).OK();
       } else {
-        new Response(res, _ACHIEVEMENTS).OK();
+        new Response(res, _ACHIEVEMENT_REWARD).OK();
       }
+    },
+    getAchievementProgressAndMaxCount(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined || data.name === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          PROGRESS
+        FROM
+          ACHIEVEMENTS
+        WHERE 1=1
+          AND NAME = '${data.name}'
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+      `;
+      query(null, sql).then((r) => {
+        _ACHIEVEMENT_COUNT[data.name];
+        new Response(res, r).OK();
+      });
+    },
+    achievementAttained(argObj, res) {
+      let data = null;
+      // try {
+        // data = JSON.parse(argObj.data);
+      // } catch (e) {
+      //   new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+      //   return false;
+      // }
+      // if (data.account_uuid === undefined || data.name === undefined) {
+      //   new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+      //   return false;
+      // }
+      // let sql = `
+      //   UPDATE
+      //     ACHIEVEMENTS
+      //   SET
+      //     PROGRESS = IFNULL((),0)+${data.amount}
+      //   WHERE 1=1
+      //     AND ACCOUNT_UUID = '${data.account_uuid}
+      //     AND 
+      // `
     },
     async claimAchievementReward(argObj, res) {
       let data = null;
@@ -1216,7 +1285,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let reward = _ACHIEVEMENTS[data.name];
+      let reward = _ACHIEVEMENT_REWARD[data.name];
       if (reward === undefined) {
         new Response(res).badRequest("해당 업적에 대한 정보 없음");
         return false;
