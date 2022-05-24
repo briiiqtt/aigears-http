@@ -29,8 +29,7 @@ const Response = class {
         ":" +
         date.getMilliseconds() +
         "\r\n",
-      ">>>>>>>>>> RESPONSE:\r\n",
-      this.code
+      ">>>>>>>>>> RESPONSE CODE:" + this.code
       // resp
     );
   }
