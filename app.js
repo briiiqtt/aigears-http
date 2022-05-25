@@ -177,6 +177,14 @@ router.post("/claim-achievement-reward", (req, res) => {
   db.sql.achievement.claimAchievementReward(req.body, res);
 });
 
+router.post("/save-game-result", (req, res) => {
+  db.sql.gameResults.saveGameResult(req.body, res);
+});
+
+router.post("/get-ranking", (req, res) => {
+  db.sql.gameResults.getRanking(req.body, res);
+});
+
 //
 //
 

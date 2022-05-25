@@ -373,7 +373,7 @@
  * output:| progress            | integer     | 진행단계
  *        | max                 | integer     | 최대단계
  *        |
- * desc:  | 계정UUID로 찾은 계정의 업적 진행단계와 
+ * desc:  | 계정UUID로 찾은 계정의 업적 진행단계와
  *          해당업적의 최대단계를 제공함.
  *
  */
@@ -386,6 +386,40 @@
  * output:| result              | string      | success / fail
  *        |
  * desc:  | 전달한 이름의 업적의 완료보상을 전달한 계정UUID에게 지급함.
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/save-game-result
+ *        |name                 |type         |desc
+ * input: | gubun               | integer     | ex)0:리그, 1:챌린지 ~~..
+ *        | season              | integer     | 시즌
+ *        | highest_round       | integer     | 최고라운드 | 선택적
+ *        | player1             | string      | 플레이어1 계정UUID
+ *        | player2             | string      | 플레이어2 계정UUID | 선택적
+ *        | winner              | string      | 승자 계정UUID | 선택적
+ *        | play_time           | integer     | 플레이타임(초)
+ *        |
+ * output:| affectedRows        | integer     | 영향받은 건수
+ *        |
+ * desc:  | 게임 결과를 저장함.
+ *
+ */
+
+/* path:  http://3.35.210.188:52530/get-ranking
+ *        |name                 |type         |desc
+ * input: | gubun               | integer     | 구분 | 선택적
+ *        | season              | integer     | 시즌 | 선택적
+ *        | rank_high           | integer     | 높은 등수 | 선택적
+ *        | rank_low            | integer     | 낮은 등수 | 선택적
+ *        |
+ * output:| rank                | integer     | 등수
+ *        | icon                | string      | 아이콘
+ *        | team                | string      | 팀명
+ *        | highest_round       | integer     | 최고라운드
+ *        | play_time           | integer     | 플레이타임(초)
+ *        |
+ * desc:  | 랭킹을 제공함.
+ *        | 구분 / 시즌 / 높은등수 / 낮은 등수로 필터링가능.
  *
  */
 

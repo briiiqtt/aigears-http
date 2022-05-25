@@ -9,10 +9,10 @@ const conn = mysql.createConnection(_CONN);
 const Response = require("./Response");
 
 const selectSingle = function (res, sql) {
+  //deprecated
   return new Promise((resolve, reject) => {
     if (!sql.includes("SELECT")) {
-      //FIXME: 이러면안된다
-      reject("단일행 SELECT 전용임");
+      reject();
       return false;
     }
     conn.query(sql, (err, result, fields) => {
@@ -1385,6 +1385,93 @@ const sql = {
       else if (flag !== true)
         new Response(res, { result: "fail" }).internalServerError();
       else if (flag === true) new Response(res, { result: "success" }).OK();
+    },
+  },
+  gameResults: {
+    saveGameResult(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (
+        data.gubun === undefined ||
+        data.season === undefined ||
+        data.player1 === undefined ||
+        data.play_time === undefined
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        INSERT INTO
+          GAME_RESULTS(
+            IDX,
+            GUBUN,
+            SEASON,
+            ${data.highest_round !== undefined ? "HIGHEST_ROUND," : ""}
+            PLAYER1,
+            ${data.player2 !== undefined ? "PLAYER2," : ""}
+            ${data.winner !== undefined ? "WINNER," : ""}
+            PLAY_TIME
+          )
+          VALUES(
+            (SELECT*FROM (SELECT NEXTVAL('SEQ_GAME_RESULT') FROM DUAL)AS A),
+            '${data.gubun}',
+            '${data.season}',
+            ${
+              data.highest_round !== undefined ? `'${data.highest_round}',` : ""
+            }
+            '${data.player1}',
+            ${data.player2 !== undefined ? `'${data.player2}',` : ""}
+            ${data.winner !== undefined ? `'${data.winner}',` : ""}
+            '${data.play_time}'
+          )
+      `;
+      query(res, sql);
+    },
+    getRanking(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT * FROM(
+          SELECT @ROWNUM:=@ROWNUM+1 "RANK", A.* FROM(
+            SELECT
+              AC.ICON, AC.TEAM, GR.HIGHEST_ROUND, GR.PLAY_TIME
+            FROM
+              GAME_RESULTS GR
+            JOIN
+              ACCOUNTS AC
+            ON
+              GR.PLAYER1 = AC.ACCOUNT_UUID,
+              (SELECT @ROWNUM:=0) AS ROWNUM
+            WHERE 1=1
+              AND GR._IS_DELETED = 0
+              ${data.gubun !== undefined ? `AND GR.GUBUN = ${data.gubun}` : ""}
+              ${
+                data.season !== undefined
+                  ? `AND GR.SEASON = ${data.season}`
+                  : ""
+              }
+            ORDER BY
+              HIGHEST_ROUND DESC,
+              PLAY_TIME ASC) AS A)AS A
+        WHERE 1=1
+          ${
+            data.rank_high !== undefined
+              ? `AND A.RANK >= ${data.rank_high}`
+              : ""
+          }
+          ${data.rank_low !== undefined ? `AND A.RANK <= ${data.rank_low}` : ""}
+      `;
+      query(res, sql);
     },
   },
 };
