@@ -1212,8 +1212,17 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
       query(null, sql).then((r) => {
-        r[0].MAX = _ACHIEVEMENT_COUNT[data.name];
-        new Response(res, r).OK();
+        if (r.length === 0) {
+          r.push({
+            PROGRESS: 0,
+            NAME: data.name,
+            MAX: _ACHIEVEMENT_COUNT[data.name],
+          });
+          new Response(res, r).OK();
+        } else {
+          r[0].MAX = _ACHIEVEMENT_COUNT[data.name];
+          new Response(res, r).OK();
+        }
       });
     },
     async claimAchievementReward(argObj, res) {
