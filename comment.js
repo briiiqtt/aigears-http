@@ -209,6 +209,19 @@
  *
  */
 
+/* path:  http://3.35.210.188:52530/delete-parts
+ *        |name               |type         |desc
+ * input: | parts_uuid        | string      | 부품UUID      |
+ *        | account_uuid      | string      | 계정UUID      |
+ *        | slot_using_this   | integer     | 해당부품을 사용하고 있는 슬롯
+ *        | gubun             | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어 | 선택적
+ *        |
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
+ * desc:  | 부품UUID 또는 (계정UUID+슬롯번호+구분번호) 로 찾은 부품을 삭제함
+ *
+ */
+
 /* path:  http://3.35.210.188:52530/get-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID

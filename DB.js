@@ -593,6 +593,7 @@ const sql = {
           ROBOTS
         WHERE 1=1
           AND PROFILE = 1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
       query(res, sql);
     },
