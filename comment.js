@@ -72,7 +72,6 @@
  *        | parts_uuid_core   | string      | 코어UUID
  *        |
  * desc:  |
- *
  */
 
 /* path:  http://3.35.210.188:52530/add-robot
@@ -82,7 +81,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 넘겨받은 UUID로 찾은 계정의 행거에 슬롯을 1칸 추가함.
- *
  */
 
 /* path:  http://3.35.210.188:52530/set-profile
@@ -93,7 +91,6 @@
  * output:| result            | string      | success / fail
  *        |
  * desc:  | 넘겨받은 UUID로 찾은 계정의 해당 슬롯을 대표로봇으로 설정함
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-profile
@@ -103,7 +100,6 @@
  * output:| slot_num          | integer     | 슬롯번호
  *        |
  * desc:  | 넘겨받은 UUID로 찾은 계정의 대표로봇의 번호를 제공함
- *
  */
 
 /* path:  http://3.35.210.188:52530/set-robot
@@ -122,7 +118,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 넘겨받은 UUID로 찾은 계정의 특정 슬롯의 정보를 바꿈.
- *
  */
 
 /* path:  http://3.35.210.188:52530/set-robot-record
@@ -143,7 +138,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | (+=)는 기존값에 받은값 누적, (=)는 기존값을 받은값으로 덮어씀
- *
  */
 
 /* path:  http://3.35.210.188:52530/add-parts
@@ -159,7 +153,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 넘겨받은 계정UUID에 귀속된 부품정보를 저장함
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-parts
@@ -206,7 +199,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | (부품UUID + 계정UUID) 또는 (계정UUID+슬롯번호(+구분번호)) 로 찾은 부품의 정보를 수정함.
- *
  */
 
 /* path:  http://3.35.210.188:52530/delete-parts
@@ -219,7 +211,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 부품UUID 또는 (계정UUID+슬롯번호+구분번호) 로 찾은 부품을 삭제함
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-commodities
@@ -235,18 +226,6 @@
  *        | qrd               | string     | 큐리덤
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화상태를 제공함.
- *
- */
-
-/* path:  http://3.35.210.188:52530/init-commodities
- *        |name               |type         |desc
- * input: | account_uuid      | string      | 계정UUID
- *        |
- * output:| affectedRows      | integer     | 영향받은 건수
- *        |
- * desc:  | 전달받은 계정UUID로 찾은 계정의 재화상태를 초기화함.
- *        | ex)회원가입시.
- *
  */
 
 /* path:  http://3.35.210.188:52530/set-commodities
@@ -263,7 +242,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화상태를 변경함
- *
  */
 
 /* path:  http://3.35.210.188:52530/add-commodities
@@ -280,7 +258,6 @@
  * output:| affectedRows      | integer     | 영향받은 건수
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화에 입력값을 누적함
- *
  */
 
 /* path:  http://3.35.210.188:52530/add-skill
@@ -291,7 +268,6 @@
  * output:| affectedRows        | integer     | 영향받은 건수
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정에 보유스킬을 추가함
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-skill
@@ -301,7 +277,6 @@
  * output:| skill_name          | string      | 스킬명
  *        |
  * desc:  | 전달받은 계정UUID로 찾은 계정이 보유하고 있는 스킬목록을 제공함
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-blueprint
@@ -314,7 +289,6 @@
  *        | model               | string      | 종류
  *        | is_made             | int         | 해금
  * desc:  | 전달받은 계정UUID로 찾은 계정의 설계도 보유상태를 제공함
- *
  */
 
 /* path:  http://3.35.210.188:52530/set-blueprint
@@ -328,7 +302,6 @@
  *        |
  * desc:  | (계정UUID+설계도종류)의 보유량 stock값으로 설정하거나
  *        | 설계도의 해금 여부를 설정한다.
- *
  */
 
 /* path:  http://3.35.210.188:52530/add-blueprint
@@ -340,7 +313,6 @@
  * output:| affectedRows        | integer     | 영향받은 건수
  *        |
  * desc:  | (계정UUID+설계도종류)의 보유량을 stock 값만큼 추가함.
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-current-and-max-blueprint-count
@@ -352,7 +324,6 @@
  *        | max                 | integer     | 최대보유량
  *        |
  * desc:  | (계정UUID+설계도종류)의 보유량과 해당 설계도의 최대보유량을 제공함
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-reward-info-json
@@ -363,7 +334,6 @@
  *        |
  * desc:  | (모든 업적 또는 전달한 이름의 업적)
  *                       의 완료시 보상에 대한 정보를 제공함.
- *
  */
 
 /* path:  http://3.35.210.188:52530/achievement-attained
@@ -375,7 +345,6 @@
  * output:| affectedRows        | integer     | 영향받은 건수
  *        |
  * desc:  | 계정UUID로 찾은 계정의 업적진행을 증가량만큼 증가시킴.
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-achievement-progress-and-max-count
@@ -388,7 +357,6 @@
  *        |
  * desc:  | 계정UUID로 찾은 계정의 업적 진행단계와
  *          해당업적의 최대단계를 제공함.
- *
  */
 
 /* path:  http://3.35.210.188:52530/claim-achievement-reward
@@ -399,7 +367,6 @@
  * output:| result              | string      | success / fail
  *        |
  * desc:  | 전달한 이름의 업적의 완료보상을 전달한 계정UUID에게 지급함.
- *
  */
 
 /* path:  http://3.35.210.188:52530/save-game-result
@@ -415,7 +382,6 @@
  * output:| affectedRows        | integer     | 영향받은 건수
  *        |
  * desc:  | 게임 결과를 저장함.
- *
  */
 
 /* path:  http://3.35.210.188:52530/get-ranking
@@ -433,7 +399,6 @@
  *        |
  * desc:  | 랭킹을 제공함.
  *        | 구분 / 시즌 / 높은등수 / 낮은 등수로 필터링가능.
- *
  */
 
 /* path:  http://3.35.210.188:52530/
@@ -443,5 +408,4 @@
  * output:|
  *        |
  * desc:  |
- *
  */

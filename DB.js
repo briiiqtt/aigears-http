@@ -83,49 +83,6 @@ const transaction = async function (sqls) {
 };
 
 const sql = {
-  async test() {
-    if (
-      (await transaction([
-        () =>
-          query(
-            null,
-            `INSERT INTO
-        ACCOUNTS(
-          ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
-        )
-        VALUES(
-          '123', '123', '123', '123'
-        )`
-          ),
-        () =>
-          query(
-            null,
-            `INSERT INTO
-        ACCOUNTS(
-          ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
-        )
-        VALUES(
-          '456', '456', '456', '456'
-        )`
-          ),
-        () =>
-          query(
-            null,
-            `INSERT INTO
-        ACCOUNTS(
-          ACCOUNT_UUID, EMAIL, PASSWORD, TEAM
-        )
-        VALUES(
-          '789', '789', '789', '789'
-        )`
-          ),
-      ])) === true
-    ) {
-      console.log(true);
-    } else {
-      console.log(false);
-    }
-  },
   accounts: {
     getAccount(argObj, res) {
       let data = null;
@@ -208,31 +165,6 @@ const sql = {
       `;
       query(res, sql);
     },
-    // uuid: {
-    //   select(argObj, res) {
-    //     let data = null;
-    //     try {
-    //       data = JSON.parse(argObj.data);
-    //     } catch (e) {
-    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    //       return false;
-    //     }
-    //     if (!data.email) {
-    //       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    //       return false;
-    //     }
-    //     let sql = `
-    //     SELECT
-    //       ACCOUNT_UUID
-    //     FROM
-    //       ACCOUNTS
-    //     WHERE 1=1
-    //       AND _IS_DELETED = 0
-    //       AND EMAIL = '${data.email}'
-    //     `;
-    //     selectSingle(res, sql);
-    //   },
-    // },
     isPWCorrect(argObj, res) {
       let data = null;
       try {
@@ -272,31 +204,6 @@ const sql = {
         }
       });
     },
-    // setPassword(argObj, res) {
-    //   let data = null;
-    //   try {
-    //     data = JSON.parse(argObj.data);
-    //   } catch (e) {
-    //     new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    //     return false;
-    //   }
-    //   if (!(data.account_uuid && data.password)) {
-    //     new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    //     return false;
-    //   }
-    //   let sql = `
-    //     UPDATE
-    //       ACCOUNTS
-    //     SET
-    //       PASSWORD = ${data.password},
-    //       _UPDATED_AT = NOW()
-    //     WHERE
-    //       1=1
-    //       AND _IS_DELETED = 0
-    //       AND ACCOUNT_UUID = ${data.account_uuid}
-    //   `;
-    //   query(res, sql);
-    // },
     team: {
       setTeam(argObj, res) {
         let data = null;
@@ -862,34 +769,6 @@ const sql = {
           COMMODITIES
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
-      `;
-      query(res, sql);
-    },
-    initCommodities(argObj, res) {
-      let data = null;
-      try {
-        data = JSON.parse(argObj.data);
-      } catch (e) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      if (data.account_uuid === undefined) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      let sql = `
-        INSERT INTO
-          COMMODITIES(
-            ACCOUNT_UUID,
-            GOLD,
-            CHIP,
-            BOLT,
-            IRONPLATE,
-            HITORIUM,
-            ELECTRIC_WIRE,
-            QRD
-          )
-          VALUES('${data.account_uuid}', 0, 0, 0, 0, 0, 0, 0)
       `;
       query(res, sql);
     },
