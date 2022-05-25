@@ -13,28 +13,29 @@ const Response = class {
     };
     this.res.json(resp);
     let date = new Date();
-    console.log(
-      this.res.get("requestNum") +
-        " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" +
-        date.getFullYear() +
-        "-" +
-        (date.getMonth() + 1) +
-        "-" +
-        date.getDate() +
-        " " +
-        date.getHours() +
-        ":" +
-        date.getMinutes() +
-        ":" +
-        date.getSeconds() +
-        ":" +
-        date.getMilliseconds() +
-        "\r\n**RESPONSE CODE: " +
-        this.code +
-        ", msg: " +
-        this.message
-      // resp
-    );
+    if (this.code !== 0)
+      console.log(
+        "\r\n\r\n\r\n\r\n\r\n\r\nresponse " +
+          this.res.get("requestNum") +
+          "  |  " +
+          date.getFullYear() +
+          "-" +
+          (date.getMonth() + 1) +
+          "-" +
+          date.getDate() +
+          " " +
+          date.getHours() +
+          ":" +
+          date.getMinutes() +
+          ":" +
+          date.getSeconds() +
+          ":" +
+          date.getMilliseconds() +
+          "  |  code: " +
+          this.code +
+          "  |  msg: " +
+          this.message
+      );
   }
   OK(msg) {
     // this.res.status(200);
