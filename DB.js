@@ -672,6 +672,7 @@ const sql = {
         FROM
           PARTS
         WHERE 1=1
+          AND _IS_DELETED = 0
           ${
             data.parts_uuid !== undefined
               ? "AND PARTS_UUID = '" + data.parts_uuid + "'"
@@ -788,6 +789,48 @@ const sql = {
               : ""
           }
           ${data.gubun !== undefined ? "AND GUBUN = " + data.gubun : ""}
+      `;
+      query(res, sql);
+    },
+    deleteParts(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (
+        (data.account_uuid === undefined ||
+          data.slot_using_this === undefined ||
+          data.gubun === undefined) &&
+        data.parts_uuid === undefined
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          PARTS
+        SET
+          _IS_DELETED = 1
+        WHERE 1=1
+          ${
+            data.parts_uuid !== undefined
+              ? `AND PARTS_UUID = '${data.parts_uuid}'`
+              : ""
+          }
+          ${
+            data.account_uuid !== undefined
+              ? `AND ACCOUNT_UUID = '${data.account_uuid}'`
+              : ""
+          }
+          ${
+            data.slot_using_this !== undefined
+              ? `AND SLOT_USING_THIS = '${data.slot_using_this}'`
+              : ""
+          }
+          ${data.gubun !== undefined ? `AND GUBUN = '${data.gubun}'` : ""}
       `;
       query(res, sql);
     },

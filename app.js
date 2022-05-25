@@ -121,6 +121,10 @@ router.post("/set-parts", (req, res) => {
   db.sql.parts.setParts(req.body, res);
 });
 
+router.post("/delete-parts", (req, res) => {
+  db.sql.parts.deleteParts(req.body, res);
+});
+
 router.post("/get-commodities", (req, res) => {
   db.sql.commodities.getCommodities(req.body, res);
 });
