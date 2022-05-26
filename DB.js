@@ -1396,7 +1396,7 @@ const sql = {
             PLAY_TIME
           )
           VALUES(
-            (SELECT*FROM (nextval('seq_game_result') FROM DUAL)AS A),
+            (SELECT*FROM (SELECT nextval('seq_game_result') FROM DUAL)AS A),
             '${data.gubun}',
             '${data.season}',
             ${
