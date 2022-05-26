@@ -13,6 +13,15 @@
  * desc:    | 넘겨받은 UUID로 찾은 계정의 모든 정보를 제공함.
  */
 
+/* path:	http://3.35.210.188:52530/set-facility-phase
+ *          |name             |type      |desc
+ * input:   | account_uuid    | string   | 계정UUID
+ *          |
+ * output:  | facillity_phase | integer  | 시설개선단계
+ *          |
+ * desc:    | 넘겨받은 UUID로 찾은 계정의 시설개선단계를 설정함.
+ */
+
 /* path:	http://3.35.210.188:52530/add-account
  *          |name           |type     |desc
  * input:   | account_uuid  | string  | 계정UUID

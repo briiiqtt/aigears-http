@@ -17,7 +17,7 @@ const selectSingle = function (res, sql) {
     }
     conn.query(sql, (err, result, fields) => {
       if (err) {
-        console.err(_NAMESPACE.ERR, err);
+        console.error(_NAMESPACE.ERR, err);
       } else if (!(result.length in [0, 1])) {
         new Response(res).internalServerError();
       } else {
@@ -113,6 +113,31 @@ const sql = {
           )
       `;
       selectSingle(res, sql);
+    },
+    setFacilityPhase(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (
+        data.account_uuid === undefined &&
+        data.facility_phase === undefined
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        UPDATE
+          ACCOUNTS
+        SET
+          FACILITY_PHASE = '${data.facility_phase}'
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+      `;
+      query(res, sql);
     },
     addAccount(argObj, res) {
       let data = null;

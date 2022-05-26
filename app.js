@@ -70,6 +70,10 @@ router.post("/get-account", (req, res) => {
   db.sql.accounts.getAccount(req.body, res);
 });
 
+router.post("/set-facility-phase", (req, res) => {
+  db.sql.accounts.setFacilityPhase(req.body, res);
+});
+
 router.post("/add-account", (req, res) => {
   db.sql.accounts.addAccount(req.body, res);
 });
