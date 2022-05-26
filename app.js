@@ -190,6 +190,10 @@ router.post("/get-ranking", (req, res) => {
   db.sql.gameResults.getRanking(req.body, res);
 });
 
+router.post("/enhancement-succeed", (req, res) => {
+  db.sql.enhancementSucceed(req.body, res);
+});
+
 //
 //
 

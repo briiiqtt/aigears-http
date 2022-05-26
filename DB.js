@@ -102,7 +102,7 @@ const sql = {
       }
       let sql = `
       SELECT
-        ACCOUNT_UUID, EMAIL, PASSWORD, AUTH, TEAM, ICON
+        ACCOUNT_UUID, EMAIL, PASSWORD, AUTH, TEAM, ICON, FACILITY_PHASE
       FROM
         ACCOUNTS
       WHERE 1=1
@@ -744,6 +744,25 @@ const sql = {
     },
   },
   commodities: {
+    initCommodities(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        INSERT INTO
+          COMMODITIES(ACCOUNT_UUID)
+          VALUES('${data.account_uuid}')
+      `;
+      query(res, sql);
+    },
     getCommodities(argObj, res) {
       let data = null;
       try {
@@ -1407,6 +1426,61 @@ const sql = {
       `;
       query(res, sql);
     },
+  },
+  enhancementSucceed(argObj, res) {
+    let data = null;
+    try {
+      data = JSON.parse(argObj.data);
+    } catch (e) {
+      new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+      return false;
+    }
+    if (
+      (data.account_uuid === undefined ||
+        data.slot_using_this === undefined ||
+        data.gubun === undefined) &&
+      data.parts_uuid === undefined
+    ) {
+      new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+      return false;
+    }
+    let flag = transaction([
+      () =>
+        query(
+          null,
+          `
+          UPDATE
+            PARTS
+          SET
+            ENHANCEMENT = ENHANCEMENT + 1
+          WHERE 1=1
+            ${
+              data.account_uuid !== undefined
+                ? `AND ACCOUNT_UUID = '${data.account_uuid}'`
+                : ""
+            }
+            ${data.gubun !== undefined ? `AND GUBUN = '${data.gubun}'` : ""}
+            ${
+              data.slot_using_this !== undefined
+                ? `AND SLOT_USING_THIS = '${data.slot_using_this}'`
+                : ""
+            }
+            ${
+              data.parts_uuid !== undefined
+                ? `AND PARTS_UUID = '${data.parts_uuid}'`
+                : ""
+            }
+            
+    `
+        ),
+      () => sql.commodities.addCommodities(argObj, null),
+    ]);
+
+    if (flag === true) {
+      new Response(res, { result: "success" }).OK();
+    } else {
+      new Response(res, { result: "fail" }).OK();
+    }
   },
 };
 

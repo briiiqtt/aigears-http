@@ -213,6 +213,15 @@
  * desc:  | 부품UUID 또는 (계정UUID+슬롯번호+구분번호) 로 찾은 부품을 삭제함
  */
 
+/* path:  http://3.35.210.188:52530/init-commodities
+ *        |name               |type         |desc
+ * input: | account_uuid      | string      | 계정UUID
+ *        |
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
+ * desc:  | 재화 초기값을 설정함
+ */
+
 /* path:  http://3.35.210.188:52530/get-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
@@ -354,6 +363,7 @@
  *        |
  * output:| progress            | integer     | 진행단계
  *        | max                 | integer     | 최대단계
+ *        | got_reward          | integer     | 0:false 1:true
  *        |
  * desc:  | 계정UUID로 찾은 계정의 업적 진행단계와
  *          해당업적의 최대단계를 제공함.
