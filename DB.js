@@ -758,13 +758,13 @@ const sql = {
       }
       let sql = `
         SELECT
-          GOLD,
-          CHIP,
-          BOLT,
-          IRONPLATE,
-          HITORIUM,
-          ELECTRIC_WIRE,
-          QRD
+          IFNULL(GOLD,0) "GOLD",
+          IFNULL(CHIP,0) "CHIP",
+          IFNULL(BOLT,0) "BOLT",
+          IFNULL(IRONPLATE,0) "IRONPLATE",
+          IFNULL(HITORIUM,0) "HITORIUM",
+          IFNULL(ELECTRIC_WIRE,0) "ELECTRIC_WIRE",
+          IFNULL(QRD,0) "QRD"
         FROM
           COMMODITIES
         WHERE 1=1
@@ -1204,7 +1204,8 @@ const sql = {
       let sql = `
         SELECT
           PROGRESS,
-          NAME
+          NAME,
+          IFNULL(GOT_REWARD, 0) "GOT_REWARD"
         FROM
           ACHIEVEMENTS
         WHERE 1=1
@@ -1217,6 +1218,7 @@ const sql = {
             PROGRESS: 0,
             NAME: data.name,
             MAX: _ACHIEVEMENT_COUNT[data.name],
+            GOT_REWARD: 0,
           });
           new Response(res, r).OK();
         } else {
