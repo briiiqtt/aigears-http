@@ -1507,6 +1507,52 @@ const sql = {
       new Response(res, { result: "fail" }).OK();
     }
   },
+  facilities: {
+    unlockFacility(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (
+        data.account_uuid === undefined ||
+        data.facility_name === undefined
+      ) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        INSERT INTO
+          FACILITIES (ACCOUNT_UUID, UNLOCKED_FACILITY)
+          VALUES('${data.account_uuid}','${data.facility_name}')
+      `;
+      query(res, sql);
+    },
+    getUnlockedFacility(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      if (data.account_uuid === undefined) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+      let sql = `
+        SELECT
+          UNLOCKED_FACILITY
+        FROM
+          FACILITIES
+        WHERE 1=1
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+      `;
+      query(res, sql);
+    },
+  },
 };
 
 module.exports = { sql };

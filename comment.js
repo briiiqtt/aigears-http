@@ -420,6 +420,25 @@
  *        | 구분 / 시즌 / 높은등수 / 낮은 등수로 필터링가능.
  */
 
+/* path:  http://3.35.210.188:52530/unlock-facility
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        | facility_name       | string      | 시설이름
+ *        |
+ * output:| affectedRows        | integer     | 영향받은 건수
+ *        |
+ * desc:  | 입력받은 계정의 잠금해제된 시설 목록에 시설을 추가함.
+ */
+
+/* path:  http://3.35.210.188:52530/get-unlocked-facility
+ *        |name                 |type         |desc
+ * input: | account_uuid        | string      | 계정UUID
+ *        |
+ * output:| unlocked_facility   | string      | 시설이름
+ *        |
+ * desc:  | 입력받은 계정의 잠금해제된 시설 목록을 제공함.
+ */
+
 /* path:  http://3.35.210.188:52530/
  *        |name                 |type         |desc
  * input: |

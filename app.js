@@ -198,6 +198,14 @@ router.post("/enhancement-succeed", (req, res) => {
   db.sql.enhancementSucceed(req.body, res);
 });
 
+router.post("/unlock-facility", (req, res) => {
+  db.sql.facilities.unlockFacility(req.body, res);
+});
+
+router.post("/get-unlocked-facility", (req, res) => {
+  db.sql.facilities.getUnlockedFacility(req.body, res);
+});
+
 //
 //
 
