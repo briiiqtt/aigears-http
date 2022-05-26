@@ -1461,17 +1461,17 @@ const sql = {
       return false;
     }
     if (
-      (data.account_uuid === undefined ||
+      ((data.account_uuid === undefined ||
         data.slot_using_this === undefined ||
         data.gubun === undefined) &&
-      data.parts_uuid === undefined &&
-      data.gold === undefined &&
-      data.chip === undefined &&
-      data.bolt === undefined &&
-      data.ironplate === undefined &&
-      data.hitorium === undefined &&
-      data.electric_wire === undefined &&
-      data.qrd === undefined
+        data.parts_uuid === undefined) ||
+      (data.gold === undefined &&
+        data.chip === undefined &&
+        data.bolt === undefined &&
+        data.ironplate === undefined &&
+        data.hitorium === undefined &&
+        data.electric_wire === undefined &&
+        data.qrd === undefined)
     ) {
       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
       return false;

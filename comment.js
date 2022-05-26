@@ -422,12 +422,23 @@
 
 /* path:  http://3.35.210.188:52530/enhancement-succeed
  *        |name                 |type         |desc
- * input: | account_uuid        | string      | 계정UUID
- *        | facility_name       | string      | 시설이름
+ * input: | parts_uuid          | string      | 부품UUID      | 파라미터1
+ *        | account_uuid        | string      | 계정UUID      | 파라미터2
+ *        | slot_using_this     | integer     | 해당부품을 사용하고 있는 슬롯 | 파라미터2
+ *        | gubun               | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어 | 파라미터2
+ *        | gold                | integer     | 골드     
+ *        | chip                | integer     | 재료1    
+ *        | bolt                | integer     | 재료2    
+ *        | ironplate           | integer     | 재료3    
+ *        | hitorium            | integer     | 재료4    
+ *        | electric_wire       | integer     | 재료5    
+ *        | qrd                 | string      | 큐리덤   
  *        |
  * output:| affectedRows        | integer     | 영향받은 건수
  *        |
- * desc:  | 입력받은 계정의 잠금해제된 시설 목록에 시설을 추가함.
+ * desc:  | 강화 단계 설정 + 재화 감소
+ *        | 
+ *        | ((부품UUID) || (계정UUID+슬롯번호+구분번호)) && (재화 중 한 종류)
  */
 
 /* path:  http://3.35.210.188:52530/unlock-facility
