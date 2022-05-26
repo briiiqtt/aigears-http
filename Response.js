@@ -6,6 +6,7 @@ const Response = class {
     this.data = _data;
   }
   sendResponse() {
+    if (this.res === null) return false;
     let resp = {
       data: this.data,
       code: this.code,

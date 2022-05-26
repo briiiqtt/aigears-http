@@ -1396,7 +1396,7 @@ const sql = {
             PLAY_TIME
           )
           VALUES(
-            (SELECT*FROM (SELECT NEXTVAL('SEQ_GAME_RESULT') FROM DUAL)AS A),
+            (SELECT*FROM (nextval('seq_game_result') FROM DUAL)AS A),
             '${data.gubun}',
             '${data.season}',
             ${
@@ -1452,7 +1452,7 @@ const sql = {
       query(res, sql);
     },
   },
-  enhancementSucceed(argObj, res) {
+  async enhancementSucceed(argObj, res) {
     let data = null;
     try {
       data = JSON.parse(argObj.data);
@@ -1464,12 +1464,19 @@ const sql = {
       (data.account_uuid === undefined ||
         data.slot_using_this === undefined ||
         data.gubun === undefined) &&
-      data.parts_uuid === undefined
+      data.parts_uuid === undefined &&
+      data.gold === undefined &&
+      data.chip === undefined &&
+      data.bolt === undefined &&
+      data.ironplate === undefined &&
+      data.hitorium === undefined &&
+      data.electric_wire === undefined &&
+      data.qrd === undefined
     ) {
       new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
       return false;
     }
-    let flag = transaction([
+    let flag = await transaction([
       () =>
         query(
           null,
@@ -1516,10 +1523,7 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      if (
-        data.account_uuid === undefined ||
-        data.facility_name === undefined
-      ) {
+      if (data.account_uuid === undefined || data.facility_name === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -1552,6 +1556,10 @@ const sql = {
       `;
       query(res, sql);
     },
+  },
+  three(a) {
+    if (a === 3) return true;
+    else return false;
   },
 };
 
