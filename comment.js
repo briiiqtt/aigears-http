@@ -415,6 +415,7 @@
  *        | team                | string      | 팀명
  *        | highest_round       | integer     | 최고라운드
  *        | play_time           | integer     | 플레이타임(초)
+ *        | account_uuid        | string      | 계정UUID
  *        |
  * desc:  | 랭킹을 제공함.
  *        | 구분 / 시즌 / 높은등수 / 낮은 등수로 필터링가능.
