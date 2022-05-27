@@ -22,7 +22,7 @@ app.listen((port = 52530), () => {
 
 let requestNum = 0;
 
-app.use((req, res, next) => {
+app.post("*", (req, res, next) => {
   let date = new Date();
   res.append("requestNum", requestNum);
   requestNum++;
@@ -58,7 +58,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/test", (req, res) => {
-  db.sql.test();
+  res.sendFile(__dirname + "/test.html");
 });
 app.get("/testdownload", (req, res) => {
   res.download(__dirname + "/test.html");
