@@ -60,10 +60,9 @@ app.post("*", (req, res, next) => {
 app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/test.html");
 });
-app.get("/testdownload", (req, res) => {
-  res.download(__dirname + "/test.html");
-  res.write(req.params);
-  res.end();
+
+app.post("/testpost", (req, res) => {
+  
 });
 
 app.use("/", router);

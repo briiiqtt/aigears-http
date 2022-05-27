@@ -43,7 +43,7 @@
             for (let i = 0; i < keys.length; i++) {
                 obj[keys[i].value] = values[i].value;
             }
-            axios.post(('http://localhost:52530/' + path), {
+            axios.post((`http://${host}:${port}/${path}`), {
                 data: JSON.stringify(obj)
             })
                 .then((r) => {
