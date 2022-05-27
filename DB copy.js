@@ -85,8 +85,14 @@ const transaction = async function (sqls) {
 
 const sql = {
   accounts: {
-    getAccount(res) {
-      let data = res.locals.data;
+    getAccount(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined && data.email === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -109,8 +115,14 @@ const sql = {
       `;
       selectSingle(res, sql);
     },
-    setFacilityPhase(res) {
-      let data = res.locals.data;
+    setFacilityPhase(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         data.account_uuid === undefined &&
         data.facility_phase === undefined
@@ -128,8 +140,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    addAccount(res) {
-      let data = res.locals.data;
+    addAccount(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         data.account_uuid === undefined ||
         data.email === undefined ||
@@ -149,8 +167,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    delAccount(res) {
-      let data = res.locals.data;
+    delAccount(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -167,8 +191,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    isPWCorrect(res) {
-      let data = res.locals.data;
+    isPWCorrect(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.email === undefined || data.password === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -201,8 +231,14 @@ const sql = {
       });
     },
     team: {
-      setTeam(res) {
-        let data = res.locals.data;
+      setTeam(argObj, res) {
+        let data = null;
+        try {
+          data = JSON.parse(argObj.data);
+        } catch (e) {
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+          return false;
+        }
         if (
           data.account_uuid === undefined ||
           data.team === undefined ||
@@ -228,8 +264,14 @@ const sql = {
     },
   },
   robots: {
-    getRobot(res) {
-      let data = res.locals.data;
+    getRobot(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -257,8 +299,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    addRobot(res) {
-      let data = res.locals.data;
+    addRobot(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -272,8 +320,14 @@ const sql = {
         `;
       query(res, sql);
     },
-    setRobot(res) {
-      let data = res.locals.data;
+    setRobot(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined || data.slot_num === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -304,8 +358,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    setRobotRecord(res) {
-      let data = res.locals.data;
+    setRobotRecord(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined || data.slot_num === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -403,8 +463,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    async setProfile(res) {
-      let data = res.locals.data;
+    async setProfile(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined || data.slot_num === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -441,8 +507,14 @@ const sql = {
         new Response(res, { result: "fail" }).internalServerError();
       else new Response(res, { result: "success" }).OK();
     },
-    getProfile(res) {
-      let data = res.locals.data;
+    getProfile(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -460,8 +532,14 @@ const sql = {
     },
   },
   parts: {
-    addParts(res) {
-      let data = res.locals.data;
+    addParts(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         data.account_uuid === undefined ||
         data.parts_uuid === undefined ||
@@ -499,8 +577,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    getParts(res) {
-      let data = res.locals.data;
+    getParts(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined && data.parts_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -543,8 +627,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    async setParts(res) {
-      let data = res.locals.data;
+    async setParts(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         (data.account_uuid === undefined ||
           data.slot_using_this === undefined) &&
@@ -636,8 +726,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    deleteParts(res) {
-      let data = res.locals.data;
+    deleteParts(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         (data.account_uuid === undefined ||
           data.slot_using_this === undefined ||
@@ -674,8 +770,14 @@ const sql = {
     },
   },
   commodities: {
-    initCommodities(res) {
-      let data = res.locals.data;
+    initCommodities(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -687,8 +789,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    getCommodities(res) {
-      let data = res.locals.data;
+    getCommodities(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -709,8 +817,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    setCommodities(res) {
-      let data = res.locals.data;
+    setCommodities(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -740,8 +854,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    addCommodities(res) {
-      let data = res.locals.data;
+    addCommodities(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         data.account_uuid === undefined ||
         (data.gold === undefined &&
@@ -841,8 +961,14 @@ const sql = {
     },
   },
   skills: {
-    addSkill(res) {
-      let data = res.locals.data;
+    addSkill(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined || data.skill_name === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -860,8 +986,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    getSkill(res) {
-      let data = res.locals.data;
+    getSkill(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -878,8 +1010,14 @@ const sql = {
     },
   },
   blueprints: {
-    getBlueprint(res) {
-      let data = res.locals.data;
+    getBlueprint(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -899,8 +1037,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    setBlueprint(res) {
-      let data = res.locals.data;
+    setBlueprint(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         data.account_uuid === undefined ||
         data.stock === undefined ||
@@ -940,8 +1084,14 @@ const sql = {
         }
       });
     },
-    addBlueprint(res) {
-      let data = res.locals.data;
+    addBlueprint(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         data.account_uuid === undefined ||
         data.stock === undefined ||
@@ -990,8 +1140,14 @@ const sql = {
         }
       });
     },
-    getCurrentAndMaxBlueprintCount(res) {
-      let data = res.locals.data;
+    getCurrentAndMaxBlueprintCount(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined || data.model === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -1024,16 +1180,28 @@ const sql = {
     },
   },
   achievement: {
-    getRewardInfoJSON(res) {
-      let data = res.locals.data;
+    getRewardInfoJSON(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.name !== undefined) {
         new Response(res, _ACHIEVEMENT_REWARD[data.name]).OK();
       } else {
         new Response(res, _ACHIEVEMENT_REWARD).OK();
       }
     },
-    achievementAttained(res) {
-      let data = res.locals.data;
+    achievementAttained(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         data.account_uuid === undefined ||
         data.name === undefined ||
@@ -1066,8 +1234,14 @@ const sql = {
         }
       });
     },
-    getAchievementProgressAndMaxCount(res) {
-      let data = res.locals.data;
+    getAchievementProgressAndMaxCount(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined || data.name === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -1098,8 +1272,14 @@ const sql = {
         }
       });
     },
-    async claimAchievementReward(res) {
-      let data = res.locals.data;
+    async claimAchievementReward(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined || data.name === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -1187,8 +1367,14 @@ const sql = {
     },
   },
   gameResults: {
-    saveGameResult(res) {
-      let data = res.locals.data;
+    saveGameResult(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         data.gubun === undefined ||
         data.season === undefined ||
@@ -1225,8 +1411,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    getRanking(res) {
-      let data = res.locals.data;
+    getRanking(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       let sql = `
         SELECT * FROM(
           SELECT @ROWNUM:=@ROWNUM+1 "RANK", A.* FROM(
@@ -1262,8 +1454,14 @@ const sql = {
     },
   },
   facilities: {
-    unlockFacility(res) {
-      let data = res.locals.data;
+    unlockFacility(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined || data.facility_name === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -1275,8 +1473,14 @@ const sql = {
       `;
       query(res, sql);
     },
-    getUnlockedFacility(res) {
-      let data = res.locals.data;
+    getUnlockedFacility(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
@@ -1293,8 +1497,14 @@ const sql = {
     },
   },
   etc: {
-    async enhancementSucceed(res) {
-      let data = res.locals.data;
+    async enhancementSucceed(argObj, res) {
+      let data = null;
+      try {
+        data = JSON.parse(argObj.data);
+      } catch (e) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
       if (
         ((data.account_uuid === undefined ||
           data.slot_using_this === undefined ||
@@ -1339,7 +1549,7 @@ const sql = {
             }
             `
           ),
-        () => sql.commodities.addCommodities(res, null),
+        () => sql.commodities.addCommodities(argObj, null),
       ]);
 
       if (flag === true) {

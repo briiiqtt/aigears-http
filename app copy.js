@@ -48,12 +48,6 @@ app.use((req, res, next) => {
       "\r\n",
     req.body
   );
-  try {
-    res.locals.data = JSON.parse(req.body.data);
-  } catch (e) {
-    new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-    return false;
-  }
   next();
 });
 
@@ -69,143 +63,143 @@ app.get("/testdownload", (req, res) => {
 app.use("/", router);
 
 router.post("/get-account", (req, res) => {
-  db.sql.accounts.getAccount(res);
+  db.sql.accounts.getAccount(req.body, res);
 });
 
 router.post("/set-facility-phase", (req, res) => {
-  db.sql.accounts.setFacilityPhase(res);
+  db.sql.accounts.setFacilityPhase(req.body, res);
 });
 
 router.post("/add-account", (req, res) => {
-  db.sql.accounts.addAccount(res);
+  db.sql.accounts.addAccount(req.body, res);
 });
 
 router.post("/del-account", (req, res) => {
-  db.sql.accounts.delAccount(res);
+  db.sql.accounts.delAccount(req.body, res);
 });
 
 router.post("/is-pw-correct", (req, res) => {
-  db.sql.accounts.isPWCorrect(res);
+  db.sql.accounts.isPWCorrect(req.body, res);
 });
 
 router.post("/set-team", (req, res) => {
-  db.sql.accounts.team.setTeam(res);
+  db.sql.accounts.team.setTeam(req.body, res);
 });
 
 router.post("/get-robot", (req, res) => {
-  db.sql.robots.getRobot(res);
+  db.sql.robots.getRobot(req.body, res);
 });
 
 router.post("/add-robot", (req, res) => {
-  db.sql.robots.addRobot(res);
+  db.sql.robots.addRobot(req.body, res);
 });
 
 router.post("/set-robot", (req, res) => {
-  db.sql.robots.setRobot(res);
+  db.sql.robots.setRobot(req.body, res);
 });
 
 router.post("/set-profile", (req, res) => {
-  db.sql.robots.setProfile(res);
+  db.sql.robots.setProfile(req.body, res);
 });
 
 router.post("/get-profile", (req, res) => {
-  db.sql.robots.getProfile(res);
+  db.sql.robots.getProfile(req.body, res);
 });
 
 router.post("/set-robot-record", (req, res) => {
-  db.sql.robots.setRobotRecord(res);
+  db.sql.robots.setRobotRecord(req.body, res);
 });
 
 router.post("/add-parts", (req, res) => {
-  db.sql.parts.addParts(res);
+  db.sql.parts.addParts(req.body, res);
 });
 
 router.post("/get-parts", (req, res) => {
-  db.sql.parts.getParts(res);
+  db.sql.parts.getParts(req.body, res);
 });
 
 router.post("/set-parts", (req, res) => {
-  db.sql.parts.setParts(res);
+  db.sql.parts.setParts(req.body, res);
 });
 
 router.post("/delete-parts", (req, res) => {
-  db.sql.parts.deleteParts(res);
+  db.sql.parts.deleteParts(req.body, res);
 });
 
 router.post("/get-commodities", (req, res) => {
-  db.sql.commodities.getCommodities(res);
+  db.sql.commodities.getCommodities(req.body, res);
 });
 
 router.post("/init-commodities", (req, res) => {
-  db.sql.commodities.initCommodities(res);
+  db.sql.commodities.initCommodities(req.body, res);
 });
 
 router.post("/set-commodities", (req, res) => {
-  db.sql.commodities.setCommodities(res);
+  db.sql.commodities.setCommodities(req.body, res);
 });
 
 router.post("/add-commodities", (req, res) => {
-  db.sql.commodities.addCommodities(res);
+  db.sql.commodities.addCommodities(req.body, res);
 });
 
 router.post("/add-skill", (req, res) => {
-  db.sql.skills.addSkill(res);
+  db.sql.skills.addSkill(req.body, res);
 });
 
 router.post("/get-skill", (req, res) => {
-  db.sql.skills.getSkill(res);
+  db.sql.skills.getSkill(req.body, res);
 });
 
 router.post("/get-blueprint", (req, res) => {
-  db.sql.blueprints.getBlueprint(res);
+  db.sql.blueprints.getBlueprint(req.body, res);
 });
 
 router.post("/set-blueprint", (req, res) => {
-  db.sql.blueprints.setBlueprint(res);
+  db.sql.blueprints.setBlueprint(req.body, res);
 });
 
 router.post("/add-blueprint", (req, res) => {
-  db.sql.blueprints.addBlueprint(res);
+  db.sql.blueprints.addBlueprint(req.body, res);
 });
 
 router.post("/get-current-and-max-blueprint-count", (req, res) => {
-  db.sql.blueprints.getCurrentAndMaxBlueprintCount(res);
+  db.sql.blueprints.getCurrentAndMaxBlueprintCount(req.body, res);
 });
 
 router.post("/get-reward-info-json", (req, res) => {
-  db.sql.achievement.getRewardInfoJSON(res);
+  db.sql.achievement.getRewardInfoJSON(req.body, res);
 });
 
 router.post("/achievement-attained", (req, res) => {
-  db.sql.achievement.achievementAttained(res);
+  db.sql.achievement.achievementAttained(req.body, res);
 });
 
 router.post("/get-achievement-progress-and-max-count", (req, res) => {
-  db.sql.achievement.getAchievementProgressAndMaxCount(res);
+  db.sql.achievement.getAchievementProgressAndMaxCount(req.body, res);
 });
 
 router.post("/claim-achievement-reward", (req, res) => {
-  db.sql.achievement.claimAchievementReward(res);
+  db.sql.achievement.claimAchievementReward(req.body, res);
 });
 
 router.post("/save-game-result", (req, res) => {
-  db.sql.gameResults.saveGameResult(res);
+  db.sql.gameResults.saveGameResult(req.body, res);
 });
 
 router.post("/get-ranking", (req, res) => {
-  db.sql.gameResults.getRanking(res);
+  db.sql.gameResults.getRanking(req.body, res);
 });
 
 router.post("/enhancement-succeed", (req, res) => {
-  db.sql.etc.enhancementSucceed(res);
+  db.sql.etc.enhancementSucceed(req.body, res);
 });
 
 router.post("/unlock-facility", (req, res) => {
-  db.sql.facilities.unlockFacility(res);
+  db.sql.facilities.unlockFacility(req.body, res);
 });
 
 router.post("/get-unlocked-facility", (req, res) => {
-  db.sql.facilities.getUnlockedFacility(res);
+  db.sql.facilities.getUnlockedFacility(req.body, res);
 });
 
 //
