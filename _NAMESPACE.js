@@ -14,7 +14,6 @@ const _NAMESPACE = {
     UUID_OR_EMAIL: "UUID와 EMAIL을 동시에 인자로 사용할 수 없음",
     IT_IS_NOT_YOUR_PARTS: "파츠 소유자 불일치",
   },
-  ERR: "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n",
 };
 
 module.exports = _NAMESPACE;

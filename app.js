@@ -13,7 +13,6 @@ app.use(express.urlencoded({ extended: false }));
 
 const db = require("./DB");
 const _NAMESPACE = require("./_NAMESPACE.js");
-const { route } = require("express/lib/application");
 const router = express.Router();
 
 app.listen((port = 52530), () => {

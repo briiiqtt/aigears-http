@@ -13,8 +13,7 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
-    "axios": "^0.27.2",
-    "jest": "^28.1.0",
+    "jest": "^22.1.0",
     "nodemon": "^2.0.16"
   }
 }

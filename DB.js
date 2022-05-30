@@ -18,7 +18,7 @@ const selectSingle = function (res, sql) {
     }
     conn.query(sql, (err, result, fields) => {
       if (err) {
-        console.error(_NAMESPACE.ERR, err);
+        console.error(err);
       } else if (!(result.length in [0, 1])) {
         new Response(res).internalServerError();
       } else {
@@ -49,7 +49,7 @@ const query = function (res, sql) {
               break;
 
             default:
-              console.error(_NAMESPACE.ERR, err);
+              console.error(err);
               new Response(res).internalServerError();
           }
         }
@@ -835,6 +835,7 @@ const sql = {
           VALUES ('${data.account_uuid}')`
           ).then(() => query(res, sql));
         } else {
+          if (res.locals.doNotResponse === true) return false;
           new Response(res, { affectedRows: r.affectedRows }).OK();
         }
       });
@@ -1339,7 +1340,10 @@ const sql = {
             }
             `
           ),
-        () => sql.commodities.addCommodities(res, null),
+        () => {
+          res.locals.doNotResponse = true;
+          sql.commodities.addCommodities(res, null);
+        },
       ]);
 
       if (flag === true) {
