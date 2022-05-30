@@ -16,7 +16,7 @@ const Response = class {
     let date = new Date();
     if (this.code !== 0)
       console.log(
-        "\r\n\r\n\response " +
+        "\r\n\r\nresponse " +
           this.res.get("requestNum") +
           "  |  " +
           date.getFullYear() +

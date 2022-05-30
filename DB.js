@@ -1355,13 +1355,13 @@ module.exports = { sql };
 
 const isAllArgsProvided = function (...args) {
   for (let arg of args) {
-    if (arg === undefined) return false;
+    if (arg === undefined || arg === "") return false;
   }
   return true;
 };
 const isAtLeastOneArgProvided = function (...args) {
   for (let arg of args) {
-    if (arg !== undefined) return true;
+    if (arg !== undefined || arg !== "") return true;
   }
   return false;
 };
