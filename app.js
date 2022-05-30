@@ -22,6 +22,10 @@ app.listen((port = 52530), () => {
 
 let requestNum = 0;
 
+app.get("/favicon.ico", (req, res) => {
+  res.end();
+});
+
 app.post("*", (req, res, next) => {
   let date = new Date();
   res.append("requestNum", requestNum);
@@ -61,9 +65,7 @@ app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/test.html");
 });
 
-app.post("/testpost", (req, res) => {
-  
-});
+app.post("/testpost", (req, res) => {});
 
 app.use("/", router);
 
