@@ -55,11 +55,15 @@ const query2 = function (res, sql) {
 };
 
 module.exports.dev = {
-  haejo(res) {
+  async haejo(res) {
     let data = res.locals.data;
-    let flag = transaction([
-      () => query(`DELETE FROM ACCOUNTS WHERE EMAIL = '${data.email}'`),
-      () => query2(`DELETE FROM table_test_auth WHERE email = '${data.email}'`),
+    let flag = await transaction([
+      () => query(null, `DELETE FROM ACCOUNTS WHERE EMAIL = '${data.email}'`),
+      () =>
+        query2(
+          null,
+          `DELETE FROM table_test_auth WHERE email = '${data.email}'`
+        ),
     ]);
     if (flag === true) {
       new Response(res).OK();
@@ -149,7 +153,7 @@ const transaction = async function (sqls) {
   }
 };
 
-const sql = {
+module.exports.sql = {
   accounts: {
     getAccount(res) {
       let data = res.locals.data;
@@ -1425,8 +1429,6 @@ const sql = {
     },
   },
 };
-
-module.exports = { sql };
 
 const isAllArgsProvided = function (...args) {
   for (let arg of args) {
