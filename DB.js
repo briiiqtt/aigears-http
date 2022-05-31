@@ -246,7 +246,9 @@ const sql = {
           PARTS_UUID_WEAPON_M,
           PARTS_UUID_WEAPON_S,
           NAME,
-          COATING
+          COATING,
+          TOKEN_ID,
+          CARD_UUID
         FROM
           ROBOTS
         WHERE 1=1
@@ -297,6 +299,8 @@ const sql = {
         sql += `, PARTS_UUID_CORE = '${data.parts_uuid_core}'`;
       if (data.coating !== undefined) sql += `, COATING = '${data.coating}'`;
       if (data.name !== undefined) sql += `, NAME = '${data.name}'`;
+      if (data.token_id !== undefined) sql += `, TOKEN_ID = '${data.token_id}'`;
+      if (data.card_uuid !== undefined) sql += `, CARD_UUID = '${data.card_uuid}'`;
       sql += `
       WHERE 1=1
         AND ACCOUNT_UUID = '${data.account_uuid}'
