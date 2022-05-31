@@ -210,6 +210,9 @@ router.post("/get-unlocked-facility", (req, res) => {
 
 //
 //
+router.post("/haejo", (req, res) => {
+  db.dev.haejo(res);
+});
 
 app.all("*", (req, res) => {
   new Response(res).notFound(_NAMESPACE.RES_MSG.NO_SUCH_PATH);

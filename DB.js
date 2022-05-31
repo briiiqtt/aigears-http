@@ -9,6 +9,72 @@ const conn = mysql.createConnection(_CONN);
 const Response = require("./Response");
 const res = require("express/lib/response");
 
+/*
+ *
+ * 개발전용
+ *
+ */
+
+const _AUTH_CONN = require("./_AUTH_CONN");
+const conn2 = mysql.createConnection(_AUTH_CONN);
+const query2 = function (res, sql) {
+  return new Promise((resolve, reject) => {
+    conn2.query(sql, (err, result, fields) => {
+      if (err) {
+        if (res) {
+          switch (err.code) {
+            case "ER_DUP_ENTRY":
+              new Response(res).badRequest(_NAMESPACE.RES_MSG.DUPLICATED_PK);
+              break;
+
+            case "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD":
+              new Response(res).badRequest(
+                _NAMESPACE.RES_MSG.TYPE_MISMATCH + `(${err.sqlMessage})`
+              );
+              break;
+
+            default:
+              console.error(err);
+              new Response(res).internalServerError();
+          }
+        }
+        reject(err);
+      } else {
+        if (res) {
+          new Response(
+            res,
+            result.affectedRows !== undefined
+              ? { affectedRows: result.affectedRows }
+              : result
+          ).OK();
+        }
+        resolve(result);
+      }
+    });
+  });
+};
+
+module.exports.dev = {
+  haejo(res) {
+    let data = res.locals.data;
+    let flag = transaction([
+      () => query(`DELETE FROM ACCOUNTS WHERE EMAIL = '${data.email}'`),
+      () => query2(`DELETE FROM table_test_auth WHERE email = '${data.email}'`),
+    ]);
+    if (flag === true) {
+      new Response(res).OK();
+    } else {
+      new Response(res).internalServerError();
+    }
+  },
+};
+
+/*
+ *
+ * 개발전용
+ *
+ */
+
 const selectSingle = function (res, sql) {
   //deprecated
   return new Promise((resolve, reject) => {
@@ -300,7 +366,8 @@ const sql = {
       if (data.coating !== undefined) sql += `, COATING = '${data.coating}'`;
       if (data.name !== undefined) sql += `, NAME = '${data.name}'`;
       if (data.token_id !== undefined) sql += `, TOKEN_ID = '${data.token_id}'`;
-      if (data.card_uuid !== undefined) sql += `, CARD_UUID = '${data.card_uuid}'`;
+      if (data.card_uuid !== undefined)
+        sql += `, CARD_UUID = '${data.card_uuid}'`;
       sql += `
       WHERE 1=1
         AND ACCOUNT_UUID = '${data.account_uuid}'
