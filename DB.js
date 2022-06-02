@@ -427,14 +427,15 @@ module.exports.sql = {
       if (data.remove_parts === true) {
         let sql2 = `
         UPDATE
-        PARTS
+         PARTS
         SET
-        _IS_DELETED = 1,
-        _UPDATED_AT = CURRENT_TIMESTAMP()
+         _IS_DELETED = 1,
+         _UPDATED_AT = CURRENT_TIMESTAMP()
         WHERE 1=1
-            AND _IS_DELETED = 0
-            AND PARTS_UUID IN (SELECT * FROM (SELECT PARTS_UUID FROM PARTS
-              WHERE 1=1
+          AND _IS_DELETED = 0
+          AND PARTS_UUID IN (SELECT * FROM (SELECT PARTS_UUID FROM PARTS
+            WHERE 1=1
+              AND GUBUN NOT IN (6,7,8)
               AND ACCOUNT_UUID = '${data.account_uuid}'
               AND SLOT_USING_THIS = '${data.slot_num}') AS A);`;
         queryArr.push(() => query(null, sql2));

@@ -1,4 +1,4 @@
-/* path:	http://3.35.210.188:52530/get-account
+/* path:	https://bskim.aigears.io/get-account
  *          |name           |type    |desc        |
  * input:   | account_uuid  | string  | 계정UUID  | 양자택일
  *          | email         | string  | 이메일    | 양자택일
@@ -13,7 +13,7 @@
  * desc:    | 넘겨받은 UUID로 찾은 계정의 모든 정보를 제공함.
  */
 
-/* path:	http://3.35.210.188:52530/set-facility-phase
+/* path:	https://bskim.aigears.io/set-facility-phase
  *          |name             |type      |desc
  * input:   | account_uuid    | string   | 계정UUID
  *          |
@@ -22,7 +22,7 @@
  * desc:    | 넘겨받은 UUID로 찾은 계정의 시설개선단계를 설정함.
  */
 
-/* path:	http://3.35.210.188:52530/add-account
+/* path:	https://bskim.aigears.io/add-account
  *          |name           |type     |desc
  * input:   | account_uuid  | string  | 계정UUID
  *          | email         | string  | 이메일
@@ -33,7 +33,7 @@
  * desc:  	|넘겨받은 입력대로 새로운 계정정보를 만들어 저장함.
  */
 
-/* path:	http://3.35.210.188:52530/is-pw-correct
+/* path:	https://bskim.aigears.io/is-pw-correct
  *          |name           |type     |desc
  * input:   | email         | string  | 이메일
  *          | password      | string  | 비밀번호
@@ -45,7 +45,7 @@
  * desc:  	|
  */
 
-/* path:	http://3.35.210.188:52530/del-account
+/* path:	https://bskim.aigears.io/del-account
  *          |name           |type    |desc
  * input:   | account_uuid  | string | 계정UUID
  *          |
@@ -54,7 +54,7 @@
  * desc:    |넘겨받은 UUID로 찾은 계정의 모든 정보를 삭제함.
  */
 
-/* path: http://3.35.210.188:52530/set-team
+/* path: https://bskim.aigears.io/set-team
  *        |name           |type     |desc
  * input: | account_uuid  | string  | 계정UUID
  *        | team          | string  | 소속
@@ -65,7 +65,7 @@
  * desc:  | 넘겨받은 UUID로 찾은 계정의 소속과 아이콘을 넘겨받은 값으로 수정함.
  */
 
-/* path:  http://3.35.210.188:52530/get-robot
+/* path:  https://bskim.aigears.io/get-robot
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호    |선택적
@@ -83,7 +83,7 @@
  * desc:  |
  */
 
-/* path:  http://3.35.210.188:52530/add-robot
+/* path:  https://bskim.aigears.io/add-robot
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        |
@@ -92,7 +92,7 @@
  * desc:  | 넘겨받은 UUID로 찾은 계정의 행거에 슬롯을 1칸 추가함.
  */
 
-/* path:  http://3.35.210.188:52530/set-profile
+/* path:  https://bskim.aigears.io/set-profile
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호
@@ -102,7 +102,7 @@
  * desc:  | 넘겨받은 UUID로 찾은 계정의 해당 슬롯을 대표로봇으로 설정함
  */
 
-/* path:  http://3.35.210.188:52530/get-profile
+/* path:  https://bskim.aigears.io/get-profile
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        |
@@ -111,7 +111,7 @@
  * desc:  | 넘겨받은 UUID로 찾은 계정의 대표로봇의 번호를 제공함
  */
 
-/* path:  http://3.35.210.188:52530/set-robot
+/* path:  https://bskim.aigears.io/set-robot
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호
@@ -129,18 +129,19 @@
  * desc:  | 넘겨받은 UUID로 찾은 계정의 특정 슬롯의 정보를 바꿈.
  */
 
-/* path:  http://3.35.210.188:52530/delete-robot
+/* path:  https://bskim.aigears.io/delete-robot
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | slot_num          | integer     | 슬롯번호
  *        | remove_parts      | boolean     | 파츠 삭제할지(true/false)
  *        |
- * output:| affectedRows      | integer     | 영향받은 건수
+ * output:| result            | string      | 처리결과
  *        |
- * desc:  | 넘겨받은 UUID로 찾은 계정의 특정 슬롯의 정보를 바꿈.
+ * desc:  | (계정UUID+슬롯번호)의 데이터를 비움.
+ *        | remove_parts에 true를 넘기면 해당 슬롯에 장착된 파츠들이 모두 삭제됨.
  */
 
-/* path:  http://3.35.210.188:52530/set-robot-record
+/* path:  https://bskim.aigears.io/set-robot-record
  *        |name                     |type         |desc
  * input: | account_uuid            | string      | 계정UUID
  *        | slot_num                | integer     | 슬롯번호
@@ -160,7 +161,7 @@
  * desc:  | (+=)는 기존값에 받은값 누적, (=)는 기존값을 받은값으로 덮어씀
  */
 
-/* path:  http://3.35.210.188:52530/add-parts
+/* path:  https://bskim.aigears.io/add-parts
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | parts_uuid        | string      | 부품UUID
@@ -175,7 +176,7 @@
  * desc:  | 넘겨받은 계정UUID에 귀속된 부품정보를 저장함
  */
 
-/* path:  http://3.35.210.188:52530/get-parts
+/* path:  https://bskim.aigears.io/get-parts
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID    |양자택일
  *        | parts_uuid        | string      | 부품UUID    |양자택일
@@ -200,7 +201,7 @@
  * desc:  | (부품UUID) 또는 (계정UUID+슬롯번호(+구분번호)) 로 찾은 부품의 정보를 제공함.
  */
 
-/* path:  http://3.35.210.188:52530/set-parts
+/* path:  https://bskim.aigears.io/set-parts
  *        |name               |type         |desc
  * input: | parts_uuid        | string      | 부품UUID      |
  *        | account_uuid      | string      | 계정UUID      |
@@ -221,7 +222,7 @@
  * desc:  | (부품UUID + 계정UUID) 또는 (계정UUID+슬롯번호(+구분번호)) 로 찾은 부품의 정보를 수정함.
  */
 
-/* path:  http://3.35.210.188:52530/delete-parts
+/* path:  https://bskim.aigears.io/delete-parts
  *        |name               |type         |desc
  * input: | parts_uuid        | string      | 부품UUID      |
  *        | account_uuid      | string      | 계정UUID      |
@@ -233,7 +234,7 @@
  * desc:  | 부품UUID 또는 (계정UUID+슬롯번호+구분번호) 로 찾은 부품을 삭제함
  */
 
-/* path:  http://3.35.210.188:52530/init-commodities
+/* path:  https://bskim.aigears.io/init-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        |
@@ -242,7 +243,7 @@
  * desc:  | 재화 초기값을 설정함
  */
 
-/* path:  http://3.35.210.188:52530/get-commodities
+/* path:  https://bskim.aigears.io/get-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        |
@@ -257,7 +258,7 @@
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화상태를 제공함.
  */
 
-/* path:  http://3.35.210.188:52530/set-commodities
+/* path:  https://bskim.aigears.io/set-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | gold              | integer     | 골드      |선택적
@@ -273,7 +274,7 @@
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화상태를 변경함
  */
 
-/* path:  http://3.35.210.188:52530/add-commodities
+/* path:  https://bskim.aigears.io/add-commodities
  *        |name               |type         |desc
  * input: | account_uuid      | string      | 계정UUID
  *        | gold              | integer     | 골드      |선택적
@@ -289,7 +290,7 @@
  * desc:  | 전달받은 계정UUID로 찾은 계정의 재화에 입력값을 누적함
  */
 
-/* path:  http://3.35.210.188:52530/add-skill
+/* path:  https://bskim.aigears.io/add-skill
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | skill_name          | string      | 스킬명
@@ -299,7 +300,7 @@
  * desc:  | 전달받은 계정UUID로 찾은 계정에 보유스킬을 추가함
  */
 
-/* path:  http://3.35.210.188:52530/get-skill
+/* path:  https://bskim.aigears.io/get-skill
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        |
@@ -308,7 +309,7 @@
  * desc:  | 전달받은 계정UUID로 찾은 계정이 보유하고 있는 스킬목록을 제공함
  */
 
-/* path:  http://3.35.210.188:52530/get-blueprint
+/* path:  https://bskim.aigears.io/get-blueprint
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | model               | string      | 종류        |선택적
@@ -320,7 +321,7 @@
  * desc:  | 전달받은 계정UUID로 찾은 계정의 설계도 보유상태를 제공함
  */
 
-/* path:  http://3.35.210.188:52530/set-blueprint
+/* path:  https://bskim.aigears.io/set-blueprint
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | stock               | int         | 보유량
@@ -333,7 +334,7 @@
  *        | 설계도의 해금 여부를 설정한다.
  */
 
-/* path:  http://3.35.210.188:52530/add-blueprint
+/* path:  https://bskim.aigears.io/add-blueprint
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | stock               | int         | 보유량
@@ -344,7 +345,7 @@
  * desc:  | (계정UUID+설계도종류)의 보유량을 stock 값만큼 추가함.
  */
 
-/* path:  http://3.35.210.188:52530/get-current-and-max-blueprint-count
+/* path:  https://bskim.aigears.io/get-current-and-max-blueprint-count
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | model               | string      | 종류
@@ -355,7 +356,7 @@
  * desc:  | (계정UUID+설계도종류)의 보유량과 해당 설계도의 최대보유량을 제공함
  */
 
-/* path:  http://3.35.210.188:52530/get-reward-info-json
+/* path:  https://bskim.aigears.io/get-reward-info-json
  *        |name                 |type         |desc
  * input: | name                | string      | 업적이름    |선택적
  *        |
@@ -365,7 +366,7 @@
  *                       의 완료시 보상에 대한 정보를 제공함.
  */
 
-/* path:  http://3.35.210.188:52530/achievement-attained
+/* path:  https://bskim.aigears.io/achievement-attained
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | name                | string      | 업적이름
@@ -376,7 +377,7 @@
  * desc:  | 계정UUID로 찾은 계정의 업적진행을 증가량만큼 증가시킴.
  */
 
-/* path:  http://3.35.210.188:52530/get-achievement-progress-and-max-count
+/* path:  https://bskim.aigears.io/get-achievement-progress-and-max-count
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | name                | string      | 업적이름
@@ -389,7 +390,7 @@
  *          해당업적의 최대단계를 제공함.
  */
 
-/* path:  http://3.35.210.188:52530/claim-achievement-reward
+/* path:  https://bskim.aigears.io/claim-achievement-reward
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | name                | string      | 업적이름
@@ -399,7 +400,7 @@
  * desc:  | 전달한 이름의 업적의 완료보상을 전달한 계정UUID에게 지급함.
  */
 
-/* path:  http://3.35.210.188:52530/save-game-result
+/* path:  https://bskim.aigears.io/save-game-result
  *        |name                 |type         |desc
  * input: | gubun               | integer     | ex)0:리그, 1:챌린지 ~~..
  *        | season              | integer     | 시즌
@@ -414,7 +415,7 @@
  * desc:  | 게임 결과를 저장함.
  */
 
-/* path:  http://3.35.210.188:52530/get-ranking
+/* path:  https://bskim.aigears.io/get-ranking
  *        |name                 |type         |desc
  * input: | gubun               | integer     | 구분 | 선택적
  *        | season              | integer     | 시즌 | 선택적
@@ -432,7 +433,7 @@
  *        | 구분 / 시즌 / 높은등수 / 낮은 등수로 필터링가능.
  */
 
-/* path:  http://3.35.210.188:52530/enhancement-succeed
+/* path:  https://bskim.aigears.io/enhancement-succeed
  *        |name                 |type         |desc
  * input: | parts_uuid          | string      | 부품UUID      | 파라미터1
  *        | account_uuid        | string      | 계정UUID      | 파라미터2
@@ -453,7 +454,7 @@
  *        | ((부품UUID) || (계정UUID+슬롯번호+구분번호)) && (재화 중 한 종류)
  */
 
-/* path:  http://3.35.210.188:52530/unlock-facility
+/* path:  https://bskim.aigears.io/unlock-facility
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        | facility_name       | string      | 시설이름
@@ -463,7 +464,7 @@
  * desc:  | 입력받은 계정의 잠금해제된 시설 목록에 시설을 추가함.
  */
 
-/* path:  http://3.35.210.188:52530/get-unlocked-facility
+/* path:  https://bskim.aigears.io/get-unlocked-facility
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
  *        |
@@ -472,7 +473,7 @@
  * desc:  | 입력받은 계정의 잠금해제된 시설 목록을 제공함.
  */
 
-/* path:  http://3.35.210.188:52530/
+/* path:  https://bskim.aigears.io/
  *        |name                 |type         |desc
  * input: |
  *        |
