@@ -129,6 +129,17 @@
  * desc:  | 넘겨받은 UUID로 찾은 계정의 특정 슬롯의 정보를 바꿈.
  */
 
+/* path:  http://3.35.210.188:52530/delete-robot
+ *        |name               |type         |desc
+ * input: | account_uuid      | string      | 계정UUID
+ *        | slot_num          | integer     | 슬롯번호
+ *        | remove_parts      | boolean     | 파츠 삭제할지(true/false)
+ *        |
+ * output:| affectedRows      | integer     | 영향받은 건수
+ *        |
+ * desc:  | 넘겨받은 UUID로 찾은 계정의 특정 슬롯의 정보를 바꿈.
+ */
+
 /* path:  http://3.35.210.188:52530/set-robot-record
  *        |name                     |type         |desc
  * input: | account_uuid            | string      | 계정UUID
@@ -427,18 +438,18 @@
  *        | account_uuid        | string      | 계정UUID      | 파라미터2
  *        | slot_using_this     | integer     | 해당부품을 사용하고 있는 슬롯 | 파라미터2
  *        | gubun               | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어 | 파라미터2
- *        | gold                | integer     | 골드     
- *        | chip                | integer     | 재료1    
- *        | bolt                | integer     | 재료2    
- *        | ironplate           | integer     | 재료3    
- *        | hitorium            | integer     | 재료4    
- *        | electric_wire       | integer     | 재료5    
- *        | qrd                 | string      | 큐리덤   
+ *        | gold                | integer     | 골드
+ *        | chip                | integer     | 재료1
+ *        | bolt                | integer     | 재료2
+ *        | ironplate           | integer     | 재료3
+ *        | hitorium            | integer     | 재료4
+ *        | electric_wire       | integer     | 재료5
+ *        | qrd                 | string      | 큐리덤
  *        |
  * output:| affectedRows        | integer     | 영향받은 건수
  *        |
  * desc:  | 강화 단계 설정 + 재화 감소
- *        | 
+ *        |
  *        | ((부품UUID) || (계정UUID+슬롯번호+구분번호)) && (재화 중 한 종류)
  */
 

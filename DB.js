@@ -16,6 +16,7 @@ const res = require("express/lib/response");
  */
 
 const _AUTH_CONN = require("./_AUTH_CONN");
+const { RES_MSG } = require("./_NAMESPACE.js");
 const conn2 = mysql.createConnection(_AUTH_CONN);
 const query2 = function (res, sql) {
   return new Promise((resolve, reject) => {
@@ -378,6 +379,74 @@ module.exports.sql = {
         AND SLOT_NUM = '${data.slot_num}'
       `;
       query(res, sql);
+    },
+    async deleteRobot(res) {
+      let data = res.locals.data;
+      if (!isAllArgsProvided(data.account_uuid, data.slot_num)) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        return false;
+      }
+
+      let sql = `
+      UPDATE
+        ROBOTS
+      SET
+        _UPDATED_AT = CURRENT_TIMESTAMP(),
+        TOKEN_ID = NULL,
+        CARD_UUID = NULL,
+        PARTS_UUID_HEAD = NULL,
+        PARTS_UUID_BODY = NULL,
+        PARTS_UUID_ARM = NULL,
+        PARTS_UUID_LEG = NULL,
+        PARTS_UUID_BOOSTER = NULL,
+        PARTS_UUID_CORE = NULL,
+        PARTS_UUID_WEAPON_M = NULL,
+        PARTS_UUID_WEAPON_S = NULL,
+        COATING = NULL,
+        NAME = NULL,
+        PROFILE = NULL,
+        SALLY_COUNT = NULL,
+        DESTROY_COUNT = NULL,
+        BE_DESTROYED_COUNT = NULL,
+        ONE_ON_ONE_WIN_COUNT = NULL,
+        ONE_ON_ONE_LOSE_COUNT = NULL,
+        TOTAL_WIN_COUNT = NULL,
+        TOTAL_LOSE_COUNT = NULL,
+        CHALLENGE_SHORTEST_TIME = NULL,
+        CHALLENGE_HIGH_ROUND = NULL,
+        DESTROY_COUNT_CHALLENGE = NULL
+      WHERE 1=1
+        AND ACCOUNT_UUID = '${data.account_uuid}'
+        AND SLOT_NUM = '${data.slot_num}'
+      `;
+
+      let queryArr = [];
+
+      queryArr.push(() => query(null, sql));
+
+      if (data.remove_parts === true) {
+        let sql2 = `
+        UPDATE
+        PARTS
+        SET
+        _IS_DELETED = 1,
+        _UPDATED_AT = CURRENT_TIMESTAMP()
+        WHERE 1=1
+            AND _IS_DELETED = 0
+            AND PARTS_UUID IN (SELECT * FROM (SELECT PARTS_UUID FROM PARTS
+              WHERE 1=1
+              AND ACCOUNT_UUID = '${data.account_uuid}'
+              AND SLOT_USING_THIS = '${data.slot_num}') AS A);`;
+        queryArr.push(() => query(null, sql2));
+      }
+
+      let flag = await transaction(queryArr);
+
+      if (flag === true) {
+        new Response(res, { result: "success" }).OK();
+      } else {
+        new Response(res).internalServerError();
+      }
     },
     setRobotRecord(res) {
       let data = res.locals.data;

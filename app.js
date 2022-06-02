@@ -104,6 +104,10 @@ router.post("/set-robot", (req, res) => {
   db.sql.robots.setRobot(res);
 });
 
+router.post("/delete-robot", (req, res) => {
+  db.sql.robots.deleteRobot(res);
+});
+
 router.post("/set-profile", (req, res) => {
   db.sql.robots.setProfile(res);
 });
