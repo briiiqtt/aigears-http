@@ -16,8 +16,6 @@ const res = require("express/lib/response");
  */
 
 const _AUTH_CONN = require("./_AUTH_CONN");
-const { RES_MSG } = require("./_NAMESPACE.js");
-const { DEC8_BIN } = require("mysql/lib/protocol/constants/charsets");
 const conn2 = mysql.createConnection(_AUTH_CONN);
 const query2 = function (res, sql) {
   return new Promise((resolve, reject) => {
