@@ -17,6 +17,7 @@ const res = require("express/lib/response");
 
 const _AUTH_CONN = require("./_AUTH_CONN");
 const { RES_MSG } = require("./_NAMESPACE.js");
+const { DEC8_BIN } = require("mysql/lib/protocol/constants/charsets");
 const conn2 = mysql.createConnection(_AUTH_CONN);
 const query2 = function (res, sql) {
   return new Promise((resolve, reject) => {
@@ -345,12 +346,46 @@ module.exports.sql = {
         `;
       query(res, sql);
     },
-    setRobot(res) {
+    async setRobot(res) {
       let data = res.locals.data;
       if (data.account_uuid === undefined || data.slot_num === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
+      //
+      let gap = 0;
+      await query(
+        null,
+        `SELECT MAX(SLOT_NUM) "MAX" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}'`
+      ).then((r) => {
+        let maxSlotNum = r[0].MAX;
+        if (maxSlotNum <= data.slot_num) {
+          gap = data.slot_num - maxSlotNum;
+        }
+      });
+      let arr = [];
+      for (let i = 0; i < gap; i++) {
+        arr.push(() =>
+          query(
+            null,
+            `
+        INSERT INTO
+          ROBOTS (ACCOUNT_UUID, SLOT_NUM)
+          VALUES (
+            '${data.account_uuid}',
+            IFNULL((SELECT A FROM (SELECT MAX(SLOT_NUM)+1 "A" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}') A),0 ))
+        `
+          )
+        );
+      }
+
+      let flag = await transaction(arr);
+      if (flag !== true) {
+        new Response(res).internalServerError();
+        return false;
+      }
+
+      //
       let sql = `UPDATE ROBOTS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
       if (data.parts_uuid_arm !== undefined)
         sql += `, PARTS_UUID_ARM = '${data.parts_uuid_arm}'`;
