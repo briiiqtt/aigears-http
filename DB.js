@@ -57,16 +57,76 @@ const query2 = function (res, sql) {
 module.exports.dev = {
   async haejo(res) {
     let data = res.locals.data;
+    if (!isAllArgsProvided(data.email)) {
+      new Response(res).badRequest(_NAMESPACE.INSUFFICIENT_VALUE);
+      return false;
+    }
+    let account_uuid = null;
+
+    let isAccountExist = true;
+    await query(
+      null,
+      `SELECT ACCOUNT_UUID FROM ACCOUNTS WHERE EMAIL = '${data.email}'`
+    ).then((r) => {
+      if (r.length !== 1) {
+        isAccountExist = false;
+      } else {
+        account_uuid = r[0].ACCOUNT_UUID;
+      }
+    });
+
+    if (!isAccountExist) {
+      new Response(res).badRequest("해당 이메일의 계정 없음");
+      return false;
+    }
+
     let flag = await transaction([
-      () => query(null, `DELETE FROM ACCOUNTS WHERE EMAIL = '${data.email}'`),
       () =>
         query2(
           null,
           `DELETE FROM table_test_auth WHERE email = '${data.email}'`
         ),
+      () =>
+        query(
+          null,
+          `DELETE FROM ROBOTS WHERE ACCOUNT_UUID = '${account_uuid}'`
+        ),
+      () =>
+        query(null, `DELETE FROM PARTS WHERE ACCOUNT_UUID = '${account_uuid}'`),
+      () =>
+        query(
+          null,
+          `DELETE FROM BLUEPRINTS WHERE ACCOUNT_UUID = '${account_uuid}'`
+        ),
+      () =>
+        query(
+          null,
+          `DELETE FROM SKILLS WHERE ACCOUNT_UUID = '${account_uuid}'`
+        ),
+      () =>
+        query(
+          null,
+          `DELETE FROM ACHIEVEMENTS WHERE ACCOUNT_UUID = '${account_uuid}'`
+        ),
+      () =>
+        query(
+          null,
+          `DELETE FROM COMMODITIES WHERE ACCOUNT_UUID = '${account_uuid}'`
+        ),
+      () =>
+        query(
+          null,
+          `DELETE FROM FACILITIES WHERE ACCOUNT_UUID = '${account_uuid}'`
+        ),
+      () =>
+        query(
+          null,
+          `DELETE FROM SETTINGS WHERE ACCOUNT_UUID = '${account_uuid}'`
+        ),
     ]);
     if (flag === true) {
-      new Response(res).OK();
+      // new Response(res).OK();
+      query(res, `DELETE FROM ACCOUNTS WHERE EMAIL = '${data.email}'`);
     } else {
       new Response(res).internalServerError();
     }
@@ -470,7 +530,7 @@ module.exports.sql = {
             WHERE 1=1
               AND GUBUN NOT IN (6,7,8)
               AND ACCOUNT_UUID = '${data.account_uuid}'
-              AND SLOT_USING_THIS = '${data.slot_num}') AS A);`;
+              AND SLOT_USING_THIS = '${data.slot_num}') AS A)`;
         queryArr.push(() => query(null, sql2));
       }
 
