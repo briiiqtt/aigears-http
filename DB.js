@@ -801,12 +801,14 @@ const sql = {
           if (r.length !== 1) {
             new Response(res).badRequest();
             flag = false;
+            return false;
           }
           if (r[0].ACCOUNT_UUID !== data.account_uuid) {
             new Response(res).badRequest(
               _NAMESPACE.RES_MSG.IT_IS_NOT_YOUR_PARTS
             );
             flag = false;
+            return false;
           }
         });
         if (!flag) return false;
