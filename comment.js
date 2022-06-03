@@ -380,7 +380,7 @@
 /* path:  https://bskim.aigears.io/get-achievement-progress-and-max-count
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
- *        | name                | string      | 업적이름
+ *        | name                | string      | 업적이름    | 선택적
  *        |
  * output:| progress            | integer     | 진행단계
  *        | max                 | integer     | 최대단계
@@ -388,6 +388,7 @@
  *        |
  * desc:  | 계정UUID로 찾은 계정의 업적 진행단계와
  *          해당업적의 최대단계를 제공함.
+ *          name 넘기지 않을 경우 모든 해당 계정의 모든 업적 진행사항 제공함.
  */
 
 /* path:  https://bskim.aigears.io/claim-achievement-reward

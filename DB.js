@@ -1329,19 +1329,30 @@ const sql = {
           ${data.name !== undefined ? `AND NAME = '${data.name}'` : ""}
       `;
       query(null, sql).then((result) => {
-        let flag = true;
-        for (let row of result) {
-          try {
-            row.MAX = _ACHIEVEMENT_COUNT[data.name];
-          } catch (e) {
-            flag = false;
+        if (data.name !== undefined && r.length === 0) {
+          r.push({
+            PROGRESS: 0,
+            NAME: data.name,
+            MAX: _ACHIEVEMENT_COUNT[data.name],
+            GOT_REWARD: 0,
+          });
+          new Response(res, r).OK();
+          return false;
+        } else {
+          let flag = true;
+          for (let row of result) {
+            try {
+              row.MAX = _ACHIEVEMENT_COUNT[data.name];
+            } catch (e) {
+              flag = false;
+            }
           }
+          if (flag) new Response(res, result).OK();
+          else
+            new Response(res).internalServerError(
+              _NAMESPACE.RES_MSG.JSON_NO_SUCH_KEY
+            );
         }
-        if (flag) new Response(res, result).OK();
-        else
-          new Response(res).internalServerError(
-            _NAMESPACE.RES_MSG.JSON_NO_SUCH_KEY
-          );
       });
     },
     async claimAchievementReward(res) {
