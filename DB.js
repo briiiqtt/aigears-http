@@ -1329,7 +1329,7 @@ const sql = {
           ${data.name !== undefined ? `AND NAME = '${data.name}'` : ""}
       `;
       query(null, sql).then((result) => {
-        if (data.name !== undefined && r.length === 0) {
+        if (data.name !== undefined && result.length === 0) {
           result.push({
             PROGRESS: 0,
             NAME: data.name,
