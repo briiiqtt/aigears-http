@@ -54,7 +54,7 @@ const query2 = function (res, sql) {
   });
 };
 
-module.exports.dev = {
+const dev = {
   async haejo(res) {
     let data = res.locals.data;
     if (!isAllArgsProvided(data.email)) {
@@ -213,7 +213,7 @@ const transaction = async function (sqls) {
   }
 };
 
-module.exports.sql = {
+const sql = {
   accounts: {
     getAccount(res) {
       let data = res.locals.data;
@@ -1605,3 +1605,5 @@ const isAtLeastOneArgProvided = function (...args) {
   }
   return false;
 };
+
+module.exports = { dev, sql };
