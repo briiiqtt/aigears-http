@@ -798,6 +798,10 @@ const sql = {
           `SELECT ACCOUNT_UUID FROM PARTS WHERE PARTS_UUID = '${data.parts_uuid}'`
         ).then((r) => {
           console.log(r);
+          if (r.length !== 1) {
+            new Response(res).badRequest();
+            flag = false;
+          }
           if (r[0].ACCOUNT_UUID !== data.account_uuid) {
             new Response(res).badRequest(
               _NAMESPACE.RES_MSG.IT_IS_NOT_YOUR_PARTS
@@ -1574,7 +1578,7 @@ const sql = {
           ),
         () => {
           res.locals.doNotResponse = true;
-          sql.commodities.addCommodities(res, null);
+          sql.commodities.addCommodities(res);
         },
       ]);
 
