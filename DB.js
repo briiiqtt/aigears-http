@@ -1325,8 +1325,8 @@ const sql = {
         FROM
           ACHIEVEMENTS
         WHERE 1=1
-        AND ACCOUNT_UUID = '${data.account_uuid}'
-        ${data.name !== undefined ? `AND NAME = '${data.name}` : ""}
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          ${data.name !== undefined ? `AND NAME = '${data.name}'` : ""}
       `;
       query(null, sql).then((r) => {
         if (r.length === 0) {
