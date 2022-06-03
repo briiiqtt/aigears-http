@@ -1330,7 +1330,7 @@ const sql = {
       `;
       query(null, sql).then((result) => {
         if (data.name !== undefined && r.length === 0) {
-          r.push({
+          result.push({
             PROGRESS: 0,
             NAME: data.name,
             MAX: _ACHIEVEMENT_COUNT[data.name],
