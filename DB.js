@@ -1338,6 +1338,19 @@ const sql = {
           });
           new Response(res, result).OK();
           return false;
+        } else if (data.name === undefined && result.length === 0) {
+          let responseArray = [];
+
+          for (let name of Object.keys(_ACHIEVEMENT_COUNT)) {
+            responseArray.push({
+              PROGRESS: 0,
+              NAME: name,
+              MAX: _ACHIEVEMENT_COUNT[name],
+              GOT_REWARD: 0,
+            });
+          }
+
+          new Response(res, responseArray).OK();
         } else {
           let flag = true;
           for (let row of result) {
