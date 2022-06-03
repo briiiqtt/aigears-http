@@ -1337,7 +1337,7 @@ const sql = {
             flag = false;
           }
         }
-        if (flag) new Response(res, r).OK();
+        if (flag) new Response(res, result).OK();
         else
           new Response(res).internalServerError(
             _NAMESPACE.RES_MSG.JSON_NO_SUCH_KEY
