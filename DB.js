@@ -1350,31 +1350,25 @@ const sql = {
       }
 
       let queryArray = [];
-      queryArray.push(() =>
-        sql.commodities.addCommodities(
-          {
-            data: JSON.stringify({
-              account_uuid: data.account_uuid,
-              gold: reward["Gold"] !== undefined ? reward["Gold"] : undefined,
-              chip: reward["Chip"] !== undefined ? reward["Chip"] : undefined,
-              bolt: reward["Bolt"] !== undefined ? reward["Bolt"] : undefined,
-              ironplate:
-                reward["IronPlate"] !== undefined
-                  ? reward["IronPlate"]
-                  : undefined,
-              hitorium:
-                reward["Hitorium"] !== undefined
-                  ? reward["Hitorium"]
-                  : undefined,
-              electric_wire:
-                reward["ElectricWire"] !== undefined
-                  ? reward["ElectricWire"]
-                  : undefined,
-            }),
-          },
-          null
-        )
-      );
+      res.locals.data.account_uuid = data.account_uuid;
+      res.locals.data.gold =
+        reward["Gold"] !== undefined ? reward["Gold"] : undefined;
+      res.locals.data.chip =
+        reward["Chip"] !== undefined ? reward["Chip"] : undefined;
+      res.locals.data.bolt =
+        reward["Bolt"] !== undefined ? reward["Bolt"] : undefined;
+      res.locals.data.ironplate =
+        reward["IronPlate"] !== undefined ? reward["IronPlate"] : undefined;
+      res.locals.data.hitorium =
+        reward["Hitorium"] !== undefined ? reward["Hitorium"] : undefined;
+      res.locals.data.electric_wire =
+        reward["ElectricWire"] !== undefined
+          ? reward["ElectricWire"]
+          : undefined;
+
+      res.locals.doNotResponse = true;
+
+      queryArray.push(() => sql.commodities.addCommodities(res));
       if (reward["SkillReward"] !== undefined) {
         if (Array.isArray(reward["SkillReward"])) {
           for (let skill of reward["SkillReward"]) {
