@@ -1313,7 +1313,7 @@ const sql = {
     },
     getAchievementProgressAndMaxCount(res) {
       let data = res.locals.data;
-      if (data.account_uuid === undefined || data.name === undefined) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
