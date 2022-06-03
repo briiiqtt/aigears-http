@@ -1328,19 +1328,20 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
           ${data.name !== undefined ? `AND NAME = '${data.name}'` : ""}
       `;
-      query(null, sql).then((r) => {
-        if (r.length === 0) {
-          r.push({
-            PROGRESS: 0,
-            NAME: data.name,
-            MAX: _ACHIEVEMENT_COUNT[data.name],
-            GOT_REWARD: 0,
-          });
-          new Response(res, r).OK();
-        } else {
-          r[0].MAX = _ACHIEVEMENT_COUNT[data.name];
-          new Response(res, r).OK();
+      query(null, sql).then((result) => {
+        let flag = true;
+        for (let row of result) {
+          try {
+            row.MAX = _ACHIEVEMENT_COUNT[data.name];
+          } catch (e) {
+            flag = false;
+          }
         }
+        if (flag) new Response(res, r).OK();
+        else
+          new Response(res).internalServerError(
+            _NAMESPACE.RES_MSG.JSON_NO_SUCH_KEY
+          );
       });
     },
     async claimAchievementReward(res) {

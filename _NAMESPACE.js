@@ -13,6 +13,7 @@ const _NAMESPACE = {
     SYNTAX_ERROR: "구문 오류",
     UUID_OR_EMAIL: "UUID와 EMAIL을 동시에 인자로 사용할 수 없음",
     IT_IS_NOT_YOUR_PARTS: "파츠 소유자 불일치",
+    JSON_NO_SUCH_KEY: "JSON에서 해당 KEY를 찾지 못함",
   },
 };
 
