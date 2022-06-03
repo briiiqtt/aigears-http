@@ -1336,7 +1336,7 @@ const sql = {
             MAX: _ACHIEVEMENT_COUNT[data.name],
             GOT_REWARD: 0,
           });
-          new Response(res, r).OK();
+          new Response(res, result).OK();
           return false;
         } else {
           let flag = true;
