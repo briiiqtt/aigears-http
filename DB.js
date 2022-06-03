@@ -1342,7 +1342,7 @@ const sql = {
           let flag = true;
           for (let row of result) {
             try {
-              row.MAX = _ACHIEVEMENT_COUNT[data.name];
+              row.MAX = _ACHIEVEMENT_COUNT[row.NAME];
             } catch (e) {
               flag = false;
             }
