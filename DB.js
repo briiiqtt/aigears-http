@@ -1468,7 +1468,7 @@ const sql = {
         SELECT * FROM(
           SELECT @ROWNUM:=@ROWNUM+1 "RANK", A.* FROM(
             SELECT
-              AC.ICON, AC.TEAM, GR.HIGHEST_ROUND, GR.PLAY_TIME, AC.ACCOUNT_UUID
+              AC.ICON, AC.TEAM, GR.HIGHEST_ROUND, GR.PLAY_TIME, DISTINCT AC.ACCOUNT_UUID
             FROM
               GAME_RESULTS GR
             JOIN
