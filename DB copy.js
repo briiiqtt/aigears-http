@@ -72,16 +72,16 @@ const dev = {
     let account_uuid = null;
 
     let isAccountExist = true;
-    let r = await query(
+    await query(
       null,
       `SELECT ACCOUNT_UUID FROM ACCOUNTS WHERE EMAIL = '${data.email}'`
-    );
-
-    if (r.length !== 1) {
-      isAccountExist = false;
-    } else {
-      account_uuid = r[0].ACCOUNT_UUID;
-    }
+    ).then((r) => {
+      if (r.length !== 1) {
+        isAccountExist = false;
+      } else {
+        account_uuid = r[0].ACCOUNT_UUID;
+      }
+    });
 
     if (!isAccountExist) {
       new Response(res).badRequest("해당 이메일의 계정 없음");
@@ -321,7 +321,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    async isPWCorrect(res) {
+    isPWCorrect(res) {
       let data = res.locals.data;
       if (data.email === undefined || data.password === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -337,21 +337,22 @@ const sql = {
             AND _IS_DELETED = 0
             AND EMAIL = '${data.email}'
         `;
-      let r = await query(null, sql);
-      let pw = null;
-      let ACCOUNT_UUID = null;
-      try {
-        pw = r[0].PASSWORD;
-        ACCOUNT_UUID = r[0].ACCOUNT_UUID;
-      } catch (e) {
-        new Response(res, { IS_PW_CORRECT: 2, ACCOUNT_UUID: null }).OK();
-        return false;
-      }
-      if (pw == data.password) {
-        new Response(res, { IS_PW_CORRECT: 1, ACCOUNT_UUID }).OK();
-      } else {
-        new Response(res, { IS_PW_CORRECT: 0, ACCOUNT_UUID: null }).OK();
-      }
+      query(null, sql).then((r) => {
+        let pw = null;
+        let ACCOUNT_UUID = null;
+        try {
+          pw = r[0].PASSWORD;
+          ACCOUNT_UUID = r[0].ACCOUNT_UUID;
+        } catch (e) {
+          new Response(res, { IS_PW_CORRECT: 2, ACCOUNT_UUID: null }).OK();
+          return false;
+        }
+        if (pw == data.password) {
+          new Response(res, { IS_PW_CORRECT: 1, ACCOUNT_UUID }).OK();
+        } else {
+          new Response(res, { IS_PW_CORRECT: 0, ACCOUNT_UUID: null }).OK();
+        }
+      });
     },
     team: {
       setTeam(res) {
@@ -435,16 +436,15 @@ const sql = {
       }
       //
       let gap = 0;
-      let r = await query(
+      await query(
         null,
         `SELECT MAX(SLOT_NUM) "MAX" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}'`
-      );
-
-      let maxSlotNum = r[0].MAX;
-      if (maxSlotNum <= data.slot_num) {
-        gap = data.slot_num - maxSlotNum;
-      }
-
+      ).then((r) => {
+        let maxSlotNum = r[0].MAX;
+        if (maxSlotNum <= data.slot_num) {
+          gap = data.slot_num - maxSlotNum;
+        }
+      });
       let arr = [];
       for (let i = 0; i < gap; i++) {
         arr.push(() =>
@@ -817,20 +817,24 @@ const sql = {
       }
       if (data.slot_change_to && data.parts_uuid) {
         let flag = true;
-        let r = await query(
+        await query(
           null,
           `SELECT ACCOUNT_UUID FROM PARTS WHERE PARTS_UUID = '${data.parts_uuid}'`
-        );
-        if (r.length !== 1) {
-          new Response(res).badRequest();
-          flag = false;
-          return false;
-        }
-        if (r[0].ACCOUNT_UUID !== data.account_uuid) {
-          new Response(res).badRequest(_NAMESPACE.RES_MSG.IT_IS_NOT_YOUR_PARTS);
-          flag = false;
-          return false;
-        }
+        ).then((r) => {
+          console.log(r);
+          if (r.length !== 1) {
+            new Response(res).badRequest();
+            flag = false;
+            return false;
+          }
+          if (r[0].ACCOUNT_UUID !== data.account_uuid) {
+            new Response(res).badRequest(
+              _NAMESPACE.RES_MSG.IT_IS_NOT_YOUR_PARTS
+            );
+            flag = false;
+            return false;
+          }
+        });
         if (!flag) return false;
       }
       let sql = `
@@ -1004,7 +1008,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    async addCommodities(res) {
+    addCommodities(res) {
       let data = res.locals.data;
       if (
         data.account_uuid === undefined ||
@@ -1090,19 +1094,19 @@ const sql = {
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
-      let r = await query(null, sql);
-      if (r.affectedRows === 0) {
-        await query(
-          null,
-          `
+      query(null, sql).then((r) => {
+        if (r.affectedRows === 0) {
+          query(
+            null,
+            `
           INSERT INTO COMMODITIES (ACCOUNT_UUID)
           VALUES ('${data.account_uuid}')`
-        );
-        await query(res, sql);
-      } else {
-        if (res.locals.doNotResponse === true) return false;
-        new Response(res, { affectedRows: r.affectedRows }).OK();
-      }
+          ).then(() => query(res, sql));
+        } else {
+          if (res.locals.doNotResponse === true) return false;
+          new Response(res, { affectedRows: r.affectedRows }).OK();
+        }
+      });
     },
   },
   skills: {
@@ -1164,7 +1168,7 @@ const sql = {
       `;
       query(res, sql);
     },
-    async setBlueprint(res) {
+    setBlueprint(res) {
       let data = res.locals.data;
       if (
         data.account_uuid === undefined ||
@@ -1186,11 +1190,11 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
           AND MODEL = '${data.model}'
       `;
-      let r = await query(null, sql);
-      if (r.affectedRows === 0) {
-        query(
-          res,
-          `
+      query(null, sql).then((r) => {
+        if (r.affectedRows === 0) {
+          query(
+            res,
+            `
             INSERT INTO
               BLUEPRINTS(ACCOUNT_UUID, STOCK, MODEL)
             VALUES(
@@ -1199,12 +1203,13 @@ const sql = {
               '${data.model}'
             )
           `
-        );
-      } else {
-        new Response(res, r.affectedRows).OK();
-      }
+          );
+        } else {
+          new Response(res, r.affectedRows).OK();
+        }
+      });
     },
-    async addBlueprint(res) {
+    addBlueprint(res) {
       let data = res.locals.data;
       if (
         data.account_uuid === undefined ||
@@ -1235,11 +1240,11 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
           AND MODEL = '${data.model}'
       `;
-      let r = await query(null, sql);
-      if (r.affectedRows === 0) {
-        query(
-          res,
-          `
+      query(null, sql).then((r) => {
+        if (r.affectedRows === 0) {
+          query(
+            res,
+            `
             INSERT INTO
               BLUEPRINTS(ACCOUNT_UUID, STOCK, MODEL)
             VALUES(
@@ -1248,12 +1253,13 @@ const sql = {
               '${data.model}'
               )
             `
-        );
-      } else {
-        new Response(res, r.affectedRows).OK();
-      }
+          );
+        } else {
+          new Response(res, r.affectedRows).OK();
+        }
+      });
     },
-    async getCurrentAndMaxBlueprintCount(res) {
+    getCurrentAndMaxBlueprintCount(res) {
       let data = res.locals.data;
       if (data.account_uuid === undefined || data.model === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -1270,19 +1276,20 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
           AND MODEL = '${data.model}'
       `;
-      let r = await query(null, sql);
-      function seriesalize(str) {
-        let series = "";
-        for (let s of str.split("-")) {
-          series += s;
+      query(null, sql).then((r) => {
+        function seriesalize(str) {
+          let series = "";
+          for (let s of str.split("-")) {
+            series += s;
+          }
+          return series.substring(0, series.indexOf("("));
         }
-        return series.substring(0, series.indexOf("("));
-      }
-      let model = data.model;
-      let series = seriesalize(model);
-      let MAX = _BLUEPRINT[series];
-      let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
-      new Response(res, { STOCK, MAX }).OK();
+        let model = data.model;
+        let series = seriesalize(model);
+        let MAX = _BLUEPRINT[series];
+        let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
+        new Response(res, { STOCK, MAX }).OK();
+      });
     },
   },
   achievement: {
@@ -1294,7 +1301,7 @@ const sql = {
         new Response(res, _ACHIEVEMENT_REWARD).OK();
       }
     },
-    async achievementAttained(res) {
+    achievementAttained(res) {
       let data = res.locals.data;
       if (
         data.account_uuid === undefined ||
@@ -1313,23 +1320,22 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
           AND NAME = '${data.name}'
       `;
-      let r = await query(null, sql);
-      if (r.affectedRows === 0) {
-        let rr = await query(
-          null,
-          `
+      query(null, sql).then((r) => {
+        if (r.affectedRows === 0) {
+          query(
+            null,
+            `
             INSERT INTO
               ACHIEVEMENTS(ACCOUNT_UUID, NAME, PROGRESS)
             VALUES ('${data.account_uuid}','${data.name}',${data.amount})
           `
-        );
-        // await query(res, sql);
-        new Response(res, { affectedRows: rr.affectedRows }).OK();
-      } else {
-        new Response(res, { affectedRows: r.affectedRows }).OK();
-      }
+          ).then(() => query(res, sql));
+        } else {
+          new Response(res, { affectedRows: r.affectedRows }).OK();
+        }
+      });
     },
-    async getAchievementProgressAndMaxCount(res) {
+    getAchievementProgressAndMaxCount(res) {
       let data = res.locals.data;
       if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
@@ -1346,42 +1352,43 @@ const sql = {
           AND ACCOUNT_UUID = '${data.account_uuid}'
           ${data.name !== undefined ? `AND NAME = '${data.name}'` : ""}
       `;
-      let r = await query(null, sql);
-      if (data.name !== undefined && r.length === 0) {
-        r.push({
-          PROGRESS: 0,
-          NAME: data.name,
-          MAX: _ACHIEVEMENT_COUNT[data.name],
-          GOT_REWARD: 0,
-        });
-        new Response(res, r).OK();
-        return false;
-      } else if (data.name === undefined && r.length === 0) {
-        let responseArray = [];
-        for (let name of Object.keys(_ACHIEVEMENT_COUNT)) {
-          responseArray.push({
+      query(null, sql).then((result) => {
+        if (data.name !== undefined && result.length === 0) {
+          result.push({
             PROGRESS: 0,
-            NAME: name,
-            MAX: _ACHIEVEMENT_COUNT[name],
+            NAME: data.name,
+            MAX: _ACHIEVEMENT_COUNT[data.name],
             GOT_REWARD: 0,
           });
-        }
-        new Response(res, responseArray).OK();
-      } else {
-        let flag = true;
-        for (let row of r) {
-          try {
-            row.MAX = _ACHIEVEMENT_COUNT[row.NAME];
-          } catch (e) {
-            flag = false;
+          new Response(res, result).OK();
+          return false;
+        } else if (data.name === undefined && result.length === 0) {
+          let responseArray = [];
+          for (let name of Object.keys(_ACHIEVEMENT_COUNT)) {
+            responseArray.push({
+              PROGRESS: 0,
+              NAME: name,
+              MAX: _ACHIEVEMENT_COUNT[name],
+              GOT_REWARD: 0,
+            });
           }
+          new Response(res, responseArray).OK();
+        } else {
+          let flag = true;
+          for (let row of result) {
+            try {
+              row.MAX = _ACHIEVEMENT_COUNT[row.NAME];
+            } catch (e) {
+              flag = false;
+            }
+          }
+          if (flag) new Response(res, result).OK();
+          else
+            new Response(res).internalServerError(
+              _NAMESPACE.RES_MSG.JSON_NO_SUCH_KEY
+            );
         }
-        if (flag) new Response(res, r).OK();
-        else
-          new Response(res).internalServerError(
-            _NAMESPACE.RES_MSG.JSON_NO_SUCH_KEY
-          );
-      }
+      });
     },
     async claimAchievementReward(res) {
       let data = res.locals.data;

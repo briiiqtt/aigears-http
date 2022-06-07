@@ -26,8 +26,8 @@ app.get("/favicon.ico", (req, res) => {
 });
 
 // 220604_added_by_ql
-setInterval(function (){
-	db.handshake();
+setInterval(function () {
+  db.handshake();
 }, 14400000);
 
 app.post("*", (req, res, next) => {
@@ -67,6 +67,10 @@ app.post("*", (req, res, next) => {
 
 app.get("/test", (req, res) => {
   res.sendFile(__dirname + "/test.html");
+});
+
+app.get("/test-ranking", (req, res) => {
+  res.sendFile(__dirname + "/test-ranking.html");
 });
 
 app.post("/testpost", (req, res) => {});
