@@ -17,6 +17,13 @@ const res = require("express/lib/response");
 
 const _AUTH_CONN = require("./_AUTH_CONN");
 const conn2 = mysql.createConnection(_AUTH_CONN);
+
+const handshake = function (){
+	conn.query('select 1');
+	conn.query('select 2');
+	console.log('handshake_databse');
+}
+
 const query2 = function (res, sql) {
   return new Promise((resolve, reject) => {
     conn2.query(sql, (err, result, fields) => {
@@ -1632,4 +1639,4 @@ const isAtLeastOneArgProvided = function (...args) {
   return false;
 };
 
-module.exports = { dev, sql };
+module.exports = { dev, sql, handshake };

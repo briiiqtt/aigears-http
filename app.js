@@ -25,6 +25,11 @@ app.get("/favicon.ico", (req, res) => {
   res.end();
 });
 
+// 220604_added_by_ql
+setInterval(function (){
+	db.handshake();
+}, 14400000);
+
 app.post("*", (req, res, next) => {
   let date = new Date();
   res.append("requestNum", requestNum);
