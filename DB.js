@@ -4,7 +4,8 @@ const _ACHIEVEMENT_REWARD = require("./AchievementReward.json");
 const _BLUEPRINT = require("./RequireBlueprintCount.json");
 const _ACHIEVEMENT_COUNT = require("./AchievementAttainCount.json");
 const mysql = require("mysql");
-const conn = mysql.createConnection(_CONN);
+// const conn = mysql.createConnection(_CONN);
+const pool = mysql.createPool(_CONN);
 
 const Response = require("./Response");
 const res = require("express/lib/response");
@@ -18,11 +19,11 @@ const res = require("express/lib/response");
 const _AUTH_CONN = require("./_AUTH_CONN");
 const conn2 = mysql.createConnection(_AUTH_CONN);
 
-const handshake = function (){
-	conn.query('select 1');
-	conn.query('select 2');
-	console.log('handshake_databse');
-}
+const handshake = function () {
+  conn.query("select 1");
+  conn.query("select 2");
+  console.log("handshake_databse");
+};
 
 const query2 = function (res, sql) {
   return new Promise((resolve, reject) => {
@@ -153,71 +154,87 @@ const selectSingle = function (res, sql) {
       reject();
       return false;
     }
-    conn.query(sql, (err, result, fields) => {
-      if (err) {
-        console.error(err);
-      } else if (!(result.length in [0, 1])) {
-        new Response(res).internalServerError();
-      } else {
-        new Response(
-          res,
-          result.affectedRows > 0
-            ? { affectedRows: result.affectedRows }
-            : result[0]
-        ).OK();
-      }
+    pool.getConnection((err, conn) => {
+      if (err) throw err;
+      conn.query(sql, (err, result, fields) => {
+        if (err) {
+          console.error(err);
+        } else if (!(result.length in [0, 1])) {
+          new Response(res).internalServerError();
+        } else {
+          new Response(
+            res,
+            result.affectedRows > 0
+              ? { affectedRows: result.affectedRows }
+              : result[0]
+          ).OK();
+        }
+      });
+      if (conn) conn.release();
     });
   });
 };
 const query = function (res, sql) {
   return new Promise((resolve, reject) => {
-    conn.query(sql, (err, result, fields) => {
-      if (err) {
-        if (res) {
-          switch (err.code) {
-            case "ER_DUP_ENTRY":
-              new Response(res).badRequest(_NAMESPACE.RES_MSG.DUPLICATED_PK);
-              break;
+    pool.getConnection((err, conn) => {
+      if (err) throw err;
+      conn.query(sql, (err, result, fields) => {
+        if (err) {
+          if (res) {
+            switch (err.code) {
+              case "ER_DUP_ENTRY":
+                new Response(res).badRequest(_NAMESPACE.RES_MSG.DUPLICATED_PK);
+                break;
 
-            case "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD":
-              new Response(res).badRequest(
-                _NAMESPACE.RES_MSG.TYPE_MISMATCH + `(${err.sqlMessage})`
-              );
-              break;
+              case "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD":
+                new Response(res).badRequest(
+                  _NAMESPACE.RES_MSG.TYPE_MISMATCH + `(${err.sqlMessage})`
+                );
+                break;
 
-            default:
-              console.error(err);
-              new Response(res).internalServerError();
+              default:
+                console.error(err);
+                new Response(res).internalServerError();
+            }
           }
+          reject(err);
+        } else {
+          if (res) {
+            new Response(
+              res,
+              result.affectedRows !== undefined
+                ? { affectedRows: result.affectedRows }
+                : result
+            ).OK();
+          }
+          resolve(result);
         }
-        reject(err);
-      } else {
-        if (res) {
-          new Response(
-            res,
-            result.affectedRows !== undefined
-              ? { affectedRows: result.affectedRows }
-              : result
-          ).OK();
-        }
-        resolve(result);
-      }
+      });
+      if (conn) conn.release();
     });
   });
 };
-// const transaction = async function (...sqls) {
 const transaction = async function (sqls) {
-  try {
-    await conn.beginTransaction();
-    // await Promise.all(sqls.map((sql) => query(null, sql)));
-    await Promise.all(sqls.map((sql) => sql()));
-    await conn.commit();
-    return true;
-  } catch (e) {
-    console.error(e);
-    await conn.rollback();
-    return e.code ? e.code : e;
-  }
+  return new Promise((resolve, reject) => {
+    pool.getConnection(async (err, conn) => {
+      if (err) throw err;
+      try {
+        conn.beginTransaction();
+        // await Promise.all(sqls.map((sql) => sql()));
+        for (let sql of sqls) {
+          await sql();
+        }
+        conn.commit();
+        if (conn) conn.release();
+        resolve(true);
+      } catch (e) {
+        console.error(e);
+        conn.rollback();
+        if (conn) conn.release();
+        reject(e.code ? e.code : e);
+      }
+    });
+  }).catch((err) => console.error(err));
 };
 
 const sql = {
