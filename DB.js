@@ -1340,7 +1340,6 @@ const sql = {
           return false;
         } else if (data.name === undefined && result.length === 0) {
           let responseArray = [];
-
           for (let name of Object.keys(_ACHIEVEMENT_COUNT)) {
             responseArray.push({
               PROGRESS: 0,
@@ -1349,7 +1348,6 @@ const sql = {
               GOT_REWARD: 0,
             });
           }
-
           new Response(res, responseArray).OK();
         } else {
           let flag = true;
