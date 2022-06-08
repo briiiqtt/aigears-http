@@ -20,9 +20,11 @@ const _AUTH_CONN = require("./_AUTH_CONN");
 const conn2 = mysql.createConnection(_AUTH_CONN);
 
 const handshake = function () {
-  conn.query("select 1");
-  conn.query("select 2");
-  console.log("handshake_databse");
+  pool.getConnection((err, conn) => {
+    conn.query("select 1");
+    conn.query("select 2");
+    console.log("handshake_databse");
+  });
 };
 
 const query2 = function (res, sql) {
