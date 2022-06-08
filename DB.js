@@ -1543,28 +1543,22 @@ const sql = {
       let sql = `
         SELECT * FROM(
           SELECT @ROWNUM:=@ROWNUM+1 "RANK", A.* FROM(
-            SELECT
-              AC.ICON, AC.TEAM, MAX(GR.HIGHEST_ROUND) "HIGHEST_ROUND", MIN(GR.PLAY_TIME) "PLAY_TIME", AC.ACCOUNT_UUID
-            FROM
-              GAME_RESULTS GR
-            JOIN
-              ACCOUNTS AC
-            ON
-              GR.PLAYER1 = AC.ACCOUNT_UUID,
-              (SELECT @ROWNUM:=0) AS ROWNUM
-            WHERE 1=1
-              AND GR._IS_DELETED = 0
-              ${data.gubun !== undefined ? `AND GR.GUBUN = ${data.gubun}` : ""}
+            SELECT A.ICON, A.TEAM, MIN(PLAY_TIME) "PLAYTIME", A.HIGHEST_ROUND, A.PLAYER1 "ACCOUNT_UUID" FROM(
+              SELECT GR1.PLAYER1, GR1.HIGHEST_ROUND, GR1.PLAY_TIME, AC.TEAM, AC.ICON
+              FROM GAME_RESULTS GR1
+              JOIN ACCOUNTS AC
+              ON AC.ACCOUNT_UUID = GR1.PLAYER1, (SELECT @ROWNUM:=0) AS ROWNUM
+              WHERE 1=1
               ${
                 data.season !== undefined
-                  ? `AND GR.SEASON = ${data.season}`
+                  ? `AND GR1.SEASON = ${data.season}`
                   : ""
               }
-            GROUP BY ACCOUNT_UUID
-            ORDER BY
-              HIGHEST_ROUND DESC,
-              PLAY_TIME ASC) AS A)AS A
-        WHERE 1=1
+              ${data.gubun !== undefined ? `AND GR1.GUBUN = ${data.gubun}` : ""}
+              AND GR1.HIGHEST_ROUND = (SELECT MAX(HIGHEST_ROUND) FROM GAME_RESULTS GR2 WHERE GR2.PLAYER1 = GR1.PLAYER1 GROUP BY GR1.PLAYER1)) AS A
+              GROUP BY PLAYER1
+              ORDER BY A.HIGHEST_ROUND DESC, A.PLAY_TIME ASC)AS A) AS A
+              WHERE 1=1
           ${
             data.rank_high !== undefined
               ? `AND A.RANK >= ${data.rank_high}`
