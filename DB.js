@@ -1278,11 +1278,29 @@ const sql = {
         }
         return series.substring(0, series.indexOf("("));
       }
-      let model = data.model;
-      let series = seriesalize(model);
-      let MAX = _BLUEPRINT[series];
-      let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
-      new Response(res, { STOCK, MAX }).OK();
+      if (data.model !== undefined) {
+        let model = data.model;
+        let series = seriesalize(model);
+        let MAX = _BLUEPRINT[series];
+        let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
+        new Response(res, { MODEL: model, STOCK, MAX }).OK();
+      } else {
+        let responseArray = [];
+        for (let rr of r) {
+          let exists = false;
+          for (let name of Object.keys(_BLUEPRINT)) {
+            if (seriesalize(rr.MODEL) === name) {
+              exists = true;
+              responseArray.push({
+                MODEL: rr.MODEL,
+                STOCK: rr.STOCK,
+                MAX: _BLUEPRINT[name],
+              });
+            }
+          }
+        }
+        new Response(res, responseArray).OK();
+      }
     },
   },
   achievement: {

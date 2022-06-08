@@ -348,12 +348,15 @@
 /* path:  https://bskim.aigears.io/get-current-and-max-blueprint-count
  *        |name                 |type         |desc
  * input: | account_uuid        | string      | 계정UUID
- *        | model               | string      | 종류
+ *        | model               | string      | 종류        |선택적
  *        |
  * output:| stock               | integer     | 현재보유량
  *        | max                 | integer     | 최대보유량
+ *        | model               | string      | 종류
  *        |
  * desc:  | (계정UUID+설계도종류)의 보유량과 해당 설계도의 최대보유량을 제공함
+ *        |  model 넘기지 않을 경우 모든 해당 계정의 모든 설계도 수집 현황 제공.
+ *
  */
 
 /* path:  https://bskim.aigears.io/get-reward-info-json
