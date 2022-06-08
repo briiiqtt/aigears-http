@@ -1271,23 +1271,18 @@ const sql = {
           ${data.model !== undefined ? `AND MODEL = '${data.model}'` : ""}
       `;
       let r = await query(null, sql);
-      if (data.model !== undefined) {
-        function seriesalize(str) {
-          let series = "";
-          for (let s of str.split("-")) {
-            series += s;
-          }
-          return series.substring(0, series.indexOf("("));
+      function seriesalize(str) {
+        let series = "";
+        for (let s of str.split("-")) {
+          series += s;
         }
-        let model = data.model;
-        let series = seriesalize(model);
-        let MAX = _BLUEPRINT[series];
-        let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
-        new Response(res, { STOCK, MAX }).OK();
-      } else {
-        console.log(_BLUEPRINT);
-        console.log(r);
+        return series.substring(0, series.indexOf("("));
       }
+      let model = data.model;
+      let series = seriesalize(model);
+      let MAX = _BLUEPRINT[series];
+      let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
+      new Response(res, { STOCK, MAX }).OK();
     },
   },
   achievement: {
