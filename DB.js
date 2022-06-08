@@ -1556,8 +1556,8 @@ const sql = {
               }
               ${data.gubun !== undefined ? `AND GR1.GUBUN = ${data.gubun}` : ""}
               AND GR1.HIGHEST_ROUND = (SELECT MAX(HIGHEST_ROUND) FROM GAME_RESULTS GR2 WHERE GR2.PLAYER1 = GR1.PLAYER1 GROUP BY GR1.PLAYER1)) AS A
-              GROUP BY PLAYER1
-              ORDER BY A.HIGHEST_ROUND DESC, A.PLAY_TIME ASC)AS A) AS A
+              GROUP BY PLAYER1)AS A
+              ORDER BY A.HIGHEST_ROUND DESC, A.PLAY_TIME ASC) AS A
               WHERE 1=1
           ${
             data.rank_high !== undefined
