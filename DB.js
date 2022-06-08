@@ -1255,7 +1255,7 @@ const sql = {
     },
     async getCurrentAndMaxBlueprintCount(res) {
       let data = res.locals.data;
-      if (data.account_uuid === undefined || data.model === undefined) {
+      if (data.account_uuid === undefined) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
@@ -1268,21 +1268,26 @@ const sql = {
         WHERE 1=1
           AND _IS_DELETED = 0
           AND ACCOUNT_UUID = '${data.account_uuid}'
-          AND MODEL = '${data.model}'
+          ${data.model !== undefined ? `AND MODEL = '${data.model}'` : ""}
       `;
       let r = await query(null, sql);
-      function seriesalize(str) {
-        let series = "";
-        for (let s of str.split("-")) {
-          series += s;
+      if (data.model !== undefined) {
+        function seriesalize(str) {
+          let series = "";
+          for (let s of str.split("-")) {
+            series += s;
+          }
+          return series.substring(0, series.indexOf("("));
         }
-        return series.substring(0, series.indexOf("("));
+        let model = data.model;
+        let series = seriesalize(model);
+        let MAX = _BLUEPRINT[series];
+        let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
+        new Response(res, { STOCK, MAX }).OK();
+      } else {
+        console.log(_BLUEPRINT);
+        console.log(r);
       }
-      let model = data.model;
-      let series = seriesalize(model);
-      let MAX = _BLUEPRINT[series];
-      let STOCK = r.length === 0 ? 0 : r[0]["STOCK"];
-      new Response(res, { STOCK, MAX }).OK();
     },
   },
   achievement: {
@@ -1356,15 +1361,29 @@ const sql = {
         });
         new Response(res, r).OK();
         return false;
-      } else if (data.name === undefined && r.length === 0) {
+      } else if (data.name === undefined) {
         let responseArray = [];
         for (let name of Object.keys(_ACHIEVEMENT_COUNT)) {
-          responseArray.push({
-            PROGRESS: 0,
-            NAME: name,
-            MAX: _ACHIEVEMENT_COUNT[name],
-            GOT_REWARD: 0,
-          });
+          let exists = false;
+          for (let rr of r) {
+            if (rr.NAME === name) {
+              exists = true;
+              responseArray.push({
+                PROGRESS: rr.PROGRESS,
+                NAME: name,
+                MAX: _ACHIEVEMENT_COUNT[name],
+                GOT_REWARD: rr.GOT_REWARD,
+              });
+            }
+          }
+          if (!exists) {
+            responseArray.push({
+              PROGRESS: 0,
+              NAME: name,
+              MAX: _ACHIEVEMENT_COUNT[name],
+              GOT_REWARD: 0,
+            });
+          }
         }
         new Response(res, responseArray).OK();
       } else {
