@@ -439,11 +439,13 @@ const sql = {
       let gap = 0;
       let r = await query(
         null,
-        `SELECT MAX(SLOT_NUM) "MAX" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}'`
+        `SELECT IFNULL(MAX(SLOT_NUM),-1) "MAX" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}'`
       );
 
       let maxSlotNum = r[0].MAX;
-      if (maxSlotNum <= data.slot_num) {
+      if (maxSlotNum === -1) {
+        gap = data.slot_num * 1 + 1;
+      } else if (maxSlotNum <= data.slot_num) {
         gap = data.slot_num - maxSlotNum;
       }
 
@@ -457,7 +459,7 @@ const sql = {
           ROBOTS (ACCOUNT_UUID, SLOT_NUM)
           VALUES (
             '${data.account_uuid}',
-            IFNULL((SELECT A FROM (SELECT MAX(SLOT_NUM)+1 "A" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}') A),0 ))
+            IFNULL((SELECT A FROM (SELECT IFNULL(MAX(SLOT_NUM),-1)+1 "A" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}') A),0 ))
         `
           )
         );
