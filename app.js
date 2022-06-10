@@ -228,7 +228,7 @@ router.post("/haejo", (req, res) => {
   db.dev.haejo(res);
 });
 
-app.post("/server-alive", (req, res) => {
+app.get("/server-alive", (req, res) => {
   res.send(true);
 });
 app.post("/server-down", (req, res) => {
