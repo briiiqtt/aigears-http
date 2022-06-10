@@ -16,6 +16,7 @@ const Response = require("./Response");
  */
 
 const _AUTH_CONN = require("./_AUTH_CONN");
+const PoolCluster = require("mysql/lib/PoolCluster");
 const conn2 = mysql.createConnection(_AUTH_CONN);
 
 const handshake = function () {
@@ -149,7 +150,7 @@ const dev = {
  */
 
 const selectSingle = function (res, sql) {
-  //deprecated
+  //FIXME: deprecated
   return new Promise((resolve, reject) => {
     if (!sql.includes("SELECT")) {
       reject();
@@ -176,6 +177,7 @@ const selectSingle = function (res, sql) {
   });
 };
 const query = function (res, sql) {
+  //FIXME: deprecated
   return new Promise((resolve, reject) => {
     pool.getConnection((err, conn) => {
       if (err) throw err;
@@ -236,6 +238,27 @@ const transaction = async function (sqls) {
       }
     });
   }).catch((err) => console.error(err));
+};
+const executeQuery = function (sql, conn) {
+  return new Promise((resolve, reject) => {
+    let connectionProvided = true;
+    if (!conn) {
+      connectionProvided = false;
+      pool.getConnection((err, _conn) => {
+        conn = _conn;
+      });
+    }
+    conn.query(sql, (err, result, fields) => {
+      if (err) {
+        reject(err.code ? err.code : err);
+      } else {
+        resolve(result);
+      }
+    });
+    if (!connectionProvided) {
+      conn.release();
+    }
+  });
 };
 
 const sql = {
