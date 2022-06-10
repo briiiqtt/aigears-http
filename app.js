@@ -227,6 +227,12 @@ router.post("/get-unlocked-facility", (req, res) => {
 router.post("/haejo", (req, res) => {
   db.dev.haejo(res);
 });
+router.post("/server-down", (req, res) => {
+  process.exit(0);
+});
+router.post("/server-crash", (req, res) => {
+  throw "hi";
+});
 
 app.all("*", (req, res) => {
   new Response(res).notFound(_NAMESPACE.RES_MSG.NO_SUCH_PATH);
