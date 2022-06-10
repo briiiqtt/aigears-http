@@ -244,16 +244,18 @@ const executeQuery = function (sql, conn) {
     }
   });
 };
-const sendExceptionResponse = function (errCode) {
-  switch (errCode) {
-    case "":
-      return "";
-    case "":
-      return "";
-    case "":
-      return "";
+const sendExceptionResponse = function (err) {
+  console.error(err);
+  let msg = "";
+  if (err.code) {
+    switch (err.code) {
+      case "EXAMPLE ERR 1":
+        msg += "예시 에러 1 메시지";
+    }
   }
-  new Response(res, {}); //TODO: 어케하지
+  if (msg === "") new Response(res).internalServerError();
+  else new Response(res).badRequest(msg);
+  return;
 };
 
 const sql = {
@@ -276,12 +278,15 @@ const sql = {
           OR EMAIL = '${data.email}'
           )
       `;
+
       let qr = null;
       try {
         qr = await executeQuery(sql);
-      } catch (e) {
-        //TODO:
+      } catch (err) {
+        sendExceptionResponse(err);
+        return;
       }
+
       let resp = [
         {
           ACCOUNT_UUID: qr.ACCOUNT_UUID,
@@ -294,6 +299,7 @@ const sql = {
           WALLET_ADDRESS: qr.WALLET_ADDRESS,
         },
       ];
+
       new Response(res, resp).OK();
     },
     setFacilityPhase(res) {
