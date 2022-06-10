@@ -149,33 +149,6 @@ const dev = {
  *
  */
 
-const selectSingle = function (res, sql) {
-  //FIXME: deprecated
-  return new Promise((resolve, reject) => {
-    if (!sql.includes("SELECT")) {
-      reject();
-      return false;
-    }
-    pool.getConnection((err, conn) => {
-      if (err) throw err;
-      conn.query(sql, (err, result, fields) => {
-        if (err) {
-          console.error(err);
-        } else if (!(result.length in [0, 1])) {
-          new Response(res).internalServerError();
-        } else {
-          new Response(
-            res,
-            result.affectedRows > 0
-              ? { affectedRows: result.affectedRows }
-              : result[0]
-          ).OK();
-        }
-      });
-      if (conn) conn.release();
-    });
-  });
-};
 const query = function (res, sql) {
   //FIXME: deprecated
   return new Promise((resolve, reject) => {
