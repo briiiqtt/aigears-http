@@ -439,10 +439,10 @@
 
 /* path:  https://bskim.aigears.io/enhancement-succeed
  *        |name                 |type         |desc
- * input: | parts_uuid          | string      | 부품UUID      | 파라미터1
- *        | account_uuid        | string      | 계정UUID      | 파라미터2
- *        | slot_using_this     | integer     | 해당부품을 사용하고 있는 슬롯 | 파라미터2
- *        | gubun               | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어 | 파라미터2
+ * input: | parts_uuid          | string      | 부품UUID
+ *        | account_uuid        | string      | 계정UUID
+ *        | slot_using_this     | integer     | 해당부품을 사용하고 있는 슬롯            | 선택적
+ *        | gubun               | integer     | 0:헤드 1:바디 2:팔 3:다리 4:부스터 5:코어| 선택적
  *        | gold                | integer     | 골드
  *        | chip                | integer     | 재료1
  *        | bolt                | integer     | 재료2

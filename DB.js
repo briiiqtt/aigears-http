@@ -1010,17 +1010,23 @@ const sql = {
     },
     async addCommodities(res) {
       let data = res.locals.data;
+
       if (
-        data.account_uuid === undefined ||
-        (data.gold === undefined &&
-          data.chip === undefined &&
-          data.bolt === undefined &&
-          data.ironplate === undefined &&
-          data.hitorium === undefined &&
-          data.electric_wire === undefined &&
-          data.qrd === undefined)
+        falseIfAllTruthy(
+          data.account_uuid,
+          !falseIfOneTruthy(
+            data.gold,
+            data.chip,
+            data.bolt,
+            data.ironplate,
+            data.hitorium,
+            data.electric_wire,
+            data.qrd
+          )
+        )
       ) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+        console.log(2222222222);
         return false;
       }
       let sql = `
@@ -1606,26 +1612,24 @@ const sql = {
     async enhancementSucceed(res) {
       let data = res.locals.data;
       if (
-        ((data.account_uuid === undefined ||
-          data.slot_using_this === undefined ||
-          data.gubun === undefined) &&
-          data.parts_uuid === undefined) ||
-        (data.gold === undefined &&
-          data.chip === undefined &&
-          data.bolt === undefined &&
-          data.ironplate === undefined &&
-          data.hitorium === undefined &&
-          data.electric_wire === undefined &&
-          data.qrd === undefined)
+        falseIfAllTruthy(
+          data.account_uuid,
+          data.parts_uuid,
+          !falseIfOneTruthy(
+            data.gold,
+            data.chip,
+            data.bolt,
+            data.ironplate,
+            data.hitorium,
+            data.electric_wire,
+            data.qrd
+          )
+        )
       ) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let flag = await transaction([
-        () =>
-          query(
-            null,
-            `
+      let sql1 = `
           UPDATE
             PARTS
           SET
@@ -1647,34 +1651,68 @@ const sql = {
                 ? `AND PARTS_UUID = '${data.parts_uuid}'`
                 : ""
             }
-            `
-          ),
-        () => {
-          res.locals.doNotResponse = true;
-          sql.commodities.addCommodities(res);
-        },
-      ]);
+            `;
+      let result = await query(null, sql1);
 
-      if (flag === true) {
-        new Response(res, { result: "success" }).OK();
+      let flag = false;
+
+      if (result.affectedRows === 0) {
+        new Response(res).badRequest(_NAMESPACE.RES_MSG.PARTS_NOT_FOUND);
+        return false;
+      } else if (result.affectedRows === 1) {
+        flag = await transaction([
+          () => {
+            res.locals.doNotResponse = true;
+            sql.commodities.addCommodities(res);
+          },
+        ]);
+
+        if (flag === true) {
+          new Response(res, { result: "success" }).OK();
+          return;
+        } else {
+          new Response(res, { result: "fail" }).OK();
+          return;
+        }
       } else {
-        new Response(res, { result: "fail" }).OK();
+        new Response(res).internalServerError();
+        console.error(result);
+        return false;
       }
     },
   },
 };
 
 const isAllArgsProvided = function (...args) {
+  //FIXME: deprecated
   for (let arg of args) {
     if (arg === undefined || arg === "") return false;
   }
   return true;
 };
-const isAtLeastOneArgProvided = function (...args) {
+const falseIfAllFalsy = function (...args) {
   for (let arg of args) {
-    if (arg !== undefined || arg !== "") return true;
+    if (arg !== undefined || arg !== "" || arg === true) return true;
   }
   return false;
+};
+const falseIfAllTruthy = function (...args) {
+  for (let arg of args) {
+    if (arg === undefined || arg === "" || arg === false) return true;
+  }
+  return false;
+};
+const falseIfOneTruthy = function (...args) {
+  for (let arg of args) {
+    if (arg !== undefined || arg !== "" || arg === true) return false;
+  }
+  return true;
+};
+const falseIfOneFalsy = function (...args) {
+  for (let arg of args) {
+    if (arg === undefined || arg === "" || arg === false) return false;
+  }
+  return true;
 };
 
 module.exports = { dev, sql, handshake };

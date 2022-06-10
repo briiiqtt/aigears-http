@@ -59,7 +59,8 @@ app.post("*", (req, res, next) => {
   try {
     res.locals.data = JSON.parse(req.body.data);
   } catch (e) {
-    new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
+    console.error(e);
+    new Response(res).badRequest("json파싱 실패");
     return false;
   }
   next();
