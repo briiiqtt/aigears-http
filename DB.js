@@ -599,12 +599,13 @@ const sql = {
         AND SLOT_NUM = '${data.slot_num}'
       `;
 
-      let queryArr = [];
+      let conn = await getConn();
+      conn.beginTransaction();
 
-      queryArr.push(() => query(null, sql));
-
-      if (data.remove_parts === true) {
-        let sql2 = `
+      let qr = await executeQuery(sql, conn);
+      if (qr.affectedRows === 1) {
+        if (data.remove_parts === true) {
+          let sql2 = `
         UPDATE
          PARTS
         SET
@@ -617,16 +618,17 @@ const sql = {
               AND GUBUN NOT IN (6,7,8)
               AND ACCOUNT_UUID = '${data.account_uuid}'
               AND SLOT_USING_THIS = '${data.slot_num}') AS A)`;
-        queryArr.push(() => query(null, sql2));
-      }
-
-      let flag = await transaction(queryArr);
-
-      if (flag === true) {
-        new Response(res, { result: "success" }).OK();
+          let qr2 = await executeQuery(sql, conn);
+          if (qr2.affectedRows === 1) {
+            new Response(res, { result: "success" }).OK();
+          } else {
+            new Response(res).internalServerError();
+          }
+        }
       } else {
         new Response(res).internalServerError();
       }
+      return;
     },
     setRobotRecord(res) {
       let data = res.locals.data;
