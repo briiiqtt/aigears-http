@@ -239,20 +239,31 @@ const transaction = async function (sqls) {
     });
   }).catch((err) => console.error(err));
 };
-const executeQuery = function (sql, conn) {
+const getConn = function () {
   return new Promise((resolve, reject) => {
+    pool.getConnection((err, conn) => {
+      if (err) reject(err);
+      else resolve(conn);
+    });
+  });
+};
+const executeQuery = function (sql, conn) {
+  /**
+   * 단일 커넥션이어야 할 경우 ex) 트랜잭션처리
+   * conn 없이 sql만 넘기고
+   * 이 함수 밖에서 처리 할 것
+   */
+  return new Promise(async (resolve, reject) => {
     let connectionProvided = true;
     if (!conn) {
       connectionProvided = false;
-      pool.getConnection((err, _conn) => {
-        conn = _conn;
-      });
+      conn = await getConn();
     }
     conn.query(sql, (err, result, fields) => {
       if (err) {
         reject(err.code ? err.code : err);
       } else {
-        resolve(result);
+        resolve(result.length === 1 ? result[0] : result);
       }
     });
     if (!connectionProvided) {
@@ -260,17 +271,24 @@ const executeQuery = function (sql, conn) {
     }
   });
 };
+const sendExceptionResponse = function (errCode) {
+  switch (errCode) {
+    case "":
+      return "";
+    case "":
+      return "";
+    case "":
+      return "";
+  }
+  new Response(res, {}); //TODO: 어케하지
+};
 
 const sql = {
   accounts: {
-    getAccount(res) {
+    async getAccount(res) {
       let data = res.locals.data;
-      if (data.account_uuid === undefined && data.email === undefined) {
+      if (falseIfOneTruthy(data.account_uuid, data.email)) {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
-        return false;
-      }
-      if (data.account_uuid && data.email) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.UUID_OR_EMAIL);
         return false;
       }
       let sql = `
@@ -285,7 +303,25 @@ const sql = {
           OR EMAIL = '${data.email}'
           )
       `;
-      selectSingle(res, sql);
+      let qr = null;
+      try {
+        qr = await executeQuery(sql);
+      } catch (e) {
+        //TODO:
+      }
+      let resp = [
+        {
+          ACCOUNT_UUID: qr.ACCOUNT_UUID,
+          EMAIL: qr.EMAIL,
+          PASSWORD: qr.PASSWORD,
+          AUTH: qr.AUTH,
+          TEAM: qr.TEAM,
+          ICON: qr.ICON,
+          FACILITY_PHASE: qr.FACILITY_PHASE,
+          WALLET_ADDRESS: qr.WALLET_ADDRESS,
+        },
+      ];
+      new Response(res, resp).OK();
     },
     setFacilityPhase(res) {
       let data = res.locals.data;
