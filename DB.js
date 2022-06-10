@@ -8,7 +8,6 @@ const mysql = require("mysql");
 const pool = mysql.createPool(_CONN);
 
 const Response = require("./Response");
-const res = require("express/lib/response");
 
 /*
  *

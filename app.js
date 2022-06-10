@@ -227,10 +227,14 @@ router.post("/get-unlocked-facility", (req, res) => {
 router.post("/haejo", (req, res) => {
   db.dev.haejo(res);
 });
-router.post("/server-down", (req, res) => {
+
+app.post("/server-alive", (req, res) => {
+  res.send(true);
+});
+app.post("/server-down", (req, res) => {
   process.exit(0);
 });
-router.post("/server-crash", (req, res) => {
+app.post("/server-crash", (req, res) => {
   throw "hi";
 });
 
