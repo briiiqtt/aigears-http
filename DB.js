@@ -27,42 +27,42 @@ const handshake = function () {
   });
 };
 
-const query2 = function (res, sql) {
-  return new Promise((resolve, reject) => {
-    conn2.query(sql, (err, result, fields) => {
-      if (err) {
-        if (res) {
-          switch (err.code) {
-            case "ER_DUP_ENTRY":
-              new Response(res).badRequest(_NAMESPACE.RES_MSG.DUPLICATED_PK);
-              break;
+// const query2 = function (res, sql) {
+//   return new Promise((resolve, reject) => {
+//     conn2.query(sql, (err, result, fields) => {
+//       if (err) {
+//         if (res) {
+//           switch (err.code) {
+//             case "ER_DUP_ENTRY":
+//               new Response(res).badRequest(_NAMESPACE.RES_MSG.DUPLICATED_PK);
+//               break;
 
-            case "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD":
-              new Response(res).badRequest(
-                _NAMESPACE.RES_MSG.TYPE_MISMATCH + `(${err.sqlMessage})`
-              );
-              break;
+//             case "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD":
+//               new Response(res).badRequest(
+//                 _NAMESPACE.RES_MSG.TYPE_MISMATCH + `(${err.sqlMessage})`
+//               );
+//               break;
 
-            default:
-              console.error(err);
-              new Response(res).internalServerError();
-          }
-        }
-        reject(err);
-      } else {
-        if (res) {
-          new Response(
-            res,
-            result.affectedRows !== undefined
-              ? { affectedRows: result.affectedRows }
-              : result
-          ).OK();
-        }
-        resolve(result);
-      }
-    });
-  });
-};
+//             default:
+//               console.error(err);
+//               new Response(res).internalServerError();
+//           }
+//         }
+//         reject(err);
+//       } else {
+//         if (res) {
+//           new Response(
+//             res,
+//             result.affectedRows !== undefined
+//               ? { affectedRows: result.affectedRows }
+//               : result
+//           ).OK();
+//         }
+//         resolve(result);
+//       }
+//     });
+//   });
+// };
 
 const dev = {
   async haejo(res) {
@@ -90,55 +90,51 @@ const dev = {
       return false;
     }
 
-    let flag = await transaction([
-      () =>
-        query2(
-          null,
-          `DELETE FROM table_test_auth WHERE email = '${data.email}'`
-        ),
-      () =>
-        query(
-          null,
-          `DELETE FROM ROBOTS WHERE ACCOUNT_UUID = '${account_uuid}'`
-        ),
-      () =>
-        query(null, `DELETE FROM PARTS WHERE ACCOUNT_UUID = '${account_uuid}'`),
-      () =>
-        query(
-          null,
-          `DELETE FROM BLUEPRINTS WHERE ACCOUNT_UUID = '${account_uuid}'`
-        ),
-      () =>
-        query(
-          null,
-          `DELETE FROM SKILLS WHERE ACCOUNT_UUID = '${account_uuid}'`
-        ),
-      () =>
-        query(
-          null,
-          `DELETE FROM ACHIEVEMENTS WHERE ACCOUNT_UUID = '${account_uuid}'`
-        ),
-      () =>
-        query(
-          null,
-          `DELETE FROM COMMODITIES WHERE ACCOUNT_UUID = '${account_uuid}'`
-        ),
-      () =>
-        query(
-          null,
-          `DELETE FROM FACILITIES WHERE ACCOUNT_UUID = '${account_uuid}'`
-        ),
-      () =>
-        query(
-          null,
-          `DELETE FROM SETTINGS WHERE ACCOUNT_UUID = '${account_uuid}'`
-        ),
-    ]);
-    if (flag === true) {
-      // new Response(res).OK();
-      query(res, `DELETE FROM ACCOUNTS WHERE EMAIL = '${data.email}'`);
-    } else {
+    let conn = await getConn();
+    conn.beginTransaction();
+    conn2.beginTransaction();
+    try {
+      conn2.query(`DELETE FROM table_test_auth WHERE email = '${data.email}'`);
+      await executeQuery(
+        `DELETE FROM PARTS WHERE ACCOUNT_UUID = '${account_uuid}'`,
+        conn
+      );
+      await executeQuery(
+        `DELETE FROM BLUEPRINTS WHERE ACCOUNT_UUID = '${account_uuid}'`,
+        conn
+      );
+      await executeQuery(
+        `DELETE FROM SKILLS WHERE ACCOUNT_UUID = '${account_uuid}'`,
+        conn
+      );
+      await executeQuery(
+        `DELETE FROM ACHIEVEMENTS WHERE ACCOUNT_UUID = '${account_uuid}'`,
+        conn
+      );
+      await executeQuery(
+        `DELETE FROM COMMODITIES WHERE ACCOUNT_UUID = '${account_uuid}'`,
+        conn
+      );
+      await executeQuery(
+        `DELETE FROM FACILITIES WHERE ACCOUNT_UUID = '${account_uuid}'`,
+        conn
+      );
+      await executeQuery(
+        `DELETE FROM SETTINGS WHERE ACCOUNT_UUID = '${account_uuid}'`,
+        conn
+      );
+      await executeQuery(
+        `DELETE FROM ACCOUNTS WHERE EMAIL = '${data.email}'`,
+        conn
+      );
+      conn.commit();
+      conn2.commit();
+      new Response(res).OK();
+      return;
+    } catch (err) {
+      console.error(err);
       new Response(res).internalServerError();
+      return;
     }
   },
 };
@@ -221,11 +217,6 @@ const getConn = function () {
   });
 };
 const executeQuery = function (sql, conn) {
-  /**
-   * 단일 커넥션이어야 할 경우 ex) 트랜잭션처리
-   * conn 없이 sql만 넘기고
-   * 이 함수 밖에서 처리 할 것
-   */
   return new Promise(async (resolve, reject) => {
     let connectionProvided = true;
     if (!conn) {
@@ -234,7 +225,7 @@ const executeQuery = function (sql, conn) {
     }
     conn.query(sql, (err, result, fields) => {
       if (err) {
-        reject(err.code ? err.code : err);
+        reject(err);
       } else {
         resolve(result.length === 1 ? result[0] : result);
       }
