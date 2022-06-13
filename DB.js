@@ -557,7 +557,7 @@ const sql = {
         PARTS
       SET
         _UPDATED_AT = CURRENT_TIMESTAMP(),
-        SLOT_USING_THIS = -2
+        SLOT_USING_THIS = -1
       WHERE 1=1
         AND _IS_DELETED = 0
         AND PARTS_UUID IN (
