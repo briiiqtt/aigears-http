@@ -241,3 +241,14 @@ app.post("/server-crash", (req, res) => {
 app.all("*", (req, res) => {
   new Response(res).notFound(_NAMESPACE.RES_MSG.NO_SUCH_PATH);
 });
+
+function hi() {
+  try {
+    throw "hi";
+  } catch (err) {
+    console.log("catch");
+    return;
+  } finally {
+    console.error("asd");
+  }
+}

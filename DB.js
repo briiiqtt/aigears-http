@@ -27,43 +27,6 @@ const handshake = function () {
   });
 };
 
-// const query2 = function (res, sql) {
-//   return new Promise((resolve, reject) => {
-//     conn2.query(sql, (err, result, fields) => {
-//       if (err) {
-//         if (res) {
-//           switch (err.code) {
-//             case "ER_DUP_ENTRY":
-//               new Response(res).badRequest(_NAMESPACE.RES_MSG.DUPLICATED_PK);
-//               break;
-
-//             case "ER_TRUNCATED_WRONG_VALUE_FOR_FIELD":
-//               new Response(res).badRequest(
-//                 _NAMESPACE.RES_MSG.TYPE_MISMATCH + `(${err.sqlMessage})`
-//               );
-//               break;
-
-//             default:
-//               console.error(err);
-//               new Response(res).internalServerError();
-//           }
-//         }
-//         reject(err);
-//       } else {
-//         if (res) {
-//           new Response(
-//             res,
-//             result.affectedRows !== undefined
-//               ? { affectedRows: result.affectedRows }
-//               : result
-//           ).OK();
-//         }
-//         resolve(result);
-//       }
-//     });
-//   });
-// };
-
 const dev = {
   async haejo(res) {
     let data = res.locals.data;
@@ -130,11 +93,13 @@ const dev = {
       conn.commit();
       conn2.commit();
       new Response(res).OK();
-      return;
     } catch (err) {
+      conn.rollback();
+      conn2.rollback();
       console.error(err);
       new Response(res).internalServerError();
-      return;
+    } finally {
+      conn.release();
     }
   },
 };
@@ -476,55 +441,63 @@ const sql = {
 
       let arr = [];
       for (let i = 0; i < gap; i++) {
-        arr.push(() =>
-          query(
-            null,
-            `
+        arr.push(
+          `
         INSERT INTO
           ROBOTS (ACCOUNT_UUID, SLOT_NUM)
           VALUES (
             '${data.account_uuid}',
             IFNULL((SELECT A FROM (SELECT IFNULL(MAX(SLOT_NUM),-1)+1 "A" FROM ROBOTS WHERE ACCOUNT_UUID = '${data.account_uuid}') A),0 ))
         `
-          )
         );
       }
 
-      let flag = await transaction(arr);
-      if (flag !== true) {
-        new Response(res).internalServerError();
-        return false;
-      }
-
-      //
-      let sql = `UPDATE ROBOTS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
-      if (data.parts_uuid_arm !== undefined)
-        sql += `, PARTS_UUID_ARM = '${data.parts_uuid_arm}'`;
-      if (data.parts_uuid_head !== undefined)
-        sql += `, PARTS_UUID_HEAD = '${data.parts_uuid_head}'`;
-      if (data.parts_uuid_leg !== undefined)
-        sql += `, PARTS_UUID_LEG = '${data.parts_uuid_leg}'`;
-      if (data.parts_uuid_body !== undefined)
-        sql += `, PARTS_UUID_BODY = '${data.parts_uuid_body}'`;
-      if (data.parts_uuid_booster !== undefined)
-        sql += `, PARTS_UUID_BOOSTER = '${data.parts_uuid_booster}'`;
-      if (data.parts_uuid_weapon_m !== undefined)
-        sql += `, PARTS_UUID_WEAPON_M = '${data.parts_uuid_weapon_m}'`;
-      if (data.parts_uuid_weapon_s !== undefined)
-        sql += `, PARTS_UUID_WEAPON_S = '${data.parts_uuid_weapon_s}'`;
-      if (data.parts_uuid_core !== undefined)
-        sql += `, PARTS_UUID_CORE = '${data.parts_uuid_core}'`;
-      if (data.coating !== undefined) sql += `, COATING = '${data.coating}'`;
-      if (data.name !== undefined) sql += `, NAME = '${data.name}'`;
-      if (data.token_id !== undefined) sql += `, TOKEN_ID = '${data.token_id}'`;
-      if (data.card_uuid !== undefined)
-        sql += `, CARD_UUID = '${data.card_uuid}'`;
-      sql += `
+      let conn = await getConn();
+      conn.beginTransaction();
+      try {
+        for (let a of arr) {
+          await executeQuery(a, conn);
+        }
+        let sql = `UPDATE ROBOTS SET _UPDATED_AT = CURRENT_TIMESTAMP()`;
+        if (data.parts_uuid_arm !== undefined)
+          sql += `, PARTS_UUID_ARM = '${data.parts_uuid_arm}'`;
+        if (data.parts_uuid_head !== undefined)
+          sql += `, PARTS_UUID_HEAD = '${data.parts_uuid_head}'`;
+        if (data.parts_uuid_leg !== undefined)
+          sql += `, PARTS_UUID_LEG = '${data.parts_uuid_leg}'`;
+        if (data.parts_uuid_body !== undefined)
+          sql += `, PARTS_UUID_BODY = '${data.parts_uuid_body}'`;
+        if (data.parts_uuid_booster !== undefined)
+          sql += `, PARTS_UUID_BOOSTER = '${data.parts_uuid_booster}'`;
+        if (data.parts_uuid_weapon_m !== undefined)
+          sql += `, PARTS_UUID_WEAPON_M = '${data.parts_uuid_weapon_m}'`;
+        if (data.parts_uuid_weapon_s !== undefined)
+          sql += `, PARTS_UUID_WEAPON_S = '${data.parts_uuid_weapon_s}'`;
+        if (data.parts_uuid_core !== undefined)
+          sql += `, PARTS_UUID_CORE = '${data.parts_uuid_core}'`;
+        if (data.coating !== undefined) sql += `, COATING = '${data.coating}'`;
+        if (data.name !== undefined) sql += `, NAME = '${data.name}'`;
+        if (data.token_id !== undefined)
+          sql += `, TOKEN_ID = '${data.token_id}'`;
+        if (data.card_uuid !== undefined)
+          sql += `, CARD_UUID = '${data.card_uuid}'`;
+        sql += `
       WHERE 1=1
         AND ACCOUNT_UUID = '${data.account_uuid}'
         AND SLOT_NUM = '${data.slot_num}'
       `;
-      query(res, sql);
+        let r = await executeQuery(sql, conn);
+        conn.commit();
+        let resp = { affectedRows: r.affectedRows };
+        new Response(res, resp).OK();
+      } catch (err) {
+        conn.rollback();
+        console.error(err);
+        new Response(res).internalServerError();
+        return;
+      } finally {
+        conn.release();
+      }
     },
     async deleteRobot(res) {
       let data = res.locals.data;
@@ -569,10 +542,11 @@ const sql = {
       let conn = await getConn();
       conn.beginTransaction();
 
-      let qr = await executeQuery(sql, conn);
-      if (qr.affectedRows === 1) {
-        if (data.remove_parts === true) {
-          let sql2 = `
+      try {
+        let qr = await executeQuery(sql, conn);
+        if (qr.affectedRows === 1) {
+          if (data.remove_parts === true) {
+            let sql2 = `
         UPDATE
          PARTS
         SET
@@ -585,17 +559,20 @@ const sql = {
               AND GUBUN NOT IN (6,7,8)
               AND ACCOUNT_UUID = '${data.account_uuid}'
               AND SLOT_USING_THIS = '${data.slot_num}') AS A)`;
-          let qr2 = await executeQuery(sql, conn);
-          if (qr2.affectedRows === 1) {
-            new Response(res, { result: "success" }).OK();
-          } else {
-            new Response(res).internalServerError();
+            let qr2 = await executeQuery(sql2, conn);
           }
+          conn.commit();
+          new Response(res, { result: "success" }).OK();
+        } else {
+          throw "T.T2";
         }
-      } else {
+      } catch (err) {
+        console.error(err);
+        conn.rollback();
         new Response(res).internalServerError();
+      } finally {
+        conn.release();
       }
-      return;
     },
     setRobotRecord(res) {
       let data = res.locals.data;
@@ -702,11 +679,11 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
-      let flag = await transaction([
-        () =>
-          query(
-            null,
-            `
+
+      let conn = await getConn();
+      try {
+        await executeQuery(
+          `
         UPDATE
           ROBOTS
         SET
@@ -714,12 +691,11 @@ const sql = {
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
           AND PROFILE = 1
-        `
-          ),
-        () =>
-          query(
-            null,
-            `
+        `,
+          conn
+        );
+        await executeQuery(
+          `
         UPDATE
           ROBOTS
         SET
@@ -727,12 +703,18 @@ const sql = {
         WHERE 1=1
             AND ACCOUNT_UUID = '${data.account_uuid}'
             AND SLOT_NUM ='${data.slot_num}'
-        `
-          ),
-      ]);
-      if (flag !== true)
+        `,
+          null
+        );
+        conn.commit();
+        new Response(res, { result: "success" }).OK();
+      } catch (err) {
+        console.error(err);
+        conn.rollback();
         new Response(res, { result: "fail" }).internalServerError();
-      else new Response(res, { result: "success" }).OK();
+      } finally {
+        conn.release();
+      }
     },
     getProfile(res) {
       let data = res.locals.data;
@@ -1035,9 +1017,8 @@ const sql = {
       `;
       query(res, sql);
     },
-    async addCommodities(res) {
+    async addCommodities(res, conn) {
       let data = res.locals.data;
-
       if (
         falseIfAllTruthy(
           data.account_uuid,
@@ -1056,6 +1037,12 @@ const sql = {
         console.log(2222222222);
         return false;
       }
+      let connectionProvided = true;
+      if (!conn) {
+        conn = await getConn();
+        connectionProvided = false;
+      }
+
       let sql = `
         UPDATE
           COMMODITIES
@@ -1127,18 +1114,29 @@ const sql = {
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
       `;
-      let r = await query(null, sql);
-      if (r.affectedRows === 0) {
-        await query(
-          null,
-          `
+
+      try {
+        let r = await executeQuery(sql, conn);
+        if (r.affectedRows === 0) {
+          await executeQuery(
+            `
           INSERT INTO COMMODITIES (ACCOUNT_UUID)
-          VALUES ('${data.account_uuid}')`
-        );
-        await query(res, sql);
-      } else {
-        if (res.locals.doNotResponse === true) return false;
-        new Response(res, { affectedRows: r.affectedRows }).OK();
+          VALUES ('${data.account_uuid}')`,
+            conn
+          );
+          let result = await executeQuery(sql, conn);
+          conn.commit();
+          new Response(res, { affectedRows: result.affectedRows }).OK();
+        } else {
+          if (res.locals.doNotResponse === true) return false;
+          new Response(res, { affectedRows: r.affectedRows }).OK();
+        }
+      } catch (err) {
+        console.error(err);
+        conn.rollback();
+        new Response(res).internalServerError();
+      } finally {
+        if (!connectionProvided) conn.release();
       }
     },
   },
@@ -1483,37 +1481,36 @@ const sql = {
 
       res.locals.doNotResponse = true;
 
-      queryArray.push(() => sql.commodities.addCommodities(res));
-      if (reward["SkillReward"] !== undefined) {
-        if (Array.isArray(reward["SkillReward"])) {
-          for (let skill of reward["SkillReward"]) {
-            queryArray.push(() =>
-              query(
-                null,
+      let conn = await getConn();
+      conn.beginTransaction();
+      try {
+        sql.commodities.addCommodities(res, conn);
+
+        if (reward["SkillReward"] !== undefined) {
+          if (Array.isArray(reward["SkillReward"])) {
+            for (let skill of reward["SkillReward"]) {
+              await executeQuery(
                 `
               INSERT INTO
                 SKILLS (ACCOUNT_UUID, SKILL_NAME)
               VALUES ('${data.account_uuid}','${skill}')
-            `
-              )
-            );
-          }
-        } else {
-          queryArray.push(() =>
-            query(
-              null,
+            `,
+                conn
+              );
+            }
+          } else {
+            await executeQuery(
               `
               INSERT INTO
                 SKILLS (ACCOUNT_UUID, SKILL_NAME)
               VALUES ('${data.account_uuid}','${reward["SkillReward"]}')
-            `
-            )
-          );
+            `,
+              conn
+            );
+          }
         }
-      }
-      queryArray.push(() =>
-        query(
-          null,
+
+        await executeQuery(
           `
         UPDATE
           ACHIEVEMENTS
@@ -1522,16 +1519,18 @@ const sql = {
         WHERE 1=1
           AND ACCOUNT_UUID = '${data.account_uuid}'
           AND NAME = '${data.name}'
-      `
-        )
-      );
-
-      let flag = await transaction(queryArray);
-      if (flag === "ER_DUP_ENTRY")
-        new Response(res, _NAMESPACE.RES_MSG.DUPLICATED_PK).badRequest();
-      else if (flag !== true)
+      `,
+          conn
+        );
+        conn.commit();
+        new Response(res, { result: "success" }).OK();
+      } catch (err) {
+        console.error(err);
+        conn.rollback();
         new Response(res, { result: "fail" }).internalServerError();
-      else if (flag === true) new Response(res, { result: "success" }).OK();
+      } finally {
+        conn.release();
+      }
     },
   },
   gameResults: {
@@ -1656,6 +1655,9 @@ const sql = {
         new Response(res).badRequest(_NAMESPACE.RES_MSG.INSUFFICIENT_VALUE);
         return false;
       }
+
+      let conn = await getConn();
+
       let sql1 = `
           UPDATE
             PARTS
@@ -1679,32 +1681,27 @@ const sql = {
                 : ""
             }
             `;
-      let result = await query(null, sql1);
+      try {
+        let result = await executeQuery(sql1, conn);
 
-      let flag = false;
+        if (result.affectedRows === 0) {
+          new Response(res).badRequest(_NAMESPACE.RES_MSG.PARTS_NOT_FOUND);
+          return false;
+        } else if (result.affectedRows === 1) {
+          res.locals.doNotResponse = true;
+          await sql.commodities.addCommodities(res, conn);
 
-      if (result.affectedRows === 0) {
-        new Response(res).badRequest(_NAMESPACE.RES_MSG.PARTS_NOT_FOUND);
-        return false;
-      } else if (result.affectedRows === 1) {
-        flag = await transaction([
-          () => {
-            res.locals.doNotResponse = true;
-            sql.commodities.addCommodities(res);
-          },
-        ]);
-
-        if (flag === true) {
+          conn.commit();
           new Response(res, { result: "success" }).OK();
-          return;
         } else {
-          new Response(res, { result: "fail" }).OK();
-          return;
+          throw result;
         }
-      } else {
-        new Response(res).internalServerError();
-        console.error(result);
-        return false;
+      } catch (err) {
+        console.error(err);
+        conn.rollback();
+        new Response(res, { result: "fail" }).OK();
+      } finally {
+        conn.release();
       }
     },
   },
