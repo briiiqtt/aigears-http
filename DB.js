@@ -4,7 +4,6 @@ const _ACHIEVEMENT_REWARD = require("./AchievementReward.json");
 const _BLUEPRINT = require("./RequireBlueprintCount.json");
 const _ACHIEVEMENT_COUNT = require("./AchievementAttainCount.json");
 const mysql = require("mysql");
-// const conn = mysql.createConnection(_CONN);
 const pool = mysql.createPool(_CONN);
 
 const Response = require("./Response");
@@ -150,28 +149,6 @@ const query = function (res, sql) {
       if (conn) conn.release();
     });
   });
-};
-const transaction = async function (sqls) {
-  return new Promise((resolve, reject) => {
-    pool.getConnection(async (err, conn) => {
-      if (err) throw err;
-      try {
-        conn.beginTransaction();
-        // await Promise.all(sqls.map((sql) => sql()));
-        for (let sql of sqls) {
-          await sql();
-        }
-        conn.commit();
-        if (conn) conn.release();
-        resolve(true);
-      } catch (e) {
-        console.error(e);
-        conn.rollback();
-        if (conn) conn.release();
-        reject(e.code ? e.code : e);
-      }
-    });
-  }).catch((err) => console.error(err));
 };
 const getConn = function () {
   return new Promise((resolve, reject) => {
