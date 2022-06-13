@@ -34,30 +34,30 @@ app.post("*", (req, res, next) => {
   let date = new Date();
   res.append("requestNum", requestNum);
   requestNum++;
-  console.log(
-    "REQUEST " +
-      res.get("requestNum") +
-      "  |  " +
-      date.getFullYear() +
-      "-" +
-      (date.getMonth() + 1) +
-      "-" +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds() +
-      ":" +
-      date.getMilliseconds() +
-      "  | " +
-      req.path +
-      "\r\n",
-    req.body
-  );
   try {
     res.locals.data = JSON.parse(req.body.data);
+    console.log(
+      "REQUEST " +
+        res.get("requestNum") +
+        "  |  " +
+        date.getFullYear() +
+        "-" +
+        (date.getMonth() + 1) +
+        "-" +
+        date.getDate() +
+        " " +
+        date.getHours() +
+        ":" +
+        date.getMinutes() +
+        ":" +
+        date.getSeconds() +
+        ":" +
+        date.getMilliseconds() +
+        "  | " +
+        req.path +
+        "\r\n",
+      res.locals.data
+    );
   } catch (e) {
     console.error(e);
     new Response(res).badRequest("json파싱 실패");
