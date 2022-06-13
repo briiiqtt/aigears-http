@@ -536,36 +536,48 @@ const sql = {
         DESTROY_COUNT_CHALLENGE = NULL
       WHERE 1=1
         AND ACCOUNT_UUID = '${data.account_uuid}'
-        AND SLOT_NUM = '${data.slot_num}'
-      `;
+        AND SLOT_NUM = '${data.slot_num}'`;
+
+      let sql2 = `
+      UPDATE
+        PARTS
+      SET
+        _IS_DELETED = 1,
+        _UPDATED_AT = CURRENT_TIMESTAMP()
+      WHERE 1=1
+        AND _IS_DELETED = 0
+        AND PARTS_UUID IN (SELECT * FROM (SELECT PARTS_UUID FROM PARTS
+          WHERE 1=1
+            AND GUBUN NOT IN (6,7,8)
+            AND ACCOUNT_UUID = '${data.account_uuid}'
+            AND SLOT_USING_THIS = '${data.slot_num}') AS A)`;
+
+      let sql3 = `
+      UPDATE
+        PARTS
+      SET
+        _UPDATED_AT = CURRENT_TIMESTAMP(),
+        SLOT_USING_THIS = -2
+      WHERE 1=1
+        AND _IS_DELETED = 0
+        AND PARTS_UUID IN (
+          SELECT * FROM (SELECT PARTS_UUID FROM PARTS
+            WHERE 1=1
+          AND GUBUN IN (6,7,8)
+          AND ACCOUNT_UUID = '${data.account_uuid}'
+          AND SLOT_USING_THIS = '${data.slot_num}') AS A)`;
 
       let conn = await getConn();
       conn.beginTransaction();
 
       try {
-        let qr = await executeQuery(sql, conn);
-        if (qr.affectedRows === 1) {
-          if (data.remove_parts === true) {
-            let sql2 = `
-        UPDATE
-         PARTS
-        SET
-         _IS_DELETED = 1,
-         _UPDATED_AT = CURRENT_TIMESTAMP()
-        WHERE 1=1
-          AND _IS_DELETED = 0
-          AND PARTS_UUID IN (SELECT * FROM (SELECT PARTS_UUID FROM PARTS
-            WHERE 1=1
-              AND GUBUN NOT IN (6,7,8)
-              AND ACCOUNT_UUID = '${data.account_uuid}'
-              AND SLOT_USING_THIS = '${data.slot_num}') AS A)`;
-            let qr2 = await executeQuery(sql2, conn);
-          }
-          conn.commit();
-          new Response(res, { result: "success" }).OK();
-        } else {
-          throw "T.T2";
+        if (data.remove_parts === true) {
+          let qr3 = await executeQuery(sql3, conn);
+          let qr2 = await executeQuery(sql2, conn);
         }
+        let qr = await executeQuery(sql, conn);
+        conn.commit();
+        new Response(res, { result: "success" }).OK();
       } catch (err) {
         console.error(err);
         conn.rollback();
