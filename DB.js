@@ -287,19 +287,16 @@ const sql = {
         return;
       }
 
-      let resp = [
-        {
-          ACCOUNT_UUID: qr.ACCOUNT_UUID,
-          EMAIL: qr.EMAIL,
-          PASSWORD: qr.PASSWORD,
-          AUTH: qr.AUTH,
-          TEAM: qr.TEAM,
-          ICON: qr.ICON,
-          FACILITY_PHASE: qr.FACILITY_PHASE,
-          WALLET_ADDRESS: qr.WALLET_ADDRESS,
-        },
-      ];
-
+      let resp = {
+        ACCOUNT_UUID: qr.ACCOUNT_UUID,
+        EMAIL: qr.EMAIL,
+        PASSWORD: qr.PASSWORD,
+        AUTH: qr.AUTH,
+        TEAM: qr.TEAM,
+        ICON: qr.ICON,
+        FACILITY_PHASE: qr.FACILITY_PHASE,
+        WALLET_ADDRESS: qr.WALLET_ADDRESS,
+      };
       new Response(res, resp).OK();
     },
     setFacilityPhase(res) {
