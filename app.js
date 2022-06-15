@@ -15,6 +15,14 @@ const db = require("./DB");
 const _NAMESPACE = require("./_NAMESPACE.js");
 const router = express.Router();
 
+const rateLimit = require("express-rate-limit");
+app.use(
+  rateLimit({
+    windowMs: 1 * 60 * 1000,
+    max: 1000,
+  })
+);
+
 app.listen((port = 52530), () => {
   console.log(`server started, port: ${port}`);
 });
